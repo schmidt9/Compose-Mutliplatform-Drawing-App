@@ -25,11 +25,11 @@ fun ColorWheel(modifier: Modifier = Modifier) {
         val canvasWidth = size.width
         val canvasHeight = size.height
 
-        require(canvasWidth == canvasHeight,
-            lazyMessage = {
-                print("Canvas dimensions should be equal to each other")
-            }
-        )
+//        require(canvasWidth == canvasHeight,
+//            lazyMessage = {
+//                print("Canvas dimensions should be equal to each other")
+//            }
+//        )
         val cX = canvasWidth / 2
         val cY = canvasHeight / 2
         val canvasRadius = canvasWidth.coerceAtMost(canvasHeight) / 2f

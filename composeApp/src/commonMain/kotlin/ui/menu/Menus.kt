@@ -54,7 +54,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.smarttoolfactory.composedrawingapp.ui.theme.Blue400
 import composemutliplatformdrawingapp.composeapp.generated.resources.Res
-import composemutliplatformdrawingapp.composeapp.generated.resources.ink_eraser_24dp_FILL0_wght400_GRAD0_opsz24
+import composemutliplatformdrawingapp.composeapp.generated.resources.ink_eraser_24dp_fill0_wght400_grad0_opsz24
 import model.PathProperties
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -114,7 +114,7 @@ fun DrawingPropertiesMenu(
             }
         ) {
             Icon(
-                painter = painterResource(Res.drawable.ink_eraser_24dp_FILL0_wght400_GRAD0_opsz24),
+                painter = painterResource(Res.drawable.ink_eraser_24dp_fill0_wght400_grad0_opsz24),
                 contentDescription = null,
                 tint = if (currentDrawMode == DrawMode.Erase) Color.Black else Color.LightGray
             )
