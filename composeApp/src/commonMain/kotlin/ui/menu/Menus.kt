@@ -7,6 +7,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Redo
+import androidx.compose.material.icons.automirrored.filled.Undo
+import androidx.compose.material.icons.filled.Brush
+import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,9 +28,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.smarttoolfactory.composedrawingapp.*
 import com.smarttoolfactory.composedrawingapp.ui.theme.Blue400
+import composemutliplatformdrawingapp.composeapp.generated.resources.Res
+import composemutliplatformdrawingapp.composeapp.generated.resources.ink_eraser_24dp_FILL0_wght400_GRAD0_opsz24
 import model.PathProperties
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.vectorResource
 import ui.ColorSlider
 import ui.ColorWheel
 import kotlin.math.roundToInt
@@ -83,12 +90,11 @@ fun DrawingPropertiesMenu(
             }
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_eraser_black_24dp),
+                painter = painterResource(Res.drawable.ink_eraser_24dp_FILL0_wght400_GRAD0_opsz24),
                 contentDescription = null,
                 tint = if (currentDrawMode == DrawMode.Erase) Color.Black else Color.LightGray
             )
         }
-
 
         IconButton(onClick = { showColorDialog = !showColorDialog }) {
             ColorWheel(modifier = Modifier.size(24.dp))
@@ -101,13 +107,13 @@ fun DrawingPropertiesMenu(
         IconButton(onClick = {
             onUndo()
         }) {
-            Icon(Icons.Filled.Undo, contentDescription = null, tint = Color.LightGray)
+            Icon(Icons.AutoMirrored.Filled.Undo, contentDescription = null, tint = Color.LightGray)
         }
 
         IconButton(onClick = {
             onRedo()
         }) {
-            Icon(Icons.Filled.Redo, contentDescription = null, tint = Color.LightGray)
+            Icon(Icons.AutoMirrored.Filled.Redo, contentDescription = null, tint = Color.LightGray)
         }
     }
 
