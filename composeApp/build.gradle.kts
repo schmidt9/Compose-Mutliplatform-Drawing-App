@@ -43,6 +43,11 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(compose.materialIconsExtended)
+
+            // https://voyager.adriel.cafe/setup
+            implementation(libs.voyager.navigator)
+            implementation(libs.voyager.transitions)
+            implementation(libs.voyager.screenmodel)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
