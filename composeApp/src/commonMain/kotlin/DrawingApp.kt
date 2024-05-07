@@ -18,7 +18,7 @@ import composemutliplatformdrawingapp.composeapp.generated.resources.compose_mul
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 @Preview
-fun App() {
+fun DrawingApp() {
     MaterialTheme {
         var showContent by remember { mutableStateOf(false) }
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {

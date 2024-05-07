@@ -6,6 +6,6 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = "Compose Mutliplatform Drawing App",
     ) {
-        App()
+        DrawingApp()
     }
 }
