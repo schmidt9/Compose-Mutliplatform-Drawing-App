@@ -200,9 +200,15 @@ class HomeScreen : Screen {
                                         )
                                     }
                                     ShapeType.Rectangle -> {
+                                        val previousDistance = previousPosition.getDistanceSquared()
+                                        val currentDistance = currentPosition.getDistanceSquared()
+
+                                        val topLeft = if (currentDistance > previousDistance) previousPosition else currentPosition
+                                        val bottomRight = if (currentDistance > previousDistance) currentPosition else previousPosition
+
                                         val rect = Rect(
-                                            topLeft = previousPosition,
-                                            bottomRight = currentPosition
+                                            topLeft = topLeft,
+                                            bottomRight = bottomRight
                                         )
 
                                         currentPath.reset()
