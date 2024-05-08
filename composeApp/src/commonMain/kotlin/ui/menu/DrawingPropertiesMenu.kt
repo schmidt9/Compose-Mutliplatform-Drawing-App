@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Redo
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.Brush
+import androidx.compose.material.icons.filled.PanTool
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -60,7 +61,7 @@ fun DrawingPropertiesMenu(
             }
         ) {
             Icon(
-                Icons.Filled.TouchApp,
+                Icons.Filled.PanTool,
                 contentDescription = null,
                 tint = if (currentDrawMode == DrawMode.Touch) Color.Black else Color.LightGray
             )
