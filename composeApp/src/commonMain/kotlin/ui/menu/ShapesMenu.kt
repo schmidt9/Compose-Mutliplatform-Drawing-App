@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Rectangle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,21 +13,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.window.Popup
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ShapesMenu(
     visible: Boolean,
     modifier: Modifier = Modifier,
-    onIconClick: (iconData: IconData) -> Unit,
-    onPopupDismissRequest: () -> Unit
+    onIconClick: (iconData: IconData) -> Unit
 ) {
     if (visible) {
         Box {
             Popup(
-                alignment = Alignment.BottomCenter,
-                onDismissRequest = {
-                    onPopupDismissRequest()
-                }
+                alignment = Alignment.BottomCenter
             ) {
                 Column {
                     Divider(color = Color.LightGray)

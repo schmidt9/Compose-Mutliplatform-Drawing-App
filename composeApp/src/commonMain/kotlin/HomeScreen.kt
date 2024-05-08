@@ -172,6 +172,7 @@ class HomeScreen : Screen {
 
                             previousPosition = currentPosition
 
+                            shapesMenuVisible = false
                         }
 
                         MotionEvent.Move -> {
@@ -295,9 +296,6 @@ class HomeScreen : Screen {
                         .background(Color.White),
                     onIconClick = {
                         currentIconData = it
-                    },
-                    onPopupDismissRequest = {
-                        shapesMenuVisible = false
                     }
                 )
 
