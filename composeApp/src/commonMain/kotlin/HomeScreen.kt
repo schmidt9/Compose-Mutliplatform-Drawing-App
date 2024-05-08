@@ -1,10 +1,14 @@
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -34,6 +38,7 @@ import gesture.dragMotionEvent
 import model.PathProperties
 import ui.menu.DrawingPropertiesMenu
 import ui.menu.HomeScreenTopMenu
+import ui.menu.ShapesMenu
 
 class HomeScreen : Screen {
     @Composable
@@ -85,6 +90,8 @@ class HomeScreen : Screen {
          * [MotionEvent.Down] and [MotionEvent.Up].
          */
         var currentPathProperty by remember { mutableStateOf(PathProperties()) }
+
+        var shapesMenuVisible by remember { mutableStateOf(false) }
 
         Scaffold(topBar = {
             TopAppBar(
@@ -283,10 +290,16 @@ class HomeScreen : Screen {
                     }
                 }
 
+                ShapesMenu(
+                    visible = shapesMenuVisible,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White)
+                )
+
                 DrawingPropertiesMenu(
                     modifier = Modifier
-                        .padding(bottom = 8.dp, start = 8.dp, end = 8.dp)
-                        .shadow(1.dp, RoundedCornerShape(8.dp))
+                        .shadow(1.dp)
                         .fillMaxWidth()
                         .background(Color.White)
                         .padding(4.dp),
@@ -296,7 +309,7 @@ class HomeScreen : Screen {
                         motionEvent = MotionEvent.Idle
                     },
                     onShapesIconClick = {
-                        // TODO: impl
+                        shapesMenuVisible = !shapesMenuVisible
                     },
                     onDrawModeChanged = {
                         motionEvent = MotionEvent.Idle
@@ -304,6 +317,7 @@ class HomeScreen : Screen {
                         currentPathProperty.eraseMode = (drawMode == DrawMode.Erase)
                     }
                 )
+
             }
         }
 
