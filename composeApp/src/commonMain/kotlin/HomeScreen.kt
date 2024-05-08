@@ -38,6 +38,7 @@ import gesture.dragMotionEvent
 import model.PathProperties
 import ui.menu.DrawingPropertiesMenu
 import ui.menu.HomeScreenTopMenu
+import ui.menu.ShapeType
 import ui.menu.ShapesMenu
 
 class HomeScreen : Screen {
@@ -92,6 +93,8 @@ class HomeScreen : Screen {
         var currentPathProperty by remember { mutableStateOf(PathProperties()) }
 
         var shapesMenuVisible by remember { mutableStateOf(false) }
+
+        var shapeType by remember { mutableStateOf(ShapeType.Freeform) }
 
         Scaffold(topBar = {
             TopAppBar(
@@ -295,6 +298,9 @@ class HomeScreen : Screen {
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color.White),
+                    onIconClick = {
+
+                    },
                     onPopupDismissRequest = {
                         shapesMenuVisible = false
                     }

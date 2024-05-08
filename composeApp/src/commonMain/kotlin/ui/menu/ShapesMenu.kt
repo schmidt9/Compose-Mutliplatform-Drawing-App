@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.window.Popup
 import composemutliplatformdrawingapp.composeapp.generated.resources.Res
 import composemutliplatformdrawingapp.composeapp.generated.resources.pen_size_2_24dp_fill0_wght400_grad0_opsz24
@@ -22,6 +23,7 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun ShapesMenu(visible: Boolean,
                modifier: Modifier = Modifier,
+               onIconClick: (shapeType: ShapeType) -> Unit,
                onPopupDismissRequest: () -> Unit) {
     if (visible) {
         Box {
@@ -35,7 +37,7 @@ fun ShapesMenu(visible: Boolean,
                     Row(modifier = modifier) {
                         IconButton(
                             onClick = {
-                                // TODO: impl
+                                onIconClick(ShapeType.Line);
                             }) {
                             Icon(painter = painterResource(Res.drawable.pen_size_2_24dp_fill0_wght400_grad0_opsz24),
                                 contentDescription = null,
@@ -44,7 +46,7 @@ fun ShapesMenu(visible: Boolean,
 
                         IconButton(
                             onClick = {
-                                // TODO: impl
+                                onIconClick(ShapeType.Rectangle)
                             }) {
                             Icon(Icons.Outlined.Rectangle,
                                 contentDescription = null,
