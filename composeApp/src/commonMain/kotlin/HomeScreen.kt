@@ -36,6 +36,8 @@ import ui.menu.HomeScreenTopMenu
 import ui.menu.IconData
 import ui.menu.ShapeType
 import ui.menu.ShapesMenu
+import kotlin.math.abs
+import kotlin.math.min
 
 class HomeScreen : Screen {
     @Composable
@@ -200,15 +202,16 @@ class HomeScreen : Screen {
                                         )
                                     }
                                     ShapeType.Rectangle -> {
-                                        val previousDistance = previousPosition.getDistanceSquared()
-                                        val currentDistance = currentPosition.getDistanceSquared()
-
-                                        val topLeft = if (currentDistance > previousDistance) previousPosition else currentPosition
-                                        val bottomRight = if (currentDistance > previousDistance) currentPosition else previousPosition
+                                        val left = min(previousPosition.x, currentPosition.x)
+                                        val top = min(previousPosition.y, currentPosition.y)
+                                        val right = left + abs(previousPosition.x - currentPosition.x)
+                                        val bottom = top + abs(previousPosition.y - currentPosition.y)
 
                                         val rect = Rect(
-                                            topLeft = topLeft,
-                                            bottomRight = bottomRight
+                                            left = left,
+                                            top = top,
+                                            right = right,
+                                            bottom = bottom
                                         )
 
                                         currentPath.reset()
