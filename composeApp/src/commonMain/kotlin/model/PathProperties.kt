@@ -40,10 +40,12 @@ class PathProperties(
 val PathProperties.Companion.selectionPathProperties
     get() = PathProperties(
         strokeWidth = 5f,
-        color = Color.Blue,
-        alpha = 1f,
-        strokeCap = StrokeCap.Round,
-        strokeJoin = StrokeJoin.Round,
-        pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 20f)),
-        eraseMode = false
+        color = Color.Cyan,
+        pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 20f))
+    )
+
+val PathProperties.Companion.selectedPathProperties
+    get() = PathProperties(
+        strokeWidth = 20f,
+        color = Color.Cyan,
     )

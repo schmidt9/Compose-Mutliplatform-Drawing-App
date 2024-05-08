@@ -20,6 +20,8 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathOperation
+import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.consumeDownChange
@@ -31,6 +33,7 @@ import com.smarttoolfactory.composedrawingapp.gesture.MotionEvent
 import com.smarttoolfactory.composedrawingapp.ui.theme.backgroundColor
 import gesture.dragMotionEvent
 import model.PathProperties
+import model.selectedPathProperties
 import model.selectionPathProperties
 import ui.menu.DrawingPropertiesMenu
 import ui.menu.HomeScreenTopMenu
@@ -84,8 +87,6 @@ class HomeScreen : Screen {
          * pointer is up this path is saved to **paths** and new instance is created
          */
         var currentPath by remember { mutableStateOf(Path()) }
-
-        var selectionPath by remember { mutableStateOf(Path()) }
 
         /**
          * Properties of path that is currently being drawn between
@@ -279,9 +280,9 @@ class HomeScreen : Screen {
 
                         paths.forEach {
                             val path = it.first
-                            val property = it.second
+                            val properties = it.second
 
-                            if (property.eraseMode) {
+                            if (properties.eraseMode) {
                                 drawPath(
                                     color = Color.Transparent,
                                     path = path,
@@ -293,13 +294,35 @@ class HomeScreen : Screen {
                                     blendMode = BlendMode.Clear
                                 )
                             } else {
+                                // draw a selection path under target path
+                                val doSelection = (currentMenuButtonAction == MenuAction.DoSelection)
+
+                                if (doSelection) {
+                                    val intersectionPath = Path()
+                                    intersectionPath.op(currentPath, path, PathOperation.Intersect)
+
+                                    if (!intersectionPath.isEmpty) {
+                                        val selectedPathProperties = PathProperties.selectedPathProperties
+
+                                        drawPath(
+                                            color = selectedPathProperties.color,
+                                            path = path,
+                                            style = Stroke(
+                                                width = selectedPathProperties.strokeWidth,
+                                                cap = selectedPathProperties.strokeCap,
+                                                join = selectedPathProperties.strokeJoin
+                                            )
+                                        )
+                                    }
+                                }
+
                                 drawPath(
-                                    color = property.color,
+                                    color = properties.color,
                                     path = path,
                                     style = Stroke(
-                                        width = property.strokeWidth,
-                                        cap = property.strokeCap,
-                                        join = property.strokeJoin
+                                        width = properties.strokeWidth,
+                                        cap = properties.strokeCap,
+                                        join = properties.strokeJoin
                                     )
                                 )
                             }
