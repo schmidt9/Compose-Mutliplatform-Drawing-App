@@ -219,6 +219,8 @@ class HomeScreen : Screen {
                                     }
                                     ShapeType.None -> {}
                                 }
+                            } else {
+                                previousPosition = currentPosition
                             }
                         }
 
