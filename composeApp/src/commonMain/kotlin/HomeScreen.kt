@@ -33,7 +33,6 @@ import model.PathProperties
 import ui.menu.DrawingPropertiesMenu
 import ui.menu.HomeScreenTopMenu
 import ui.menu.IconData
-import ui.menu.ShapeType
 import ui.menu.ShapesMenu
 
 class HomeScreen : Screen {
@@ -296,6 +295,7 @@ class HomeScreen : Screen {
                         .background(Color.White),
                     onIconClick = {
                         currentIconData = it
+                        shapesMenuVisible = false
                     }
                 )
 
@@ -307,6 +307,7 @@ class HomeScreen : Screen {
                         .padding(4.dp),
                     pathProperties = currentPathProperty,
                     drawMode = drawMode,
+                    shapeIconData = currentIconData,
                     onPathPropertiesChange = {
                         motionEvent = MotionEvent.Idle
                     },
