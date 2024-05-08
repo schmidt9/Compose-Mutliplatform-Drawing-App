@@ -20,10 +20,16 @@ import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun ShapesMenu(visible: Boolean, modifier: Modifier = Modifier) {
+fun ShapesMenu(visible: Boolean,
+               modifier: Modifier = Modifier,
+               onPopupDismissRequest: () -> Unit) {
     if (visible) {
         Box {
-            Popup(alignment = Alignment.BottomCenter) {
+            Popup(
+                alignment = Alignment.BottomCenter,
+                onDismissRequest = {
+                    onPopupDismissRequest()
+            }) {
                 Column {
                     Divider(color = Color.LightGray)
                     Row(modifier = modifier) {

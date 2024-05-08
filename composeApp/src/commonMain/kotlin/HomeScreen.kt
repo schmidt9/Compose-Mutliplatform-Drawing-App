@@ -294,7 +294,10 @@ class HomeScreen : Screen {
                     visible = shapesMenuVisible,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.White)
+                        .background(Color.White),
+                    onPopupDismissRequest = {
+                        shapesMenuVisible = false
+                    }
                 )
 
                 DrawingPropertiesMenu(
