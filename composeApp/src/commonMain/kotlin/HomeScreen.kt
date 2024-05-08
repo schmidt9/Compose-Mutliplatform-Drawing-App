@@ -295,6 +295,9 @@ class HomeScreen : Screen {
                     onPathPropertiesChange = {
                         motionEvent = MotionEvent.Idle
                     },
+                    onShapesIconClick = {
+                        // TODO: impl
+                    },
                     onDrawModeChanged = {
                         motionEvent = MotionEvent.Idle
                         drawMode = it

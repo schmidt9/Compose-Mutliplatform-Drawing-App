@@ -8,6 +8,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Brush
+import androidx.compose.material.icons.filled.FormatShapes
 import androidx.compose.material.icons.filled.PanTool
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import composemutliplatformdrawingapp.composeapp.generated.resources.Res
 import composemutliplatformdrawingapp.composeapp.generated.resources.ink_eraser_24dp_fill0_wght400_grad0_opsz24
+import composemutliplatformdrawingapp.composeapp.generated.resources.shapes_24dp_fill0_wght400_grad0_opsz24
 import model.PathProperties
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -33,6 +35,7 @@ fun DrawingPropertiesMenu(
     pathProperties: PathProperties,
     drawMode: DrawMode,
     onPathPropertiesChange: (PathProperties) -> Unit,
+    onShapesIconClick: () -> Unit,
     onDrawModeChanged: (DrawMode) -> Unit
 ) {
 
@@ -86,6 +89,16 @@ fun DrawingPropertiesMenu(
 
         IconButton(onClick = { showPropertiesDialog = !showPropertiesDialog }) {
             Icon(Icons.Filled.Brush, contentDescription = null, tint = Color.LightGray)
+        }
+
+        IconButton(
+            onClick = {
+                onShapesIconClick()
+            }) {
+            Icon(
+                painter = painterResource(Res.drawable.shapes_24dp_fill0_wght400_grad0_opsz24),
+                contentDescription = null,
+                tint = Color.LightGray)
         }
     }
 
