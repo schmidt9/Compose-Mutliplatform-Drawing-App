@@ -272,11 +272,21 @@ class HomeScreen : Screen {
                         val checkPoint = saveLayer(null, null)
 
                         paths.forEach {
-
                             val path = it.first
                             val property = it.second
 
-                            if (!property.eraseMode) {
+                            if (property.eraseMode) {
+                                drawPath(
+                                    color = Color.Transparent,
+                                    path = path,
+                                    style = Stroke(
+                                        width = currentPathProperty.strokeWidth,
+                                        cap = currentPathProperty.strokeCap,
+                                        join = currentPathProperty.strokeJoin
+                                    ),
+                                    blendMode = BlendMode.Clear
+                                )
+                            } else {
                                 drawPath(
                                     color = property.color,
                                     path = path,
@@ -286,12 +296,14 @@ class HomeScreen : Screen {
                                         join = property.strokeJoin
                                     )
                                 )
-                            } else {
+                            }
+                        }
 
-                                // Source
+                        if (motionEvent != MotionEvent.Idle) {
+                            if (currentPathProperty.eraseMode) {
                                 drawPath(
                                     color = Color.Transparent,
-                                    path = path,
+                                    path = currentPath,
                                     style = Stroke(
                                         width = currentPathProperty.strokeWidth,
                                         cap = currentPathProperty.strokeCap,
@@ -299,12 +311,7 @@ class HomeScreen : Screen {
                                     ),
                                     blendMode = BlendMode.Clear
                                 )
-                            }
-                        }
-
-                        if (motionEvent != MotionEvent.Idle) {
-
-                            if (!currentPathProperty.eraseMode) {
+                            } else {
                                 drawPath(
                                     color = currentPathProperty.color,
                                     path = currentPath,
@@ -314,19 +321,9 @@ class HomeScreen : Screen {
                                         join = currentPathProperty.strokeJoin
                                     )
                                 )
-                            } else {
-                                drawPath(
-                                    color = Color.Transparent,
-                                    path = currentPath,
-                                    style = Stroke(
-                                        width = currentPathProperty.strokeWidth,
-                                        cap = currentPathProperty.strokeCap,
-                                        join = currentPathProperty.strokeJoin
-                                    ),
-                                    blendMode = BlendMode.Clear
-                                )
                             }
                         }
+
                         restoreToCount(checkPoint)
                     }
                 }
