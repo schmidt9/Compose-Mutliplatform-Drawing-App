@@ -34,8 +34,6 @@ fun DrawingPropertiesMenu(
     modifier: Modifier = Modifier,
     pathProperties: PathProperties,
     drawMode: DrawMode,
-    onUndo: () -> Unit,
-    onRedo: () -> Unit,
     onPathPropertiesChange: (PathProperties) -> Unit,
     onDrawModeChanged: (DrawMode) -> Unit
 ) {
@@ -47,9 +45,7 @@ fun DrawingPropertiesMenu(
     var currentDrawMode = drawMode
 
     Row(
-        modifier = modifier
-//            .background(getRandomColor())
-        ,
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
@@ -92,18 +88,6 @@ fun DrawingPropertiesMenu(
 
         IconButton(onClick = { showPropertiesDialog = !showPropertiesDialog }) {
             Icon(Icons.Filled.Brush, contentDescription = null, tint = Color.LightGray)
-        }
-
-        IconButton(onClick = {
-            onUndo()
-        }) {
-            Icon(Icons.AutoMirrored.Filled.Undo, contentDescription = null, tint = Color.LightGray)
-        }
-
-        IconButton(onClick = {
-            onRedo()
-        }) {
-            Icon(Icons.AutoMirrored.Filled.Redo, contentDescription = null, tint = Color.LightGray)
         }
     }
 

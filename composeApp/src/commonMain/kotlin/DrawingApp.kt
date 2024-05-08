@@ -20,22 +20,8 @@ fun DrawingApp() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
         ) {
-            Scaffold(
-                topBar = {
-                    TopAppBar(
-                        elevation = 2.dp,
-                        backgroundColor = MaterialTheme.colors.surface,
-                        contentColor = MaterialTheme.colors.onSurface,
-                        title = {
-                            Text("Drawing App")
-                        },
-
-                        actions = {}
-                    )
-                }) {
-                Navigator(screen = HomeScreen()) { navigator ->
-                    SlideTransition(navigator)
-                }
+            Navigator(screen = HomeScreen()) { navigator ->
+                SlideTransition(navigator)
             }
         }
     }

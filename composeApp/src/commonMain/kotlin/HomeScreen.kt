@@ -5,6 +5,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -29,6 +33,7 @@ import com.smarttoolfactory.composedrawingapp.ui.theme.backgroundColor
 import gesture.dragMotionEvent
 import model.PathProperties
 import ui.menu.DrawingPropertiesMenu
+import ui.menu.HomeScreenTopMenu
 
 class HomeScreen : Screen {
     @Composable
@@ -81,212 +86,224 @@ class HomeScreen : Screen {
          */
         var currentPathProperty by remember { mutableStateOf(PathProperties()) }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(backgroundColor)
-        ) {
+        Scaffold(topBar = {
+            TopAppBar(
+                elevation = 2.dp,
+                backgroundColor = MaterialTheme.colors.surface,
+                contentColor = MaterialTheme.colors.onSurface,
+                title = {},
+                actions = {
+                    HomeScreenTopMenu(
+                        onUndo = {
+                            if (paths.isNotEmpty()) {
+                                val lastItem = paths.last()
+                                val lastPath = lastItem.first
+                                val lastPathProperty = lastItem.second
+                                paths.remove(lastItem)
 
-            val drawModifier = Modifier
-                .padding(8.dp)
-                .shadow(1.dp)
-                .fillMaxWidth()
-                .weight(1f)
-                .background(Color.White)
-                .dragMotionEvent(
-                    onDragStart = { pointerInputChange ->
-                        motionEvent = MotionEvent.Down
-                        currentPosition = pointerInputChange.position
-                        pointerInputChange.consumeDownChange()
-
-                    },
-                    onDrag = { pointerInputChange ->
-                        motionEvent = MotionEvent.Move
-                        currentPosition = pointerInputChange.position
-
-                        if (drawMode == DrawMode.Touch) {
-                            val change = pointerInputChange.positionChange()
-                            println("DRAG: $change")
-                            paths.forEach { entry ->
-                                val path: Path = entry.first
-                                path.translate(change)
+                                pathsUndone.add(Pair(lastPath, lastPathProperty))
                             }
-                            currentPath.translate(change)
-                        }
-                        pointerInputChange.consumePositionChange()
-
-                    },
-                    onDragEnd = { pointerInputChange ->
-                        motionEvent = MotionEvent.Up
-                        pointerInputChange.consumeDownChange()
-                    }
-                )
-
-            Canvas(modifier = drawModifier) {
-
-                when (motionEvent) {
-
-                    MotionEvent.Down -> {
-                        if (drawMode != DrawMode.Touch) {
-                            currentPath.moveTo(currentPosition.x, currentPosition.y)
-                        }
-
-                        previousPosition = currentPosition
-
-                    }
-                    MotionEvent.Move -> {
-
-                        if (drawMode != DrawMode.Touch) {
-                            currentPath.quadraticBezierTo(
-                                previousPosition.x,
-                                previousPosition.y,
-                                (previousPosition.x + currentPosition.x) / 2,
-                                (previousPosition.y + currentPosition.y) / 2
-
-                            )
-                        }
-
-                        previousPosition = currentPosition
-                    }
-
-                    MotionEvent.Up -> {
-                        if (drawMode != DrawMode.Touch) {
-                            currentPath.lineTo(currentPosition.x, currentPosition.y)
-
-                            // Pointer is up save current path
-                            paths.add(Pair(currentPath, currentPathProperty))
-
-                            // Since paths are keys for map, use new one for each key
-                            // and have separate path for each down-move-up gesture cycle
-                            currentPath = Path()
-
-                            // Create new instance of path properties to have new path and properties
-                            // only for the one currently being drawn
-                            currentPathProperty = PathProperties(
-                                strokeWidth = currentPathProperty.strokeWidth,
-                                color = currentPathProperty.color,
-                                strokeCap = currentPathProperty.strokeCap,
-                                strokeJoin = currentPathProperty.strokeJoin,
-                                eraseMode = currentPathProperty.eraseMode
-                            )
-                        }
-
-                        // Since new path is drawn no need to store paths to undone
-                        pathsUndone.clear()
-
-                        // If we leave this state at MotionEvent.Up it causes current path to draw
-                        // line from (0,0) if this composable recomposes when draw mode is changed
-                        currentPosition = Offset.Unspecified
-                        previousPosition = currentPosition
-                        motionEvent = MotionEvent.Idle
-                    }
-                    else -> Unit
-                }
-
-                with(drawContext.canvas.nativeCanvas) {
-
-                    val checkPoint = saveLayer(null, null)
-
-                    paths.forEach {
-
-                        val path = it.first
-                        val property = it.second
-
-                        if (!property.eraseMode) {
-                            drawPath(
-                                color = property.color,
-                                path = path,
-                                style = Stroke(
-                                    width = property.strokeWidth,
-                                    cap = property.strokeCap,
-                                    join = property.strokeJoin
-                                )
-                            )
-                        } else {
-
-                            // Source
-                            drawPath(
-                                color = Color.Transparent,
-                                path = path,
-                                style = Stroke(
-                                    width = currentPathProperty.strokeWidth,
-                                    cap = currentPathProperty.strokeCap,
-                                    join = currentPathProperty.strokeJoin
-                                ),
-                                blendMode = BlendMode.Clear
-                            )
-                        }
-                    }
-
-                    if (motionEvent != MotionEvent.Idle) {
-
-                        if (!currentPathProperty.eraseMode) {
-                            drawPath(
-                                color = currentPathProperty.color,
-                                path = currentPath,
-                                style = Stroke(
-                                    width = currentPathProperty.strokeWidth,
-                                    cap = currentPathProperty.strokeCap,
-                                    join = currentPathProperty.strokeJoin
-                                )
-                            )
-                        } else {
-                            drawPath(
-                                color = Color.Transparent,
-                                path = currentPath,
-                                style = Stroke(
-                                    width = currentPathProperty.strokeWidth,
-                                    cap = currentPathProperty.strokeCap,
-                                    join = currentPathProperty.strokeJoin
-                                ),
-                                blendMode = BlendMode.Clear
-                            )
-                        }
-                    }
-                    restoreToCount(checkPoint)
-                }
-            }
-
-            DrawingPropertiesMenu(
-                modifier = Modifier
-                    .padding(bottom = 8.dp, start = 8.dp, end = 8.dp)
-                    .shadow(1.dp, RoundedCornerShape(8.dp))
-                    .fillMaxWidth()
-                    .background(Color.White)
-                    .padding(4.dp),
-                pathProperties = currentPathProperty,
-                drawMode = drawMode,
-                onUndo = {
-                    if (paths.isNotEmpty()) {
-
-                        val lastItem = paths.last()
-                        val lastPath = lastItem.first
-                        val lastPathProperty = lastItem.second
-                        paths.remove(lastItem)
-
-                        pathsUndone.add(Pair(lastPath, lastPathProperty))
-
-                    }
-                },
-                onRedo = {
-                    if (pathsUndone.isNotEmpty()) {
-
-                        val lastPath = pathsUndone.last().first
-                        val lastPathProperty = pathsUndone.last().second
-                        pathsUndone.removeLast()
-                        paths.add(Pair(lastPath, lastPathProperty))
-                    }
-                },
-                onPathPropertiesChange = {
-                    motionEvent = MotionEvent.Idle
-                },
-                onDrawModeChanged = {
-                    motionEvent = MotionEvent.Idle
-                    drawMode = it
-                    currentPathProperty.eraseMode = (drawMode == DrawMode.Erase)
+                        },
+                        onRedo = {
+                            if (pathsUndone.isNotEmpty()) {
+                                val lastPath = pathsUndone.last().first
+                                val lastPathProperty = pathsUndone.last().second
+                                pathsUndone.removeLast()
+                                paths.add(Pair(lastPath, lastPathProperty))
+                            }
+                        })
                 }
             )
+        }) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(backgroundColor)
+            ) {
+
+                val drawModifier = Modifier
+                    .padding(8.dp)
+                    .shadow(1.dp)
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(Color.White)
+                    .dragMotionEvent(
+                        onDragStart = { pointerInputChange ->
+                            motionEvent = MotionEvent.Down
+                            currentPosition = pointerInputChange.position
+                            pointerInputChange.consumeDownChange()
+
+                        },
+                        onDrag = { pointerInputChange ->
+                            motionEvent = MotionEvent.Move
+                            currentPosition = pointerInputChange.position
+
+                            if (drawMode == DrawMode.Touch) {
+                                val change = pointerInputChange.positionChange()
+                                println("DRAG: $change")
+                                paths.forEach { entry ->
+                                    val path: Path = entry.first
+                                    path.translate(change)
+                                }
+                                currentPath.translate(change)
+                            }
+                            pointerInputChange.consumePositionChange()
+
+                        },
+                        onDragEnd = { pointerInputChange ->
+                            motionEvent = MotionEvent.Up
+                            pointerInputChange.consumeDownChange()
+                        }
+                    )
+
+                Canvas(modifier = drawModifier) {
+
+                    when (motionEvent) {
+
+                        MotionEvent.Down -> {
+                            if (drawMode != DrawMode.Touch) {
+                                currentPath.moveTo(currentPosition.x, currentPosition.y)
+                            }
+
+                            previousPosition = currentPosition
+
+                        }
+
+                        MotionEvent.Move -> {
+
+                            if (drawMode != DrawMode.Touch) {
+                                currentPath.quadraticBezierTo(
+                                    previousPosition.x,
+                                    previousPosition.y,
+                                    (previousPosition.x + currentPosition.x) / 2,
+                                    (previousPosition.y + currentPosition.y) / 2
+
+                                )
+                            }
+
+                            previousPosition = currentPosition
+                        }
+
+                        MotionEvent.Up -> {
+                            if (drawMode != DrawMode.Touch) {
+                                currentPath.lineTo(currentPosition.x, currentPosition.y)
+
+                                // Pointer is up save current path
+                                paths.add(Pair(currentPath, currentPathProperty))
+
+                                // Since paths are keys for map, use new one for each key
+                                // and have separate path for each down-move-up gesture cycle
+                                currentPath = Path()
+
+                                // Create new instance of path properties to have new path and properties
+                                // only for the one currently being drawn
+                                currentPathProperty = PathProperties(
+                                    strokeWidth = currentPathProperty.strokeWidth,
+                                    color = currentPathProperty.color,
+                                    strokeCap = currentPathProperty.strokeCap,
+                                    strokeJoin = currentPathProperty.strokeJoin,
+                                    eraseMode = currentPathProperty.eraseMode
+                                )
+                            }
+
+                            // Since new path is drawn no need to store paths to undone
+                            pathsUndone.clear()
+
+                            // If we leave this state at MotionEvent.Up it causes current path to draw
+                            // line from (0,0) if this composable recomposes when draw mode is changed
+                            currentPosition = Offset.Unspecified
+                            previousPosition = currentPosition
+                            motionEvent = MotionEvent.Idle
+                        }
+
+                        else -> Unit
+                    }
+
+                    with(drawContext.canvas.nativeCanvas) {
+
+                        val checkPoint = saveLayer(null, null)
+
+                        paths.forEach {
+
+                            val path = it.first
+                            val property = it.second
+
+                            if (!property.eraseMode) {
+                                drawPath(
+                                    color = property.color,
+                                    path = path,
+                                    style = Stroke(
+                                        width = property.strokeWidth,
+                                        cap = property.strokeCap,
+                                        join = property.strokeJoin
+                                    )
+                                )
+                            } else {
+
+                                // Source
+                                drawPath(
+                                    color = Color.Transparent,
+                                    path = path,
+                                    style = Stroke(
+                                        width = currentPathProperty.strokeWidth,
+                                        cap = currentPathProperty.strokeCap,
+                                        join = currentPathProperty.strokeJoin
+                                    ),
+                                    blendMode = BlendMode.Clear
+                                )
+                            }
+                        }
+
+                        if (motionEvent != MotionEvent.Idle) {
+
+                            if (!currentPathProperty.eraseMode) {
+                                drawPath(
+                                    color = currentPathProperty.color,
+                                    path = currentPath,
+                                    style = Stroke(
+                                        width = currentPathProperty.strokeWidth,
+                                        cap = currentPathProperty.strokeCap,
+                                        join = currentPathProperty.strokeJoin
+                                    )
+                                )
+                            } else {
+                                drawPath(
+                                    color = Color.Transparent,
+                                    path = currentPath,
+                                    style = Stroke(
+                                        width = currentPathProperty.strokeWidth,
+                                        cap = currentPathProperty.strokeCap,
+                                        join = currentPathProperty.strokeJoin
+                                    ),
+                                    blendMode = BlendMode.Clear
+                                )
+                            }
+                        }
+                        restoreToCount(checkPoint)
+                    }
+                }
+
+                DrawingPropertiesMenu(
+                    modifier = Modifier
+                        .padding(bottom = 8.dp, start = 8.dp, end = 8.dp)
+                        .shadow(1.dp, RoundedCornerShape(8.dp))
+                        .fillMaxWidth()
+                        .background(Color.White)
+                        .padding(4.dp),
+                    pathProperties = currentPathProperty,
+                    drawMode = drawMode,
+                    onPathPropertiesChange = {
+                        motionEvent = MotionEvent.Idle
+                    },
+                    onDrawModeChanged = {
+                        motionEvent = MotionEvent.Idle
+                        drawMode = it
+                        currentPathProperty.eraseMode = (drawMode == DrawMode.Erase)
+                    }
+                )
+            }
         }
+
     }
 
 }
