@@ -8,7 +8,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Brush
-import androidx.compose.material.icons.filled.FormatShapes
 import androidx.compose.material.icons.filled.PanTool
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import composemutliplatformdrawingapp.composeapp.generated.resources.Res
 import composemutliplatformdrawingapp.composeapp.generated.resources.ink_eraser_24dp_fill0_wght400_grad0_opsz24
@@ -88,7 +88,8 @@ fun DrawingPropertiesMenu(
         }
 
         IconButton(onClick = { showPropertiesDialog = !showPropertiesDialog }) {
-            Icon(Icons.Filled.Brush, contentDescription = null, tint = Color.LightGray)
+            val p = rememberVectorPainter(Icons.Filled.Brush)
+            Icon(p, contentDescription = null, tint = Color.LightGray)
         }
 
         IconButton(

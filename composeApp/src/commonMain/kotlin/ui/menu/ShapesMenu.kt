@@ -12,45 +12,63 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.window.Popup
-import composemutliplatformdrawingapp.composeapp.generated.resources.Res
-import composemutliplatformdrawingapp.composeapp.generated.resources.pen_size_2_24dp_fill0_wght400_grad0_opsz24
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun ShapesMenu(visible: Boolean,
-               modifier: Modifier = Modifier,
-               onIconClick: (shapeType: ShapeType) -> Unit,
-               onPopupDismissRequest: () -> Unit) {
+fun ShapesMenu(
+    visible: Boolean,
+    modifier: Modifier = Modifier,
+    onIconClick: (iconData: IconData) -> Unit,
+    onPopupDismissRequest: () -> Unit
+) {
     if (visible) {
         Box {
             Popup(
                 alignment = Alignment.BottomCenter,
                 onDismissRequest = {
                     onPopupDismissRequest()
-            }) {
+                }
+            ) {
                 Column {
                     Divider(color = Color.LightGray)
                     Row(modifier = modifier) {
+                        val freeformIcon = IconData.FreeformIcon
+                        val lineIcon = IconData.LineIcon
+                        val rectangleIcon = IconData.RectangleIcon
+
                         IconButton(
                             onClick = {
-                                onIconClick(ShapeType.Line);
+                                onIconClick(freeformIcon);
                             }) {
-                            Icon(painter = painterResource(Res.drawable.pen_size_2_24dp_fill0_wght400_grad0_opsz24),
+                            Icon(
+                                freeformIcon.imagePainter,
                                 contentDescription = null,
-                                tint = Color.LightGray)
+                                tint = Color.LightGray
+                            )
                         }
 
                         IconButton(
                             onClick = {
-                                onIconClick(ShapeType.Rectangle)
+                                onIconClick(lineIcon);
                             }) {
-                            Icon(Icons.Outlined.Rectangle,
+                            Icon(
+                                lineIcon.imagePainter,
                                 contentDescription = null,
-                                tint = Color.LightGray)
+                                tint = Color.LightGray
+                            )
+                        }
+
+                        IconButton(
+                            onClick = {
+                                onIconClick(rectangleIcon)
+                            }) {
+                            Icon(
+                                rectangleIcon.imagePainter,
+                                contentDescription = null,
+                                tint = Color.LightGray
+                            )
                         }
                     }
                     Divider(color = Color.LightGray)

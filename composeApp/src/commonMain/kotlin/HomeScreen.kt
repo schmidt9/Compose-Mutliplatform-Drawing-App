@@ -1,17 +1,11 @@
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,6 +32,7 @@ import gesture.dragMotionEvent
 import model.PathProperties
 import ui.menu.DrawingPropertiesMenu
 import ui.menu.HomeScreenTopMenu
+import ui.menu.IconData
 import ui.menu.ShapeType
 import ui.menu.ShapesMenu
 
@@ -94,7 +89,7 @@ class HomeScreen : Screen {
 
         var shapesMenuVisible by remember { mutableStateOf(false) }
 
-        var shapeType by remember { mutableStateOf(ShapeType.Freeform) }
+        var currentIconData: IconData by remember { mutableStateOf(IconData.FreeformIcon) }
 
         Scaffold(topBar = {
             TopAppBar(
@@ -299,7 +294,7 @@ class HomeScreen : Screen {
                         .fillMaxWidth()
                         .background(Color.White),
                     onIconClick = {
-
+                        currentIconData = it
                     },
                     onPopupDismissRequest = {
                         shapesMenuVisible = false
