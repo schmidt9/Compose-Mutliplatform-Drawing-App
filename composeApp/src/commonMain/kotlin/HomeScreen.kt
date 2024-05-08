@@ -31,6 +31,7 @@ import com.smarttoolfactory.composedrawingapp.gesture.MotionEvent
 import com.smarttoolfactory.composedrawingapp.ui.theme.backgroundColor
 import gesture.dragMotionEvent
 import model.PathProperties
+import model.selectionPathProperties
 import ui.menu.DrawingPropertiesMenu
 import ui.menu.HomeScreenTopMenu
 import ui.menu.MenuButton
@@ -84,11 +85,13 @@ class HomeScreen : Screen {
          */
         var currentPath by remember { mutableStateOf(Path()) }
 
+        var selectionPath by remember { mutableStateOf(Path()) }
+
         /**
          * Properties of path that is currently being drawn between
          * [MotionEvent.Down] and [MotionEvent.Up].
          */
-        var currentPathProperty by remember { mutableStateOf(PathProperties()) }
+        var currentPathProperties by remember { mutableStateOf(PathProperties()) }
 
         var shapesMenuVisible by remember { mutableStateOf(false) }
 
@@ -237,7 +240,10 @@ class HomeScreen : Screen {
                                 }
 
                                 // Pointer is up save current path
-                                paths.add(Pair(currentPath, currentPathProperty))
+
+                                if (currentMenuButtonAction != MenuAction.DoSelection) {
+                                    paths.add(Pair(currentPath, currentPathProperties))
+                                }
 
                                 // Since paths are keys for map, use new one for each key
                                 // and have separate path for each down-move-up gesture cycle
@@ -245,12 +251,12 @@ class HomeScreen : Screen {
 
                                 // Create new instance of path properties to have new path and properties
                                 // only for the one currently being drawn
-                                currentPathProperty = PathProperties(
-                                    strokeWidth = currentPathProperty.strokeWidth,
-                                    color = currentPathProperty.color,
-                                    strokeCap = currentPathProperty.strokeCap,
-                                    strokeJoin = currentPathProperty.strokeJoin,
-                                    eraseMode = currentPathProperty.eraseMode
+                                currentPathProperties = PathProperties(
+                                    strokeWidth = currentPathProperties.strokeWidth,
+                                    color = currentPathProperties.color,
+                                    strokeCap = currentPathProperties.strokeCap,
+                                    strokeJoin = currentPathProperties.strokeJoin,
+                                    eraseMode = currentPathProperties.eraseMode
                                 )
                             }
 
@@ -280,9 +286,9 @@ class HomeScreen : Screen {
                                     color = Color.Transparent,
                                     path = path,
                                     style = Stroke(
-                                        width = currentPathProperty.strokeWidth,
-                                        cap = currentPathProperty.strokeCap,
-                                        join = currentPathProperty.strokeJoin
+                                        width = currentPathProperties.strokeWidth,
+                                        cap = currentPathProperties.strokeCap,
+                                        join = currentPathProperties.strokeJoin
                                     ),
                                     blendMode = BlendMode.Clear
                                 )
@@ -300,25 +306,29 @@ class HomeScreen : Screen {
                         }
 
                         if (motionEvent != MotionEvent.Idle) {
-                            if (currentPathProperty.eraseMode) {
+                            if (currentPathProperties.eraseMode) {
                                 drawPath(
                                     color = Color.Transparent,
                                     path = currentPath,
                                     style = Stroke(
-                                        width = currentPathProperty.strokeWidth,
-                                        cap = currentPathProperty.strokeCap,
-                                        join = currentPathProperty.strokeJoin
+                                        width = currentPathProperties.strokeWidth,
+                                        cap = currentPathProperties.strokeCap,
+                                        join = currentPathProperties.strokeJoin
                                     ),
                                     blendMode = BlendMode.Clear
                                 )
                             } else {
+                                val doSelection = (currentMenuButtonAction == MenuAction.DoSelection)
+                                val pathProperties = if (doSelection) PathProperties.selectionPathProperties else currentPathProperties
+
                                 drawPath(
-                                    color = currentPathProperty.color,
+                                    color = pathProperties.color,
                                     path = currentPath,
                                     style = Stroke(
-                                        width = currentPathProperty.strokeWidth,
-                                        cap = currentPathProperty.strokeCap,
-                                        join = currentPathProperty.strokeJoin
+                                        width = pathProperties.strokeWidth,
+                                        cap = pathProperties.strokeCap,
+                                        join = pathProperties.strokeJoin,
+                                        pathEffect = pathProperties.pathEffect
                                     )
                                 )
                             }
@@ -345,7 +355,7 @@ class HomeScreen : Screen {
                         .fillMaxWidth()
                         .background(Color.White)
                         .padding(4.dp),
-                    pathProperties = currentPathProperty,
+                    pathProperties = currentPathProperties,
                     drawMode = drawMode,
                     shapeMenuButtonAction = currentMenuButtonAction,
                     onShapesIconClick = {
@@ -357,7 +367,7 @@ class HomeScreen : Screen {
                     onDrawModeChanged = {
                         motionEvent = MotionEvent.Idle
                         drawMode = it
-                        currentPathProperty.eraseMode = (drawMode == DrawMode.Erase)
+                        currentPathProperties.eraseMode = (drawMode == DrawMode.Erase)
                     }
                 )
 
