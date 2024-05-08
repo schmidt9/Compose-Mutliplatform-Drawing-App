@@ -32,17 +32,22 @@ fun DrawingPropertiesMenu(
     modifier: Modifier = Modifier,
     pathProperties: PathProperties,
     drawMode: DrawMode,
-    shapeMenuButton: MenuButton,
+    shapeMenuButtonAction: MenuAction,
     onShapesIconClick: () -> Unit,
-    onSelectionIconClick: (menuButton: MenuButton) -> Unit,
+    onSelectionIconClick: (menuAction: MenuAction) -> Unit,
     onDrawModeChanged: (DrawMode) -> Unit
 ) {
-
     val properties by rememberUpdatedState(newValue = pathProperties)
 
     var showColorDialog by remember { mutableStateOf(false) }
     var showPropertiesDialog by remember { mutableStateOf(false) }
     var currentDrawMode = drawMode
+    var doSelection by remember { mutableStateOf(false) }
+    val shapeMenuButton = listOf(
+        MenuButton.DrawFreeformMenuButton,
+        MenuButton.DrawLineMenuButton,
+        MenuButton.DrawRectangleMenuButton
+    ).firstOrNull { it.menuAction == shapeMenuButtonAction } ?: MenuButton.DrawFreeformMenuButton
 
     Row(
         modifier = modifier,
@@ -97,17 +102,20 @@ fun DrawingPropertiesMenu(
             Icon(
                 shapeMenuButton.imagePainter,
                 contentDescription = null,
-                tint = Color.LightGray)
+                tint = Color.LightGray
+            )
         }
 
         IconButton(
             onClick = {
-                onSelectionIconClick(MenuButton.DoSelectionMenuButton)
+                onSelectionIconClick(MenuButton.DoSelectionMenuButton.menuAction)
+                doSelection = !doSelection
             }) {
             Icon(
                 MenuButton.DoSelectionMenuButton.imagePainter,
                 contentDescription = null,
-                tint = Color.LightGray)
+                tint = if (doSelection) Color.Black else Color.LightGray
+            )
         }
     }
 

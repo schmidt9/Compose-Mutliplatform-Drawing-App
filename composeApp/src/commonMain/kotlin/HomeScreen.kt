@@ -92,7 +92,7 @@ class HomeScreen : Screen {
 
         var shapesMenuVisible by remember { mutableStateOf(false) }
 
-        var currentMenuButton: MenuButton by remember { mutableStateOf(MenuButton.DrawFreeformMenuButton) }
+        var currentMenuButtonAction by remember { mutableStateOf(MenuButton.DrawFreeformMenuButton.menuAction) }
 
         Scaffold(topBar = {
             TopAppBar(
@@ -179,7 +179,7 @@ class HomeScreen : Screen {
 
                         MotionEvent.Move -> {
                             if (drawMode != DrawMode.Touch) {
-                                when (currentMenuButton.menuAction) {
+                                when (currentMenuButtonAction) {
                                     MenuAction.DrawFreeform -> {
                                         currentPath.quadraticBezierTo(
                                             previousPosition.x,
@@ -232,7 +232,7 @@ class HomeScreen : Screen {
 
                         MotionEvent.Up -> {
                             if (drawMode != DrawMode.Touch) {
-                                if (currentMenuButton.menuAction == MenuAction.DrawFreeform) {
+                                if (currentMenuButtonAction == MenuAction.DrawFreeform) {
                                     currentPath.lineTo(currentPosition.x, currentPosition.y)
                                 }
 
@@ -337,7 +337,7 @@ class HomeScreen : Screen {
                         .fillMaxWidth()
                         .background(Color.White),
                     onIconClick = {
-                        currentMenuButton = it
+                        currentMenuButtonAction = it.menuAction
                         shapesMenuVisible = false
                     }
                 )
@@ -350,12 +350,12 @@ class HomeScreen : Screen {
                         .padding(4.dp),
                     pathProperties = currentPathProperty,
                     drawMode = drawMode,
-                    shapeMenuButton = currentMenuButton,
+                    shapeMenuButtonAction = currentMenuButtonAction,
                     onShapesIconClick = {
                         shapesMenuVisible = !shapesMenuVisible
                     },
                     onSelectionIconClick = {
-                        currentMenuButton = it
+                        currentMenuButtonAction = it
                     },
                     onDrawModeChanged = {
                         motionEvent = MotionEvent.Idle

@@ -15,9 +15,11 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalResourceApi::class)
-sealed class MenuButton(val menuAction: MenuAction,
-                        private val drawableResource: DrawableResource? = null,
-                        private val imageVector: ImageVector? = null) {
+sealed class MenuButton(
+    val menuAction: MenuAction,
+    private val drawableResource: DrawableResource? = null,
+    private val imageVector: ImageVector? = null
+) {
 
     val imagePainter: Painter
         @Composable
