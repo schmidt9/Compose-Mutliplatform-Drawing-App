@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -33,6 +34,7 @@ import model.PathProperties
 import ui.menu.DrawingPropertiesMenu
 import ui.menu.HomeScreenTopMenu
 import ui.menu.IconData
+import ui.menu.ShapeType
 import ui.menu.ShapesMenu
 
 class HomeScreen : Screen {
@@ -163,7 +165,6 @@ class HomeScreen : Screen {
                 Canvas(modifier = drawModifier) {
 
                     when (motionEvent) {
-
                         MotionEvent.Down -> {
                             if (drawMode != DrawMode.Touch) {
                                 currentPath.moveTo(currentPosition.x, currentPosition.y)
@@ -175,23 +176,48 @@ class HomeScreen : Screen {
                         }
 
                         MotionEvent.Move -> {
-
                             if (drawMode != DrawMode.Touch) {
-                                currentPath.quadraticBezierTo(
-                                    previousPosition.x,
-                                    previousPosition.y,
-                                    (previousPosition.x + currentPosition.x) / 2,
-                                    (previousPosition.y + currentPosition.y) / 2
+                                when (currentIconData.shapeType) {
+                                    ShapeType.Freeform -> {
+                                        currentPath.quadraticBezierTo(
+                                            previousPosition.x,
+                                            previousPosition.y,
+                                            (previousPosition.x + currentPosition.x) / 2,
+                                            (previousPosition.y + currentPosition.y) / 2
+                                        )
 
-                                )
+                                        previousPosition = currentPosition
+                                    }
+                                    ShapeType.Line -> {
+                                        currentPath.reset()
+                                        currentPath.moveTo(
+                                            previousPosition.x,
+                                            previousPosition.y
+                                        )
+                                        currentPath.lineTo(
+                                            currentPosition.x,
+                                            currentPosition.y
+                                        )
+                                    }
+                                    ShapeType.Rectangle -> {
+                                        val rect = Rect(
+                                            topLeft = previousPosition,
+                                            bottomRight = currentPosition
+                                        )
+
+                                        currentPath.reset()
+                                        currentPath.addRect(rect)
+                                    }
+                                    ShapeType.None -> {}
+                                }
                             }
-
-                            previousPosition = currentPosition
                         }
 
                         MotionEvent.Up -> {
                             if (drawMode != DrawMode.Touch) {
-                                currentPath.lineTo(currentPosition.x, currentPosition.y)
+                                if (currentIconData.shapeType == ShapeType.Freeform) {
+                                    currentPath.lineTo(currentPosition.x, currentPosition.y)
+                                }
 
                                 // Pointer is up save current path
                                 paths.add(Pair(currentPath, currentPathProperty))

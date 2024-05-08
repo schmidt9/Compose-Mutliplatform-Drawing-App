@@ -39,7 +39,7 @@ sealed class IconData(val shapeType: ShapeType,
     )
 
     data object RectangleIcon : IconData(
-        ShapeType.Line,
+        ShapeType.Rectangle,
         imageVector = Icons.Outlined.Rectangle
     )
 
