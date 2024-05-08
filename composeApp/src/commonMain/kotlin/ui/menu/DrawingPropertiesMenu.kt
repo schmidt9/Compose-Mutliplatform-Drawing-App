@@ -32,9 +32,9 @@ fun DrawingPropertiesMenu(
     modifier: Modifier = Modifier,
     pathProperties: PathProperties,
     drawMode: DrawMode,
-    shapeIconData: IconData,
-    onPathPropertiesChange: (PathProperties) -> Unit,
+    shapeMenuButton: MenuButton,
     onShapesIconClick: () -> Unit,
+    onSelectionIconClick: (menuButton: MenuButton) -> Unit,
     onDrawModeChanged: (DrawMode) -> Unit
 ) {
 
@@ -95,7 +95,17 @@ fun DrawingPropertiesMenu(
                 onShapesIconClick()
             }) {
             Icon(
-                shapeIconData.imagePainter,
+                shapeMenuButton.imagePainter,
+                contentDescription = null,
+                tint = Color.LightGray)
+        }
+
+        IconButton(
+            onClick = {
+                onSelectionIconClick(MenuButton.DoSelectionMenuButton)
+            }) {
+            Icon(
+                MenuButton.DoSelectionMenuButton.imagePainter,
                 contentDescription = null,
                 tint = Color.LightGray)
         }

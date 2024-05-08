@@ -11,13 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.window.Popup
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @Composable
 fun ShapesMenu(
     visible: Boolean,
     modifier: Modifier = Modifier,
-    onIconClick: (iconData: IconData) -> Unit
+    onIconClick: (menuButton: MenuButton) -> Unit
 ) {
     if (visible) {
         Box {
@@ -27,9 +26,9 @@ fun ShapesMenu(
                 Column {
                     Divider(color = Color.LightGray)
                     Row(modifier = modifier) {
-                        val freeformIcon = IconData.FreeformIcon
-                        val lineIcon = IconData.LineIcon
-                        val rectangleIcon = IconData.RectangleIcon
+                        val freeformIcon = MenuButton.DrawFreeformMenuButton
+                        val lineIcon = MenuButton.DrawLineMenuButton
+                        val rectangleIcon = MenuButton.DrawRectangleMenuButton
 
                         IconButton(
                             onClick = {

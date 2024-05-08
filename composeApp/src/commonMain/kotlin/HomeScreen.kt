@@ -33,8 +33,8 @@ import gesture.dragMotionEvent
 import model.PathProperties
 import ui.menu.DrawingPropertiesMenu
 import ui.menu.HomeScreenTopMenu
-import ui.menu.IconData
-import ui.menu.ShapeType
+import ui.menu.MenuButton
+import ui.menu.MenuAction
 import ui.menu.ShapesMenu
 import kotlin.math.abs
 import kotlin.math.min
@@ -92,7 +92,7 @@ class HomeScreen : Screen {
 
         var shapesMenuVisible by remember { mutableStateOf(false) }
 
-        var currentIconData: IconData by remember { mutableStateOf(IconData.FreeformIcon) }
+        var currentMenuButton: MenuButton by remember { mutableStateOf(MenuButton.DrawFreeformMenuButton) }
 
         Scaffold(topBar = {
             TopAppBar(
@@ -179,8 +179,8 @@ class HomeScreen : Screen {
 
                         MotionEvent.Move -> {
                             if (drawMode != DrawMode.Touch) {
-                                when (currentIconData.shapeType) {
-                                    ShapeType.Freeform -> {
+                                when (currentMenuButton.menuAction) {
+                                    MenuAction.DrawFreeform -> {
                                         currentPath.quadraticBezierTo(
                                             previousPosition.x,
                                             previousPosition.y,
@@ -190,7 +190,8 @@ class HomeScreen : Screen {
 
                                         previousPosition = currentPosition
                                     }
-                                    ShapeType.Line -> {
+
+                                    MenuAction.DrawLine -> {
                                         currentPath.reset()
                                         currentPath.moveTo(
                                             previousPosition.x,
@@ -201,11 +202,15 @@ class HomeScreen : Screen {
                                             currentPosition.y
                                         )
                                     }
-                                    ShapeType.Rectangle -> {
+
+                                    MenuAction.DrawRectangle,
+                                    MenuAction.DoSelection -> {
                                         val left = min(previousPosition.x, currentPosition.x)
                                         val top = min(previousPosition.y, currentPosition.y)
-                                        val right = left + abs(previousPosition.x - currentPosition.x)
-                                        val bottom = top + abs(previousPosition.y - currentPosition.y)
+                                        val right =
+                                            left + abs(previousPosition.x - currentPosition.x)
+                                        val bottom =
+                                            top + abs(previousPosition.y - currentPosition.y)
 
                                         val rect = Rect(
                                             left = left,
@@ -217,7 +222,8 @@ class HomeScreen : Screen {
                                         currentPath.reset()
                                         currentPath.addRect(rect)
                                     }
-                                    ShapeType.None -> {}
+
+                                    MenuAction.None -> {}
                                 }
                             } else {
                                 previousPosition = currentPosition
@@ -226,7 +232,7 @@ class HomeScreen : Screen {
 
                         MotionEvent.Up -> {
                             if (drawMode != DrawMode.Touch) {
-                                if (currentIconData.shapeType == ShapeType.Freeform) {
+                                if (currentMenuButton.menuAction == MenuAction.DrawFreeform) {
                                     currentPath.lineTo(currentPosition.x, currentPosition.y)
                                 }
 
@@ -331,7 +337,7 @@ class HomeScreen : Screen {
                         .fillMaxWidth()
                         .background(Color.White),
                     onIconClick = {
-                        currentIconData = it
+                        currentMenuButton = it
                         shapesMenuVisible = false
                     }
                 )
@@ -344,12 +350,12 @@ class HomeScreen : Screen {
                         .padding(4.dp),
                     pathProperties = currentPathProperty,
                     drawMode = drawMode,
-                    shapeIconData = currentIconData,
-                    onPathPropertiesChange = {
-                        motionEvent = MotionEvent.Idle
-                    },
+                    shapeMenuButton = currentMenuButton,
                     onShapesIconClick = {
                         shapesMenuVisible = !shapesMenuVisible
+                    },
+                    onSelectionIconClick = {
+                        currentMenuButton = it
                     },
                     onDrawModeChanged = {
                         motionEvent = MotionEvent.Idle

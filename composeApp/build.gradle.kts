@@ -14,6 +14,9 @@ kotlin {
             }
         }
     }
+
+    // fix for "Task 'testClasses' not found in project" when rebuilding project
+    task("testClasses")
     
     jvm("desktop")
     

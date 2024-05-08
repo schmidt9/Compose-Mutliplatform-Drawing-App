@@ -9,14 +9,15 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import composemutliplatformdrawingapp.composeapp.generated.resources.Res
 import composemutliplatformdrawingapp.composeapp.generated.resources.pen_size_2_24dp_fill0_wght400_grad0_opsz24
+import composemutliplatformdrawingapp.composeapp.generated.resources.select_24dp_fill0_wght400_grad0_opsz24
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalResourceApi::class)
-sealed class IconData(val shapeType: ShapeType,
-                      private val drawableResource: DrawableResource? = null,
-                      private val imageVector: ImageVector? = null) {
+sealed class MenuButton(val menuAction: MenuAction,
+                        private val drawableResource: DrawableResource? = null,
+                        private val imageVector: ImageVector? = null) {
 
     val imagePainter: Painter
         @Composable
@@ -28,19 +29,24 @@ sealed class IconData(val shapeType: ShapeType,
             }
         }
 
-    data object FreeformIcon : IconData(
-        ShapeType.Freeform,
+    data object DrawFreeformMenuButton : MenuButton(
+        MenuAction.DrawFreeform,
         imageVector = Icons.Default.Draw
     )
 
-    data object LineIcon : IconData(
-        ShapeType.Line,
+    data object DrawLineMenuButton : MenuButton(
+        MenuAction.DrawLine,
         Res.drawable.pen_size_2_24dp_fill0_wght400_grad0_opsz24
     )
 
-    data object RectangleIcon : IconData(
-        ShapeType.Rectangle,
+    data object DrawRectangleMenuButton : MenuButton(
+        MenuAction.DrawRectangle,
         imageVector = Icons.Outlined.Rectangle
+    )
+
+    data object DoSelectionMenuButton : MenuButton(
+        MenuAction.DoSelection,
+        Res.drawable.select_24dp_fill0_wght400_grad0_opsz24
     )
 
 }
