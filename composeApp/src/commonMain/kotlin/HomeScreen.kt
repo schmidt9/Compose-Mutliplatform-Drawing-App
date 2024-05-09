@@ -235,10 +235,11 @@ class HomeScreen : Screen {
 
                     with(drawContext.canvas.nativeCanvas) {
                         val checkPoint = saveLayer(null, null)
+                        val doSelection = (currentMenuButtonAction == MenuAction.DoSelection)
+
+                        // draw all paths
 
                         paths.forEach {
-                            val doSelection = (currentMenuButtonAction == MenuAction.DoSelection)
-
                             if (doSelection) {
                                 // draw selection path first if there is an intersection
                                 if (it.intersects(currentPath)) {
@@ -252,9 +253,11 @@ class HomeScreen : Screen {
                             it.draw(this@Canvas)
                         }
 
+                        // draw current path
+
                         if (motionEvent != MotionEvent.Idle) {
-                            val doSelection = (currentMenuButtonAction == MenuAction.DoSelection)
-                            val pathProperties = if (doSelection) currentPath.selectionPathProperties else currentPath.properties
+                            val pathProperties =
+                                if (doSelection) currentPath.selectionPathProperties else currentPath.properties
 
                             currentPath.draw(this@Canvas, pathProperties)
                         }
