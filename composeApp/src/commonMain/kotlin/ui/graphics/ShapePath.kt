@@ -36,11 +36,35 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
         this.points = points.toMutableList()
     }
 
-    fun intersects(path: ShapePath): Boolean {
-        val intersectionPath = Path()
-        val success = intersectionPath.op(this.composePath, path.composePath, PathOperation.Intersect)
+    fun getPoints() = points
 
-        return intersectionPath.isEmpty.not() && success
+    open fun intersects(path: ShapePath): Boolean {
+        if (composePath.isEmpty || path.composePath.isEmpty) {
+            return false
+        }
+
+        // detect if one path intersects another path from outside,
+        // but it still returns non-empty intersection if one path
+        // is completely inside another path
+        // (ie. we started drawing one shape inside another)
+        val outsidePath = Path()
+        outsidePath.op(composePath, path.composePath, PathOperation.Intersect)
+        val noIntersection = outsidePath.isEmpty
+
+        if (noIntersection) {
+            println("NO INTERSECT")
+            return false
+        }
+
+        // detect if one path is completely inside another path or vica versa
+        val insidePath = Path()
+        insidePath.op(composePath, path.composePath, PathOperation.Difference)
+        val isInside1 = insidePath.isEmpty
+
+        insidePath.op(composePath, path.composePath, PathOperation.ReverseDifference)
+        val isInside2 = insidePath.isEmpty
+
+        return isInside1.not() && isInside2.not()
     }
 
     // TODO: use for paths intersection or remove
