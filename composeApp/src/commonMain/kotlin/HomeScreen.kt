@@ -242,45 +242,21 @@ class HomeScreen : Screen {
                             if (doSelection) {
                                 // draw selection path first if there is an intersection
                                 if (it.intersects(currentPath)) {
-                                    val selectedPathProperties = it.selectedPathProperties
-
-                                    drawPath(
-                                        color = selectedPathProperties.color,
-                                        path = it.composePath,
-                                        style = Stroke(
-                                            width = selectedPathProperties.strokeWidth,
-                                            cap = selectedPathProperties.strokeCap,
-                                            join = selectedPathProperties.strokeJoin
-                                        )
+                                    it.draw(
+                                        drawScope = this@Canvas,
+                                        propertiesType = ShapePath.PropertiesType.SelectedPath
                                     )
                                 }
                             }
 
-                            drawPath(
-                                color = it.properties.color,
-                                path = it.composePath,
-                                style = Stroke(
-                                    width = it.properties.strokeWidth,
-                                    cap = it.properties.strokeCap,
-                                    join = it.properties.strokeJoin
-                                )
-                            )
+                            it.draw(this@Canvas)
                         }
 
                         if (motionEvent != MotionEvent.Idle) {
                             val doSelection = (currentMenuButtonAction == MenuAction.DoSelection)
                             val pathProperties = if (doSelection) currentPath.selectionPathProperties else currentPath.properties
 
-                            drawPath(
-                                color = pathProperties.color,
-                                path = currentPath.composePath,
-                                style = Stroke(
-                                    width = pathProperties.strokeWidth,
-                                    cap = pathProperties.strokeCap,
-                                    join = pathProperties.strokeJoin,
-                                    pathEffect = pathProperties.pathEffect
-                                )
-                            )
+                            currentPath.draw(this@Canvas, pathProperties)
                         }
 
                         restoreToCount(checkPoint)

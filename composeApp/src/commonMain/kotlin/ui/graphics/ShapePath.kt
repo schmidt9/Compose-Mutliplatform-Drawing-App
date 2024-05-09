@@ -4,11 +4,19 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathMeasure
 import androidx.compose.ui.graphics.PathOperation
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import model.PathProperties
 import model.selectedPathProperties
 import model.selectionPathProperties
 
 open class ShapePath(var properties: PathProperties = PathProperties()) {
+
+    enum class PropertiesType {
+        Default,
+        SelectedPath,
+        SelectionPath
+    }
 
     val composePath = Path()
 
@@ -19,6 +27,34 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
     private var points = mutableListOf<Offset>()
 
     var isSelected = false
+
+    fun draw(
+        drawScope: DrawScope,
+        propertiesType: PropertiesType = PropertiesType.Default
+    ) {
+        val currentProperties = when (propertiesType) {
+            PropertiesType.Default -> properties
+            PropertiesType.SelectedPath -> selectedPathProperties
+            PropertiesType.SelectionPath -> selectedPathProperties
+        }
+
+        draw(drawScope, currentProperties)
+    }
+
+    fun draw(
+        drawScope: DrawScope,
+        properties: PathProperties
+    ) {
+        drawScope.drawPath(
+            path = composePath,
+            color = properties.color,
+            style = Stroke(
+                width = properties.strokeWidth,
+                cap = properties.strokeCap,
+                join = properties.strokeJoin
+            )
+        )
+    }
 
     fun translate(offset: Offset) {
         composePath.translate(offset)
@@ -52,7 +88,6 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
         val noIntersection = outsidePath.isEmpty
 
         if (noIntersection) {
-            println("NO INTERSECT")
             return false
         }
 
