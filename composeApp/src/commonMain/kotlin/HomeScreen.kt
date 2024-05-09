@@ -17,11 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathMeasure
-import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.consumeDownChange
@@ -33,8 +31,7 @@ import com.smarttoolfactory.composedrawingapp.gesture.MotionEvent
 import com.smarttoolfactory.composedrawingapp.ui.theme.backgroundColor
 import gesture.dragMotionEvent
 import model.PathProperties
-import model.selectedPathProperties
-import model.selectionPathProperties
+import ui.graphics.ShapePath
 import ui.menu.DrawingPropertiesMenu
 import ui.menu.HomeScreenTopMenu
 import ui.menu.MenuAction
@@ -50,7 +47,7 @@ class HomeScreen : Screen {
          * Paths that are added, this is required to have paths with different options and paths
          *  ith erase to keep over each other
          */
-        val paths = remember { mutableStateListOf<Pair<Path, PathProperties>>() }
+        val paths = remember { mutableStateListOf<ShapePath>() }
 
         /**
          * Paths that are undone via button. These paths are restored if user pushes
@@ -59,7 +56,7 @@ class HomeScreen : Screen {
          * If new path is drawn after this list is cleared to not break paths after undoing previous
          * ones.
          */
-        val pathsUndone = remember { mutableStateListOf<Pair<Path, PathProperties>>() }
+        val pathsUndone = remember { mutableStateListOf<ShapePath>() }
 
         /**
          * Canvas touch state. [MotionEvent.Idle] by default, [MotionEvent.Down] at first contact,
@@ -86,13 +83,7 @@ class HomeScreen : Screen {
          * Path that is being drawn between [MotionEvent.Down] and [MotionEvent.Up]. When
          * pointer is up this path is saved to **paths** and new instance is created
          */
-        var currentPath by remember { mutableStateOf(Path()) }
-
-        /**
-         * Properties of path that is currently being drawn between
-         * [MotionEvent.Down] and [MotionEvent.Up].
-         */
-        var currentPathProperties by remember { mutableStateOf(PathProperties()) }
+        var currentPath by remember { mutableStateOf(ShapePath()) }
 
         var shapesMenuVisible by remember { mutableStateOf(false) }
 
@@ -109,19 +100,15 @@ class HomeScreen : Screen {
                         onUndo = {
                             if (paths.isNotEmpty()) {
                                 val lastItem = paths.last()
-                                val lastPath = lastItem.first
-                                val lastPathProperty = lastItem.second
                                 paths.remove(lastItem)
-
-                                pathsUndone.add(Pair(lastPath, lastPathProperty))
+                                pathsUndone.add(lastItem)
                             }
                         },
                         onRedo = {
                             if (pathsUndone.isNotEmpty()) {
-                                val lastPath = pathsUndone.last().first
-                                val lastPathProperty = pathsUndone.last().second
+                                val lastPath = pathsUndone.last()
                                 pathsUndone.removeLast()
-                                paths.add(Pair(lastPath, lastPathProperty))
+                                paths.add(lastPath)
                             }
                         })
                 }
@@ -153,10 +140,10 @@ class HomeScreen : Screen {
                             if (drawMode == DrawMode.Touch) {
                                 val change = pointerInputChange.positionChange()
 
-                                paths.forEach { entry ->
-                                    val path: Path = entry.first
+                                paths.forEach { path ->
                                     path.translate(change)
                                 }
+
                                 currentPath.translate(change)
                             }
                             pointerInputChange.consumePositionChange()
@@ -220,21 +207,21 @@ class HomeScreen : Screen {
                                 // Pointer is up save current path
 
                                 if (currentMenuButtonAction != MenuAction.DoSelection) {
-                                    paths.add(Pair(currentPath, currentPathProperties))
+                                    paths.add(currentPath)
                                 }
-
-                                // Since paths are keys for map, use new one for each key
-                                // and have separate path for each down-move-up gesture cycle
-                                currentPath = Path()
 
                                 // Create new instance of path properties to have new path and properties
                                 // only for the one currently being drawn
-                                currentPathProperties = PathProperties(
-                                    strokeWidth = currentPathProperties.strokeWidth,
-                                    color = currentPathProperties.color,
-                                    strokeCap = currentPathProperties.strokeCap,
-                                    strokeJoin = currentPathProperties.strokeJoin,
+                                val properties = PathProperties(
+                                    strokeWidth = currentPath.properties.strokeWidth,
+                                    color = currentPath.properties.color,
+                                    strokeCap = currentPath.properties.strokeCap,
+                                    strokeJoin = currentPath.properties.strokeJoin,
                                 )
+
+                                // Since paths are keys for map, use new one for each key
+                                // and have separate path for each down-move-up gesture cycle
+                                currentPath = ShapePath(properties)
                             }
 
                             // Since new path is drawn no need to store paths to undone
@@ -251,66 +238,46 @@ class HomeScreen : Screen {
                     }
 
                     with(drawContext.canvas.nativeCanvas) {
-
                         val checkPoint = saveLayer(null, null)
 
                         paths.forEach {
-                            val path = it.first
-                            val properties = it.second
-
-                            // draw a selection path under target path
                             val doSelection = (currentMenuButtonAction == MenuAction.DoSelection)
 
                             if (doSelection) {
-                                val intersectionPath = Path()
-                                intersectionPath.op(path, currentPath, PathOperation.Intersect)
-
-                                if (!intersectionPath.isEmpty) {
-                                    val selectedPathProperties =
-                                        PathProperties.selectedPathProperties
+                                // draw selection path first if there is an intersection
+                                if (it.intersects(currentPath)) {
+                                    val selectedPathProperties = it.selectedPathProperties
 
                                     drawPath(
                                         color = selectedPathProperties.color,
-                                        path = path,
+                                        path = it.composePath,
                                         style = Stroke(
                                             width = selectedPathProperties.strokeWidth,
                                             cap = selectedPathProperties.strokeCap,
                                             join = selectedPathProperties.strokeJoin
                                         )
                                     )
-
-                                    drawPath(
-                                        color = Color.Red,
-                                        path = intersectionPath,
-                                        style = Stroke(
-                                            width = selectedPathProperties.strokeWidth,
-                                            cap = selectedPathProperties.strokeCap,
-                                            join = selectedPathProperties.strokeJoin
-                                        )
-                                    )
-
                                 }
                             }
 
                             drawPath(
-                                color = properties.color,
-                                path = path,
+                                color = it.properties.color,
+                                path = it.composePath,
                                 style = Stroke(
-                                    width = properties.strokeWidth,
-                                    cap = properties.strokeCap,
-                                    join = properties.strokeJoin
+                                    width = it.properties.strokeWidth,
+                                    cap = it.properties.strokeCap,
+                                    join = it.properties.strokeJoin
                                 )
                             )
                         }
 
                         if (motionEvent != MotionEvent.Idle) {
                             val doSelection = (currentMenuButtonAction == MenuAction.DoSelection)
-                            val pathProperties =
-                                if (doSelection) PathProperties.selectionPathProperties else currentPathProperties
+                            val pathProperties = if (doSelection) currentPath.selectionPathProperties else currentPath.properties
 
                             drawPath(
                                 color = pathProperties.color,
-                                path = currentPath,
+                                path = currentPath.composePath,
                                 style = Stroke(
                                     width = pathProperties.strokeWidth,
                                     cap = pathProperties.strokeCap,
@@ -341,7 +308,7 @@ class HomeScreen : Screen {
                         .fillMaxWidth()
                         .background(Color.White)
                         .padding(4.dp),
-                    pathProperties = currentPathProperties,
+                    pathProperties = currentPath.properties,
                     drawMode = drawMode,
                     shapeMenuButtonAction = currentMenuButtonAction,
                     onShapesIconClick = {
