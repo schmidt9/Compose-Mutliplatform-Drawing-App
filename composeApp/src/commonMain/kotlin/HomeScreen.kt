@@ -31,6 +31,7 @@ import com.smarttoolfactory.composedrawingapp.gesture.MotionEvent
 import com.smarttoolfactory.composedrawingapp.ui.theme.backgroundColor
 import gesture.dragMotionEvent
 import model.PathProperties
+import ui.graphics.RectShape
 import ui.graphics.ShapePath
 import ui.menu.DrawingPropertiesMenu
 import ui.menu.HomeScreenTopMenu
@@ -159,10 +160,6 @@ class HomeScreen : Screen {
 
                     when (motionEvent) {
                         MotionEvent.Down -> {
-                            if (drawMode != DrawMode.Touch) {
-                                currentPath.moveTo(currentPosition.x, currentPosition.y)
-                            }
-
                             previousPosition = currentPosition
 
                             shapesMenuVisible = false
@@ -191,8 +188,7 @@ class HomeScreen : Screen {
                                             bottom = bottom
                                         )
 
-                                        currentPath.reset()
-                                        currentPath.addRect(rect)
+                                        currentPath = RectShape(rect)
                                     }
 
                                     MenuAction.None -> {}
@@ -328,18 +324,4 @@ class HomeScreen : Screen {
 
     }
 
-}
-
-// TODO: use for paths intersection or remove
-fun getPathPoints(path: Path) {
-    val pathMeasure = PathMeasure()
-    pathMeasure.setPath(path, false)
-    val length = pathMeasure.length
-    var i = 0f
-
-    do {
-        val position = pathMeasure.getPosition(i)
-        println("POS $position")
-        i += 1
-    } while (i < length)
 }
