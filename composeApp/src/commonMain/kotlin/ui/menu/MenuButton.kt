@@ -1,14 +1,12 @@
 package ui.menu
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Draw
 import androidx.compose.material.icons.outlined.Rectangle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import composemutliplatformdrawingapp.composeapp.generated.resources.Res
-import composemutliplatformdrawingapp.composeapp.generated.resources.pen_size_2_24dp_fill0_wght400_grad0_opsz24
 import composemutliplatformdrawingapp.composeapp.generated.resources.polygon_svgrepo_com
 import composemutliplatformdrawingapp.composeapp.generated.resources.select_24dp_fill0_wght400_grad0_opsz24
 import org.jetbrains.compose.resources.DrawableResource
@@ -31,16 +29,6 @@ sealed class MenuButton(
                 rememberVectorPainter(imageVector!!)
             }
         }
-
-    data object DrawFreeformMenuButton : MenuButton(
-        MenuAction.DrawFreeform,
-        imageVector = Icons.Default.Draw
-    )
-
-    data object DrawLineMenuButton : MenuButton(
-        MenuAction.DrawLine,
-        Res.drawable.pen_size_2_24dp_fill0_wght400_grad0_opsz24
-    )
 
     data object DrawPolygonMenuButton : MenuButton(
         MenuAction.DrawPolygon,

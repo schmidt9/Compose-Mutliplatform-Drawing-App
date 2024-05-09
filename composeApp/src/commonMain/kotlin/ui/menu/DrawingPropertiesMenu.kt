@@ -44,10 +44,9 @@ fun DrawingPropertiesMenu(
     var currentDrawMode = drawMode
     var doSelection by remember { mutableStateOf(false) }
     val shapeMenuButton = listOf(
-        MenuButton.DrawFreeformMenuButton,
-        MenuButton.DrawLineMenuButton,
+        MenuButton.DrawPolygonMenuButton,
         MenuButton.DrawRectangleMenuButton
-    ).firstOrNull { it.menuAction == shapeMenuButtonAction } ?: MenuButton.DrawFreeformMenuButton
+    ).firstOrNull { it.menuAction == shapeMenuButtonAction } ?: MenuButton.DrawRectangleMenuButton
 
     Row(
         modifier = modifier,

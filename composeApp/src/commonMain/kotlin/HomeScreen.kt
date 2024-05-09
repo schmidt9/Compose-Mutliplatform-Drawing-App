@@ -41,7 +41,6 @@ import ui.menu.MenuAction
 import ui.menu.MenuButton
 import ui.menu.ShapesMenu
 import kotlin.math.abs
-import kotlin.math.max
 import kotlin.math.min
 
 class HomeScreen : Screen {
@@ -97,7 +96,7 @@ class HomeScreen : Screen {
 
         var shapesMenuVisible by remember { mutableStateOf(false) }
 
-        var currentMenuButtonAction by remember { mutableStateOf(MenuButton.DrawFreeformMenuButton.menuAction) }
+        var currentMenuButtonAction by remember { mutableStateOf(MenuButton.DrawRectangleMenuButton.menuAction) }
 
         Scaffold(topBar = {
             TopAppBar(
@@ -185,29 +184,6 @@ class HomeScreen : Screen {
                         MotionEvent.Move -> {
                             if (drawMode != DrawMode.Touch) {
                                 when (currentMenuButtonAction) {
-                                    MenuAction.DrawFreeform -> {
-                                        currentPath.quadraticBezierTo(
-                                            previousPosition.x,
-                                            previousPosition.y,
-                                            (previousPosition.x + currentPosition.x) / 2,
-                                            (previousPosition.y + currentPosition.y) / 2
-                                        )
-
-                                        previousPosition = currentPosition
-                                    }
-
-                                    MenuAction.DrawLine -> {
-                                        currentPath.reset()
-                                        currentPath.moveTo(
-                                            previousPosition.x,
-                                            previousPosition.y
-                                        )
-                                        currentPath.lineTo(
-                                            currentPosition.x,
-                                            currentPosition.y
-                                        )
-                                    }
-
                                     MenuAction.DrawPolygon -> {
                                         TODO("impl")
                                     }
