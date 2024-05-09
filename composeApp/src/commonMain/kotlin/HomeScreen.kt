@@ -208,6 +208,10 @@ class HomeScreen : Screen {
                                         )
                                     }
 
+                                    MenuAction.DrawPolygon -> {
+                                        TODO("impl")
+                                    }
+
                                     MenuAction.DrawRectangle,
                                     MenuAction.DoSelection -> {
                                         val left = min(previousPosition.x, currentPosition.x)

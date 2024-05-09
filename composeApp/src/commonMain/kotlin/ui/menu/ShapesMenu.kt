@@ -28,6 +28,7 @@ fun ShapesMenu(
                     Row(modifier = modifier) {
                         val freeformIcon = MenuButton.DrawFreeformMenuButton
                         val lineIcon = MenuButton.DrawLineMenuButton
+                        val polygonIcon = MenuButton.DrawPolygonMenuButton
                         val rectangleIcon = MenuButton.DrawRectangleMenuButton
 
                         IconButton(
@@ -47,6 +48,17 @@ fun ShapesMenu(
                             }) {
                             Icon(
                                 lineIcon.imagePainter,
+                                contentDescription = null,
+                                tint = Color.LightGray
+                            )
+                        }
+
+                        IconButton(
+                            onClick = {
+                                onIconClick(polygonIcon);
+                            }) {
+                            Icon(
+                                polygonIcon.imagePainter,
                                 contentDescription = null,
                                 tint = Color.LightGray
                             )

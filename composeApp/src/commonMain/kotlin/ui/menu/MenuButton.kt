@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import composemutliplatformdrawingapp.composeapp.generated.resources.Res
 import composemutliplatformdrawingapp.composeapp.generated.resources.pen_size_2_24dp_fill0_wght400_grad0_opsz24
+import composemutliplatformdrawingapp.composeapp.generated.resources.polygon_svgrepo_com
 import composemutliplatformdrawingapp.composeapp.generated.resources.select_24dp_fill0_wght400_grad0_opsz24
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -39,6 +40,11 @@ sealed class MenuButton(
     data object DrawLineMenuButton : MenuButton(
         MenuAction.DrawLine,
         Res.drawable.pen_size_2_24dp_fill0_wght400_grad0_opsz24
+    )
+
+    data object DrawPolygonMenuButton : MenuButton(
+        MenuAction.DrawPolygon,
+        Res.drawable.polygon_svgrepo_com
     )
 
     data object DrawRectangleMenuButton : MenuButton(
