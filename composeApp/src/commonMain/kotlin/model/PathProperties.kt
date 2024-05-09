@@ -12,7 +12,6 @@ class PathProperties(
     var strokeCap: StrokeCap = StrokeCap.Round,
     var strokeJoin: StrokeJoin = StrokeJoin.Round,
     var pathEffect: PathEffect? = null,
-    var eraseMode: Boolean = false
 ) {
 
     companion object
@@ -22,10 +21,9 @@ class PathProperties(
         color: Color = this.color,
         alpha: Float = this.alpha,
         strokeCap: StrokeCap = this.strokeCap,
-        strokeJoin: StrokeJoin = this.strokeJoin,
-        eraseMode: Boolean = this.eraseMode
+        strokeJoin: StrokeJoin = this.strokeJoin
     ) = PathProperties(
-        strokeWidth, color, alpha, strokeCap, strokeJoin,  eraseMode = eraseMode
+        strokeWidth, color, alpha, strokeCap, strokeJoin
     )
 
     fun copyFrom(properties: PathProperties) {
@@ -33,7 +31,6 @@ class PathProperties(
         this.color = properties.color
         this.strokeCap = properties.strokeCap
         this.strokeJoin = properties.strokeJoin
-        this.eraseMode = properties.eraseMode
     }
 }
 

@@ -19,11 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import composemutliplatformdrawingapp.composeapp.generated.resources.Res
-import composemutliplatformdrawingapp.composeapp.generated.resources.ink_eraser_24dp_fill0_wght400_grad0_opsz24
 import model.PathProperties
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 import ui.ColorWheel
 
 @OptIn(ExperimentalResourceApi::class)
@@ -67,22 +64,6 @@ fun DrawingPropertiesMenu(
                 Icons.Filled.PanTool,
                 contentDescription = null,
                 tint = if (currentDrawMode == DrawMode.Touch) Color.Black else Color.LightGray
-            )
-        }
-        IconButton(
-            onClick = {
-                currentDrawMode = if (currentDrawMode == DrawMode.Erase) {
-                    DrawMode.Draw
-                } else {
-                    DrawMode.Erase
-                }
-                onDrawModeChanged(currentDrawMode)
-            }
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.ink_eraser_24dp_fill0_wght400_grad0_opsz24),
-                contentDescription = null,
-                tint = if (currentDrawMode == DrawMode.Erase) Color.Black else Color.LightGray
             )
         }
 

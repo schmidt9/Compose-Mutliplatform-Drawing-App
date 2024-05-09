@@ -152,7 +152,7 @@ class HomeScreen : Screen {
 
                             if (drawMode == DrawMode.Touch) {
                                 val change = pointerInputChange.positionChange()
-                                println("DRAG: $change")
+
                                 paths.forEach { entry ->
                                     val path: Path = entry.first
                                     path.translate(change)
@@ -234,7 +234,6 @@ class HomeScreen : Screen {
                                     color = currentPathProperties.color,
                                     strokeCap = currentPathProperties.strokeCap,
                                     strokeJoin = currentPathProperties.strokeJoin,
-                                    eraseMode = currentPathProperties.eraseMode
                                 )
                             }
 
@@ -259,90 +258,66 @@ class HomeScreen : Screen {
                             val path = it.first
                             val properties = it.second
 
-                            if (properties.eraseMode) {
-                                drawPath(
-                                    color = Color.Transparent,
-                                    path = path,
-                                    style = Stroke(
-                                        width = currentPathProperties.strokeWidth,
-                                        cap = currentPathProperties.strokeCap,
-                                        join = currentPathProperties.strokeJoin
-                                    ),
-                                    blendMode = BlendMode.Clear
-                                )
-                            } else {
-                                // draw a selection path under target path
-                                val doSelection = (currentMenuButtonAction == MenuAction.DoSelection)
+                            // draw a selection path under target path
+                            val doSelection = (currentMenuButtonAction == MenuAction.DoSelection)
 
-                                if (doSelection) {
-                                    val intersectionPath = Path()
-                                    intersectionPath.op(path, currentPath, PathOperation.Intersect)
+                            if (doSelection) {
+                                val intersectionPath = Path()
+                                intersectionPath.op(path, currentPath, PathOperation.Intersect)
 
-                                    if (!intersectionPath.isEmpty) {
-                                        val selectedPathProperties = PathProperties.selectedPathProperties
+                                if (!intersectionPath.isEmpty) {
+                                    val selectedPathProperties =
+                                        PathProperties.selectedPathProperties
 
-                                        drawPath(
-                                            color = selectedPathProperties.color,
-                                            path = path,
-                                            style = Stroke(
-                                                width = selectedPathProperties.strokeWidth,
-                                                cap = selectedPathProperties.strokeCap,
-                                                join = selectedPathProperties.strokeJoin
-                                            )
+                                    drawPath(
+                                        color = selectedPathProperties.color,
+                                        path = path,
+                                        style = Stroke(
+                                            width = selectedPathProperties.strokeWidth,
+                                            cap = selectedPathProperties.strokeCap,
+                                            join = selectedPathProperties.strokeJoin
                                         )
-
-                                        drawPath(
-                                            color = Color.Red,
-                                            path = intersectionPath,
-                                            style = Stroke(
-                                                width = selectedPathProperties.strokeWidth,
-                                                cap = selectedPathProperties.strokeCap,
-                                                join = selectedPathProperties.strokeJoin
-                                            )
-                                        )
-
-                                    }
-                                }
-
-                                drawPath(
-                                    color = properties.color,
-                                    path = path,
-                                    style = Stroke(
-                                        width = properties.strokeWidth,
-                                        cap = properties.strokeCap,
-                                        join = properties.strokeJoin
                                     )
-                                )
+
+                                    drawPath(
+                                        color = Color.Red,
+                                        path = intersectionPath,
+                                        style = Stroke(
+                                            width = selectedPathProperties.strokeWidth,
+                                            cap = selectedPathProperties.strokeCap,
+                                            join = selectedPathProperties.strokeJoin
+                                        )
+                                    )
+
+                                }
                             }
+
+                            drawPath(
+                                color = properties.color,
+                                path = path,
+                                style = Stroke(
+                                    width = properties.strokeWidth,
+                                    cap = properties.strokeCap,
+                                    join = properties.strokeJoin
+                                )
+                            )
                         }
 
                         if (motionEvent != MotionEvent.Idle) {
-                            if (currentPathProperties.eraseMode) {
-                                drawPath(
-                                    color = Color.Transparent,
-                                    path = currentPath,
-                                    style = Stroke(
-                                        width = currentPathProperties.strokeWidth,
-                                        cap = currentPathProperties.strokeCap,
-                                        join = currentPathProperties.strokeJoin
-                                    ),
-                                    blendMode = BlendMode.Clear
-                                )
-                            } else {
-                                val doSelection = (currentMenuButtonAction == MenuAction.DoSelection)
-                                val pathProperties = if (doSelection) PathProperties.selectionPathProperties else currentPathProperties
+                            val doSelection = (currentMenuButtonAction == MenuAction.DoSelection)
+                            val pathProperties =
+                                if (doSelection) PathProperties.selectionPathProperties else currentPathProperties
 
-                                drawPath(
-                                    color = pathProperties.color,
-                                    path = currentPath,
-                                    style = Stroke(
-                                        width = pathProperties.strokeWidth,
-                                        cap = pathProperties.strokeCap,
-                                        join = pathProperties.strokeJoin,
-                                        pathEffect = pathProperties.pathEffect
-                                    )
+                            drawPath(
+                                color = pathProperties.color,
+                                path = currentPath,
+                                style = Stroke(
+                                    width = pathProperties.strokeWidth,
+                                    cap = pathProperties.strokeCap,
+                                    join = pathProperties.strokeJoin,
+                                    pathEffect = pathProperties.pathEffect
                                 )
-                            }
+                            )
                         }
 
                         restoreToCount(checkPoint)
@@ -378,7 +353,6 @@ class HomeScreen : Screen {
                     onDrawModeChanged = {
                         motionEvent = MotionEvent.Idle
                         drawMode = it
-                        currentPathProperties.eraseMode = (drawMode == DrawMode.Erase)
                     }
                 )
 
