@@ -20,8 +20,8 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathMeasure
 import androidx.compose.ui.graphics.PathOperation
-import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.consumeDownChange
@@ -37,10 +37,11 @@ import model.selectedPathProperties
 import model.selectionPathProperties
 import ui.menu.DrawingPropertiesMenu
 import ui.menu.HomeScreenTopMenu
-import ui.menu.MenuButton
 import ui.menu.MenuAction
+import ui.menu.MenuButton
 import ui.menu.ShapesMenu
 import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.min
 
 class HomeScreen : Screen {
@@ -236,10 +237,6 @@ class HomeScreen : Screen {
 
                         MotionEvent.Up -> {
                             if (drawMode != DrawMode.Touch) {
-                                if (currentMenuButtonAction == MenuAction.DrawFreeform) {
-                                    currentPath.lineTo(currentPosition.x, currentPosition.y)
-                                }
-
                                 // Pointer is up save current path
 
                                 if (currentMenuButtonAction != MenuAction.DoSelection) {
@@ -299,7 +296,7 @@ class HomeScreen : Screen {
 
                                 if (doSelection) {
                                     val intersectionPath = Path()
-                                    intersectionPath.op(currentPath, path, PathOperation.Intersect)
+                                    intersectionPath.op(path, currentPath, PathOperation.Intersect)
 
                                     if (!intersectionPath.isEmpty) {
                                         val selectedPathProperties = PathProperties.selectedPathProperties
@@ -313,6 +310,17 @@ class HomeScreen : Screen {
                                                 join = selectedPathProperties.strokeJoin
                                             )
                                         )
+
+                                        drawPath(
+                                            color = Color.Red,
+                                            path = intersectionPath,
+                                            style = Stroke(
+                                                width = selectedPathProperties.strokeWidth,
+                                                cap = selectedPathProperties.strokeCap,
+                                                join = selectedPathProperties.strokeJoin
+                                            )
+                                        )
+
                                     }
                                 }
 
@@ -399,4 +407,18 @@ class HomeScreen : Screen {
 
     }
 
+}
+
+// TODO: use for paths intersection or remove
+fun getPathPoints(path: Path) {
+    val pathMeasure = PathMeasure()
+    pathMeasure.setPath(path, false)
+    val length = pathMeasure.length
+    var i = 0f
+
+    do {
+        val position = pathMeasure.getPosition(i)
+        println("POS $position")
+        i += 1
+    } while (i < length)
 }
