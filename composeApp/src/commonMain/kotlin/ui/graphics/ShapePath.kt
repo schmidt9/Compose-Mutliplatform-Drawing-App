@@ -32,6 +32,10 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
         drawScope: DrawScope,
         propertiesType: PropertiesType = PropertiesType.Default
     ) {
+        if (isSelected) {
+            draw(drawScope, selectedPathProperties)
+        }
+
         val currentProperties = when (propertiesType) {
             PropertiesType.Default -> properties
             PropertiesType.SelectedPath -> selectedPathProperties

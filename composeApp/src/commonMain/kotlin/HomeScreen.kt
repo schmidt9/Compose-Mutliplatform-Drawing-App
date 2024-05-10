@@ -240,16 +240,7 @@ class HomeScreen : Screen {
                         // draw all paths
 
                         paths.forEach {
-                            if (doSelection) {
-                                // draw selection path first if there is an intersection
-                                if (it.intersects(currentPath)) {
-                                    it.draw(
-                                        drawScope = this@Canvas,
-                                        propertiesType = ShapePath.PropertiesType.SelectedPath
-                                    )
-                                }
-                            }
-
+                            it.isSelected = doSelection && it.intersects(currentPath)
                             it.draw(this@Canvas)
                         }
 
