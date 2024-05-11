@@ -81,6 +81,10 @@ class HomeScreen : Screen {
          */
         var currentPath by remember { mutableStateOf(ShapePath()) }
 
+        var shapesMenuButtonSelected by remember { mutableStateOf(true) }
+
+        var selectionButtonSelected by remember { mutableStateOf(false) }
+
         var shapesMenuVisible by remember { mutableStateOf(false) }
 
         var currentMenuButtonAction by remember { mutableStateOf(MenuButton.DrawRectangleMenuButton.menuAction) }
@@ -274,6 +278,7 @@ class HomeScreen : Screen {
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color.White),
+                    selectedMenuAction = currentMenuButtonAction,
                     onIconClick = {
                         currentMenuButtonAction = it.menuAction
                         shapesMenuVisible = false
@@ -287,12 +292,19 @@ class HomeScreen : Screen {
                         .background(Color.White)
                         .padding(4.dp),
                     pathProperties = currentPath.properties,
-                    shapeMenuButtonAction = currentMenuButtonAction,
-                    onShapesIconClick = {
+                    shapesMenuButtonAction = currentMenuButtonAction,
+                    shapesMenuButtonSelected = shapesMenuButtonSelected,
+                    onShapesMenuButtonClick = {
                         shapesMenuVisible = !shapesMenuVisible
-                    },
-                    onSelectionIconClick = {
                         currentMenuButtonAction = it
+                        shapesMenuButtonSelected = true
+                        selectionButtonSelected = false
+                    },
+                    selectionButtonSelected = selectionButtonSelected,
+                    onSelectionButtonClick = {
+                        currentMenuButtonAction = it
+                        shapesMenuButtonSelected = false
+                        selectionButtonSelected = true
                     }
                 )
 

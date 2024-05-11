@@ -16,6 +16,7 @@ import androidx.compose.ui.window.Popup
 fun ShapesMenu(
     visible: Boolean,
     modifier: Modifier = Modifier,
+    selectedMenuAction: MenuAction,
     onIconClick: (menuButton: MenuButton) -> Unit
 ) {
     if (visible) {
@@ -25,32 +26,25 @@ fun ShapesMenu(
             ) {
                 Column {
                     Divider(color = Color.LightGray)
+
                     Row(modifier = modifier) {
-                        val polygonIcon = MenuButton.DrawPolygonMenuButton
-                        val rectangleIcon = MenuButton.DrawRectangleMenuButton
+                        val menuButtons = listOf(
+                            MenuButton.DrawPolygonMenuButton,
+                            MenuButton.DrawRectangleMenuButton
+                        )
 
-                        IconButton(
-                            onClick = {
-                                onIconClick(polygonIcon);
-                            }) {
-                            Icon(
-                                polygonIcon.imagePainter,
-                                contentDescription = null,
-                                tint = Color.LightGray
+                        menuButtons.forEach {
+                            SelectableIconButton(
+                                onClick = {
+                                    onIconClick(it)
+                                },
+                                painter = it.imagePainter,
+                                selected = (it.menuAction == selectedMenuAction)
                             )
                         }
 
-                        IconButton(
-                            onClick = {
-                                onIconClick(rectangleIcon)
-                            }) {
-                            Icon(
-                                rectangleIcon.imagePainter,
-                                contentDescription = null,
-                                tint = Color.LightGray
-                            )
-                        }
                     }
+
                     Divider(color = Color.LightGray)
                 }
             }

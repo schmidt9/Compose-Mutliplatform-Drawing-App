@@ -10,9 +10,9 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 
 @Composable
 fun SelectableIconButton(
-    painter: Painter,
-    selected: Boolean = false,
     onClick: () -> Unit,
+    painter: Painter,
+    selected: Boolean = false
 ) {
     IconButton(
         onClick = {
@@ -28,12 +28,12 @@ fun SelectableIconButton(
 
 @Composable
 fun SelectableIconButton(
-    imageVector: ImageVector,
-    selected: Boolean = false,
     onClick: () -> Unit,
+    imageVector: ImageVector,
+    selected: Boolean = false
 ) {
     SelectableIconButton(
+        onClick = onClick,
         painter = rememberVectorPainter(imageVector),
-        selected = selected,
-        onClick)
+        selected = selected)
 }

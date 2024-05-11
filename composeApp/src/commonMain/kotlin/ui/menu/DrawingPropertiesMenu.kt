@@ -24,19 +24,20 @@ import ui.ColorWheel
 fun DrawingPropertiesMenu(
     modifier: Modifier = Modifier,
     pathProperties: PathProperties,
-    shapeMenuButtonAction: MenuAction,
-    onShapesIconClick: () -> Unit,
-    onSelectionIconClick: (menuAction: MenuAction) -> Unit
+    shapesMenuButtonAction: MenuAction,
+    shapesMenuButtonSelected: Boolean,
+    onShapesMenuButtonClick: (MenuAction) -> Unit,
+    selectionButtonSelected: Boolean,
+    onSelectionButtonClick: (MenuAction) -> Unit
 ) {
     val properties by rememberUpdatedState(newValue = pathProperties)
 
     var showColorDialog by remember { mutableStateOf(false) }
     var showPropertiesDialog by remember { mutableStateOf(false) }
-    var doSelection by remember { mutableStateOf(false) }
     val shapeMenuButton = listOf(
         MenuButton.DrawPolygonMenuButton,
         MenuButton.DrawRectangleMenuButton
-    ).firstOrNull { it.menuAction == shapeMenuButtonAction } ?: MenuButton.DrawRectangleMenuButton
+    ).firstOrNull { it.menuAction == shapesMenuButtonAction } ?: MenuButton.DrawRectangleMenuButton
 
     Row(
         modifier = modifier,
@@ -48,34 +49,29 @@ fun DrawingPropertiesMenu(
         }
 
         SelectableIconButton(
+            onClick = {
+                showPropertiesDialog = true
+            },
             imageVector = Icons.Filled.Brush,
             selected = showPropertiesDialog
-        ) {
-            showPropertiesDialog = true
-        }
+        )
 
-        IconButton(
+        SelectableIconButton(
             onClick = {
-                onShapesIconClick()
-            }) {
-            Icon(
-                shapeMenuButton.imagePainter,
-                contentDescription = null,
-                tint = Color.LightGray
-            )
-        }
+                onShapesMenuButtonClick(shapeMenuButton.menuAction)
+            },
+            painter = shapeMenuButton.imagePainter,
+            selected = shapesMenuButtonSelected
+        )
 
-        IconButton(
+        SelectableIconButton(
             onClick = {
-                onSelectionIconClick(MenuButton.DoSelectionMenuButton.menuAction)
-                doSelection = !doSelection
-            }) {
-            Icon(
-                MenuButton.DoSelectionMenuButton.imagePainter,
-                contentDescription = null,
-                tint = if (doSelection) Color.Black else Color.LightGray
-            )
-        }
+                onSelectionButtonClick(MenuButton.DoSelectionMenuButton.menuAction)
+            },
+            painter = MenuButton.DoSelectionMenuButton.imagePainter,
+            selected = selectionButtonSelected
+        )
+
     }
 
     if (showColorDialog) {
