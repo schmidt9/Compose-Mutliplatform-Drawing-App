@@ -1,6 +1,5 @@
 package ui.menu
 
-import DrawMode
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
@@ -8,7 +7,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Brush
-import androidx.compose.material.icons.filled.PanTool
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,10 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import model.PathProperties
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import ui.ColorWheel
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun DrawingPropertiesMenu(
     modifier: Modifier = Modifier,
@@ -51,8 +47,11 @@ fun DrawingPropertiesMenu(
             ColorWheel(modifier = Modifier.size(24.dp))
         }
 
-        IconButton(onClick = { showPropertiesDialog = !showPropertiesDialog }) {
-            Icon(Icons.Filled.Brush, contentDescription = null, tint = Color.LightGray)
+        SelectableIconButton(
+            imageVector = Icons.Filled.Brush,
+            selected = showPropertiesDialog
+        ) {
+            showPropertiesDialog = true
         }
 
         IconButton(
@@ -93,7 +92,7 @@ fun DrawingPropertiesMenu(
 
     if (showPropertiesDialog) {
         PropertiesMenuDialog(properties) {
-            showPropertiesDialog = !showPropertiesDialog
+            showPropertiesDialog = false
         }
     }
 }
