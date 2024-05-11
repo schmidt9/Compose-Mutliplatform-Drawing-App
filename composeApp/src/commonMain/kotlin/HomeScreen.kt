@@ -8,6 +8,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -86,9 +87,9 @@ class HomeScreen : Screen {
 
         fun selectedPaths() = paths.filter { it.isSelected }
 
-        fun isSelectionAction() = (currentMenuButtonAction == MenuAction.DoSelection)
+        val isSelectionAction by remember { derivedStateOf { currentMenuButtonAction == MenuAction.DoSelection } }
 
-        fun isMoveSelectionDrawMode() = (drawMode == DrawMode.MoveSelection)
+        val isMoveSelectionDrawMode by remember { derivedStateOf { drawMode == DrawMode.MoveSelection } }
 
         Scaffold(topBar = {
             TopAppBar(
@@ -141,7 +142,7 @@ class HomeScreen : Screen {
                         onDragStart = {
                             pointerEvent = PointerEvent.DragStart
 
-                            drawMode = if (isSelectionAction()) {
+                            drawMode = if (isSelectionAction) {
                                 if (selectedPaths().isEmpty()) DrawMode.Draw else DrawMode.MoveSelection
                             } else {
                                 DrawMode.Draw
@@ -154,7 +155,7 @@ class HomeScreen : Screen {
                             pointerEvent = PointerEvent.Drag
                             currentPosition = position
 
-                            if (isMoveSelectionDrawMode()) {
+                            if (isMoveSelectionDrawMode) {
                                 selectedPaths().forEach { path ->
                                     path.translate(dragAmount)
                                 }
@@ -175,7 +176,7 @@ class HomeScreen : Screen {
                         }
 
                         PointerEvent.Drag -> {
-                            if (isMoveSelectionDrawMode()) {
+                            if (isMoveSelectionDrawMode) {
                                 previousPosition = currentPosition
                             } else {
                                 when (currentMenuButtonAction) {
@@ -211,7 +212,7 @@ class HomeScreen : Screen {
                             if (drawMode != DrawMode.MoveSelection) {
                                 // Pointer is up save current path
 
-                                if (isSelectionAction().not()) {
+                                if (isSelectionAction.not()) {
                                     paths.add(currentPath)
                                 }
 
@@ -249,7 +250,7 @@ class HomeScreen : Screen {
 
                         paths.forEach {
                             if (it.isSelected.not()) {
-                                it.isSelected = isSelectionAction() && it.intersects(currentPath)
+                                it.isSelected = isSelectionAction && it.intersects(currentPath)
                             }
 
                             it.draw(this@Canvas)
@@ -259,7 +260,7 @@ class HomeScreen : Screen {
 
                         if (pointerEvent != PointerEvent.Idle && pointerEvent != PointerEvent.Tap) {
                             val pathProperties =
-                                if (isSelectionAction()) currentPath.selectionPathProperties else currentPath.properties
+                                if (isSelectionAction) currentPath.selectionPathProperties else currentPath.properties
 
                             currentPath.draw(this@Canvas, pathProperties)
                         }
