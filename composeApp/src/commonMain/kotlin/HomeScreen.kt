@@ -84,7 +84,11 @@ class HomeScreen : Screen {
 
         var currentMenuButtonAction by remember { mutableStateOf(MenuButton.DrawRectangleMenuButton.menuAction) }
 
-        val isSelectionAction = (currentMenuButtonAction == MenuAction.DoSelection)
+        fun selectedPaths() = paths.filter { it.isSelected }
+
+        fun isSelectionAction() = (currentMenuButtonAction == MenuAction.DoSelection)
+
+        fun isMoveSelectionDrawMode() = (drawMode == DrawMode.MoveSelection)
 
         Scaffold(topBar = {
             TopAppBar(
@@ -125,17 +129,24 @@ class HomeScreen : Screen {
                     .background(Color.White)
                     .pointerEvents(
                         onTap = {
+                            pointerEvent = PointerEvent.Tap
+
                             paths.forEach {
                                 it.isSelected = false
                             }
-
-                            pointerEvent = PointerEvent.Tap
                         },
                         onDoubleTap = {
                             // TODO: impl
                         },
                         onDragStart = {
                             pointerEvent = PointerEvent.DragStart
+
+                            drawMode = if (isSelectionAction()) {
+                                if (selectedPaths().isEmpty()) DrawMode.Draw else DrawMode.MoveSelection
+                            } else {
+                                DrawMode.Draw
+                            }
+
                             currentPosition = it
                             previousPosition = it
                         },
@@ -143,12 +154,10 @@ class HomeScreen : Screen {
                             pointerEvent = PointerEvent.Drag
                             currentPosition = position
 
-                            if (drawMode == DrawMode.Touch) {
-                                paths.forEach { path ->
+                            if (isMoveSelectionDrawMode()) {
+                                selectedPaths().forEach { path ->
                                     path.translate(dragAmount)
                                 }
-
-                                currentPath.translate(dragAmount)
                             }
                         },
                         onDragEnd = {
@@ -166,7 +175,9 @@ class HomeScreen : Screen {
                         }
 
                         PointerEvent.Drag -> {
-                            if (drawMode != DrawMode.Touch) {
+                            if (isMoveSelectionDrawMode()) {
+                                previousPosition = currentPosition
+                            } else {
                                 when (currentMenuButtonAction) {
                                     MenuAction.DrawPolygon -> {
                                         TODO("impl")
@@ -193,16 +204,14 @@ class HomeScreen : Screen {
 
                                     MenuAction.None -> {}
                                 }
-                            } else {
-                                previousPosition = currentPosition
                             }
                         }
 
                         PointerEvent.DragEnd -> {
-                            if (drawMode != DrawMode.Touch) {
+                            if (drawMode != DrawMode.MoveSelection) {
                                 // Pointer is up save current path
 
-                                if (isSelectionAction.not()) {
+                                if (isSelectionAction().not()) {
                                     paths.add(currentPath)
                                 }
 
@@ -240,7 +249,7 @@ class HomeScreen : Screen {
 
                         paths.forEach {
                             if (it.isSelected.not()) {
-                                it.isSelected = isSelectionAction && it.intersects(currentPath)
+                                it.isSelected = isSelectionAction() && it.intersects(currentPath)
                             }
 
                             it.draw(this@Canvas)
@@ -250,7 +259,7 @@ class HomeScreen : Screen {
 
                         if (pointerEvent != PointerEvent.Idle && pointerEvent != PointerEvent.Tap) {
                             val pathProperties =
-                                if (isSelectionAction) currentPath.selectionPathProperties else currentPath.properties
+                                if (isSelectionAction()) currentPath.selectionPathProperties else currentPath.properties
 
                             currentPath.draw(this@Canvas, pathProperties)
                         }
@@ -277,17 +286,12 @@ class HomeScreen : Screen {
                         .background(Color.White)
                         .padding(4.dp),
                     pathProperties = currentPath.properties,
-                    drawMode = drawMode,
                     shapeMenuButtonAction = currentMenuButtonAction,
                     onShapesIconClick = {
                         shapesMenuVisible = !shapesMenuVisible
                     },
                     onSelectionIconClick = {
                         currentMenuButtonAction = it
-                    },
-                    onDrawModeChanged = {
-                        pointerEvent = PointerEvent.Idle
-                        drawMode = it
                     }
                 )
 

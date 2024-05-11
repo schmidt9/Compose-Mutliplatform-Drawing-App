@@ -1,3 +1,4 @@
 enum class DrawMode {
-    Draw, Touch
+    Draw,
+    MoveSelection
 }

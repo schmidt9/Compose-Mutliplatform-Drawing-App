@@ -28,17 +28,14 @@ import ui.ColorWheel
 fun DrawingPropertiesMenu(
     modifier: Modifier = Modifier,
     pathProperties: PathProperties,
-    drawMode: DrawMode,
     shapeMenuButtonAction: MenuAction,
     onShapesIconClick: () -> Unit,
-    onSelectionIconClick: (menuAction: MenuAction) -> Unit,
-    onDrawModeChanged: (DrawMode) -> Unit
+    onSelectionIconClick: (menuAction: MenuAction) -> Unit
 ) {
     val properties by rememberUpdatedState(newValue = pathProperties)
 
     var showColorDialog by remember { mutableStateOf(false) }
     var showPropertiesDialog by remember { mutableStateOf(false) }
-    var currentDrawMode = drawMode
     var doSelection by remember { mutableStateOf(false) }
     val shapeMenuButton = listOf(
         MenuButton.DrawPolygonMenuButton,
@@ -50,23 +47,6 @@ fun DrawingPropertiesMenu(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        IconButton(
-            onClick = {
-                currentDrawMode = if (currentDrawMode == DrawMode.Touch) {
-                    DrawMode.Draw
-                } else {
-                    DrawMode.Touch
-                }
-                onDrawModeChanged(currentDrawMode)
-            }
-        ) {
-            Icon(
-                Icons.Filled.PanTool,
-                contentDescription = null,
-                tint = if (currentDrawMode == DrawMode.Touch) Color.Black else Color.LightGray
-            )
-        }
-
         IconButton(onClick = { showColorDialog = !showColorDialog }) {
             ColorWheel(modifier = Modifier.size(24.dp))
         }
