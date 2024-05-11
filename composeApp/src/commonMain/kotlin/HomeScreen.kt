@@ -18,18 +18,12 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathMeasure
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.input.pointer.consumeDownChange
-import androidx.compose.ui.input.pointer.consumePositionChange
-import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import com.smarttoolfactory.composedrawingapp.gesture.MotionEvent
 import com.smarttoolfactory.composedrawingapp.ui.theme.backgroundColor
-import gesture.dragMotionEvent
+import gesture.pointerEvents
 import model.PathProperties
 import ui.graphics.RectShape
 import ui.graphics.ShapePath
@@ -127,32 +121,32 @@ class HomeScreen : Screen {
                     .fillMaxWidth()
                     .weight(1f)
                     .background(Color.White)
-                    .dragMotionEvent(
-                        onDragStart = { pointerInputChange ->
-                            motionEvent = MotionEvent.Down
-                            currentPosition = pointerInputChange.position
-                            pointerInputChange.consumeDownChange()
-
+                    .pointerEvents(
+                        onTap = {
+                            // TODO: impl
                         },
-                        onDrag = { pointerInputChange ->
+                        onDoubleTap = {
+                            // TODO: impl
+                        },
+                        onDragStart = {
+                            motionEvent = MotionEvent.Down
+                            currentPosition = it
+                            previousPosition = it
+                        },
+                        onDrag = { position, dragAmount ->
                             motionEvent = MotionEvent.Move
-                            currentPosition = pointerInputChange.position
+                            currentPosition = position
 
                             if (drawMode == DrawMode.Touch) {
-                                val change = pointerInputChange.positionChange()
-
                                 paths.forEach { path ->
-                                    path.translate(change)
+                                    path.translate(dragAmount)
                                 }
 
-                                currentPath.translate(change)
+                                currentPath.translate(dragAmount)
                             }
-                            pointerInputChange.consumePositionChange()
-
                         },
-                        onDragEnd = { pointerInputChange ->
+                        onDragEnd = {
                             motionEvent = MotionEvent.Up
-                            pointerInputChange.consumeDownChange()
                         }
                     )
 
@@ -240,7 +234,10 @@ class HomeScreen : Screen {
                         // draw all paths
 
                         paths.forEach {
-                            it.isSelected = doSelection && it.intersects(currentPath)
+                            if (it.isSelected.not()) {
+                                it.isSelected = doSelection && it.intersects(currentPath)
+                            }
+
                             it.draw(this@Canvas)
                         }
 
