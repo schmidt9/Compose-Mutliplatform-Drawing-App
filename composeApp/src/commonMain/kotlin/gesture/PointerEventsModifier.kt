@@ -20,11 +20,9 @@ fun Modifier.pointerEvents(
         .pointerInput(Unit) {
             detectTapGestures(
                 onTap = {
-                    println("TAP $it")
                     onTap(it)
                 },
                 onDoubleTap = {
-                    println("DOUBLE TAP $it")
                     onDoubleTap(it)
                 }
             )
@@ -32,15 +30,12 @@ fun Modifier.pointerEvents(
         .pointerInput(Unit) {
             detectDragGestures(
                 onDragStart = {
-                    println("DRAG START $it")
                     onDragStart(it)
                 },
                 onDrag = { change, dragAmount ->
-                    println("DRAG")
                     onDrag(change.position, dragAmount)
                 },
                 onDragEnd = {
-                    println("DRAG END")
                     onDragEnd()
                 }
             )

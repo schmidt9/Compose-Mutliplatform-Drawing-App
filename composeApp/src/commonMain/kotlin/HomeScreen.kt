@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
-import com.smarttoolfactory.composedrawingapp.gesture.MotionEvent
+import gesture.PointerEvent
 import com.smarttoolfactory.composedrawingapp.ui.theme.backgroundColor
 import gesture.pointerEvents
 import model.PathProperties
@@ -54,10 +54,10 @@ class HomeScreen : Screen {
         val pathsUndone = remember { mutableStateListOf<ShapePath>() }
 
         /**
-         * Canvas touch state. [MotionEvent.Idle] by default, [MotionEvent.Down] at first contact,
-         * [MotionEvent.Move] while dragging and [MotionEvent.Up] when first pointer is up
+         * Canvas touch state. [PointerEvent.Idle] by default, [PointerEvent.DragStart] at first contact,
+         * [PointerEvent.Drag] while dragging and [PointerEvent.DragEnd] when first pointer is up
          */
-        var motionEvent by remember { mutableStateOf(MotionEvent.Idle) }
+        var pointerEvent by remember { mutableStateOf(PointerEvent.Idle) }
 
         /**
          * Current position of the pointer that is pressed or being moved
@@ -75,7 +75,7 @@ class HomeScreen : Screen {
         var drawMode by remember { mutableStateOf(DrawMode.Draw) }
 
         /**
-         * Path that is being drawn between [MotionEvent.Down] and [MotionEvent.Up]. When
+         * Path that is being drawn between [PointerEvent.DragStart] and [PointerEvent.DragEnd]. When
          * pointer is up this path is saved to **paths** and new instance is created
          */
         var currentPath by remember { mutableStateOf(ShapePath()) }
@@ -83,6 +83,8 @@ class HomeScreen : Screen {
         var shapesMenuVisible by remember { mutableStateOf(false) }
 
         var currentMenuButtonAction by remember { mutableStateOf(MenuButton.DrawRectangleMenuButton.menuAction) }
+
+        val isSelectionAction = (currentMenuButtonAction == MenuAction.DoSelection)
 
         Scaffold(topBar = {
             TopAppBar(
@@ -123,18 +125,22 @@ class HomeScreen : Screen {
                     .background(Color.White)
                     .pointerEvents(
                         onTap = {
-                            // TODO: impl
+                            paths.forEach {
+                                it.isSelected = false
+                            }
+
+                            pointerEvent = PointerEvent.Tap
                         },
                         onDoubleTap = {
                             // TODO: impl
                         },
                         onDragStart = {
-                            motionEvent = MotionEvent.Down
+                            pointerEvent = PointerEvent.DragStart
                             currentPosition = it
                             previousPosition = it
                         },
                         onDrag = { position, dragAmount ->
-                            motionEvent = MotionEvent.Move
+                            pointerEvent = PointerEvent.Drag
                             currentPosition = position
 
                             if (drawMode == DrawMode.Touch) {
@@ -146,20 +152,20 @@ class HomeScreen : Screen {
                             }
                         },
                         onDragEnd = {
-                            motionEvent = MotionEvent.Up
+                            pointerEvent = PointerEvent.DragEnd
                         }
                     )
 
                 Canvas(modifier = drawModifier) {
 
-                    when (motionEvent) {
-                        MotionEvent.Down -> {
+                    when (pointerEvent) {
+                        PointerEvent.DragStart -> {
                             previousPosition = currentPosition
 
                             shapesMenuVisible = false
                         }
 
-                        MotionEvent.Move -> {
+                        PointerEvent.Drag -> {
                             if (drawMode != DrawMode.Touch) {
                                 when (currentMenuButtonAction) {
                                     MenuAction.DrawPolygon -> {
@@ -192,11 +198,11 @@ class HomeScreen : Screen {
                             }
                         }
 
-                        MotionEvent.Up -> {
+                        PointerEvent.DragEnd -> {
                             if (drawMode != DrawMode.Touch) {
                                 // Pointer is up save current path
 
-                                if (currentMenuButtonAction != MenuAction.DoSelection) {
+                                if (isSelectionAction.not()) {
                                     paths.add(currentPath)
                                 }
 
@@ -221,7 +227,7 @@ class HomeScreen : Screen {
                             // line from (0,0) if this composable recomposes when draw mode is changed
                             currentPosition = Offset.Unspecified
                             previousPosition = currentPosition
-                            motionEvent = MotionEvent.Idle
+                            pointerEvent = PointerEvent.Idle
                         }
 
                         else -> Unit
@@ -229,13 +235,12 @@ class HomeScreen : Screen {
 
                     with(drawContext.canvas.nativeCanvas) {
                         val checkPoint = saveLayer(null, null)
-                        val doSelection = (currentMenuButtonAction == MenuAction.DoSelection)
 
                         // draw all paths
 
                         paths.forEach {
                             if (it.isSelected.not()) {
-                                it.isSelected = doSelection && it.intersects(currentPath)
+                                it.isSelected = isSelectionAction && it.intersects(currentPath)
                             }
 
                             it.draw(this@Canvas)
@@ -243,9 +248,9 @@ class HomeScreen : Screen {
 
                         // draw current path
 
-                        if (motionEvent != MotionEvent.Idle) {
+                        if (pointerEvent != PointerEvent.Idle && pointerEvent != PointerEvent.Tap) {
                             val pathProperties =
-                                if (doSelection) currentPath.selectionPathProperties else currentPath.properties
+                                if (isSelectionAction) currentPath.selectionPathProperties else currentPath.properties
 
                             currentPath.draw(this@Canvas, pathProperties)
                         }
@@ -281,7 +286,7 @@ class HomeScreen : Screen {
                         currentMenuButtonAction = it
                     },
                     onDrawModeChanged = {
-                        motionEvent = MotionEvent.Idle
+                        pointerEvent = PointerEvent.Idle
                         drawMode = it
                     }
                 )
