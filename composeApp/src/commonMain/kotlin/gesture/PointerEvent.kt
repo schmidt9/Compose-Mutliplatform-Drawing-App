@@ -1,5 +1,9 @@
 package gesture
 
 enum class PointerEvent {
-    Idle, DragStart, Drag, DragEnd, Tap
+    Tap,
+    DragStart,
+    Drag,
+    DragEnd,
+    Idle
 }

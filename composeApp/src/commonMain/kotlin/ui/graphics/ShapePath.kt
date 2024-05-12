@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import model.PathProperties
 import model.selectedPathProperties
 import model.selectionPathProperties
+import kotlin.jvm.JvmName
 
 open class ShapePath(var properties: PathProperties = PathProperties()) {
 
@@ -18,15 +19,39 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
         SelectionPath
     }
 
-    val composePath = Path()
+    // region Properties
 
-    val selectedPathProperties = PathProperties.selectedPathProperties
+    private val composePath = Path()
+
+    private val selectedPathProperties = PathProperties.selectedPathProperties
 
     val selectionPathProperties = PathProperties.selectionPathProperties
 
-    private var points = mutableListOf<Offset>()
+    val isEmpty get() = composePath.isEmpty
+
+    open val shouldClose = false
 
     var isSelected = false
+
+    private var points = mutableListOf<Offset>()
+        @JvmName("setShapePoints")
+        set(value) {
+            composePath.reset()
+
+            if (value.isEmpty().not()) {
+                composePath.moveTo(value.first())
+            }
+
+            value.forEach {
+                composePath.lineTo(it)
+            }
+
+            field = value
+        }
+
+    // endregion
+
+    // region Methods
 
     fun draw(
         drawScope: DrawScope,
@@ -72,8 +97,22 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
         composePath.reset()
     }
 
+    fun close() {
+        composePath.close()
+    }
+
     fun setPoints(points: List<Offset>) {
         this.points = points.toMutableList()
+
+        if (shouldClose) {
+            close()
+        }
+    }
+
+    fun addPoint(point: Offset) {
+        points.add(point)
+        // recreate path to close with the new point
+        setPoints(points)
     }
 
     fun getPoints() = points
@@ -125,6 +164,8 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
 
         return points
     }
+
+    // endregion
 
 }
 

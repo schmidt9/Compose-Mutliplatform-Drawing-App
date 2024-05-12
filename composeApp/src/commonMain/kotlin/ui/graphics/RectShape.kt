@@ -2,10 +2,12 @@ package ui.graphics
 
 import androidx.compose.ui.geometry.Rect
 
-class RectShape(private val rect: Rect) : ShapePath() {
+class RectShape(rect: Rect) : ShapePath() {
+
+    override val shouldClose: Boolean
+        get() = true
 
     init {
-        composePath.addRect(rect)
         setPoints(listOf(
             rect.topLeft,
             rect.bottomLeft,

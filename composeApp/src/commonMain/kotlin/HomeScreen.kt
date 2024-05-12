@@ -26,6 +26,7 @@ import gesture.PointerEvent
 import com.smarttoolfactory.composedrawingapp.ui.theme.backgroundColor
 import gesture.pointerEvents
 import model.PathProperties
+import ui.graphics.PolygonShape
 import ui.graphics.RectShape
 import ui.graphics.ShapePath
 import ui.menu.DrawingPropertiesMenu
@@ -136,6 +137,9 @@ class HomeScreen : Screen {
                         onTap = {
                             pointerEvent = PointerEvent.Tap
 
+                            currentPosition = it
+                            previousPosition = it
+
                             paths.forEach {
                                 it.isSelected = false
                             }
@@ -173,6 +177,20 @@ class HomeScreen : Screen {
                 Canvas(modifier = drawModifier) {
 
                     when (pointerEvent) {
+                        PointerEvent.Tap -> {
+                            when (currentMenuButtonAction) {
+                                MenuAction.DrawPolygon -> {
+                                    if (currentPath.isEmpty) {
+                                        currentPath = PolygonShape(currentPosition)
+                                    } else {
+                                        currentPath.addPoint(currentPosition)
+                                    }
+                                }
+
+                                else -> Unit
+                            }
+                        }
+
                         PointerEvent.DragStart -> {
                             previousPosition = currentPosition
 
@@ -262,7 +280,7 @@ class HomeScreen : Screen {
 
                         // draw current path
 
-                        if (pointerEvent != PointerEvent.Idle && pointerEvent != PointerEvent.Tap) {
+                        if (pointerEvent != PointerEvent.Idle/* && pointerEvent != PointerEvent.Tap*/) {
                             val pathProperties =
                                 if (isSelectionAction) currentPath.selectionPathProperties else currentPath.properties
 
