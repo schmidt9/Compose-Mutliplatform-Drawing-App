@@ -115,6 +115,16 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
         setPoints(points)
     }
 
+    fun setLastPoint(point: Offset) {
+        if (points.isEmpty().not()) {
+            points.removeLast()
+        }
+
+        addPoint(point)
+
+        println("POINTS $points")
+    }
+
     fun getPoints() = points
 
     open fun intersects(path: ShapePath): Boolean {

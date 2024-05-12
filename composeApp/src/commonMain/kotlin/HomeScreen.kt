@@ -140,15 +140,19 @@ class HomeScreen : Screen {
                             currentPosition = it
                             previousPosition = it
 
-                            paths.forEach {
-                                it.isSelected = false
+                            paths.forEach { path ->
+                                path.isSelected = false
                             }
                         },
                         onDoubleTap = {
                             // TODO: impl
                         },
                         onDragStart = {
+                            println("DRAG START")
                             pointerEvent = PointerEvent.DragStart
+
+                            currentPosition = it
+                            previousPosition = it
 
                             drawMode = if (isSelectionAction) {
                                 if (selectedPaths().isEmpty()) DrawMode.Draw else DrawMode.MoveSelection
@@ -156,10 +160,23 @@ class HomeScreen : Screen {
                                 DrawMode.Draw
                             }
 
-                            currentPosition = it
-                            previousPosition = it
+                            when (currentMenuButtonAction) {
+                                MenuAction.DrawPolygon -> {
+                                    if (currentPath.isEmpty) {
+                                        currentPath = PolygonShape(currentPosition)
+                                        println("CREATE")
+                                    } else {
+                                        currentPath.addPoint(currentPosition)
+                                    }
+                                }
+
+                                else -> Unit
+                            }
+
+                            shapesMenuVisible = false
                         },
                         onDrag = { position, dragAmount ->
+                            println("DRAG")
                             pointerEvent = PointerEvent.Drag
                             currentPosition = position
 
@@ -170,11 +187,14 @@ class HomeScreen : Screen {
                             }
                         },
                         onDragEnd = {
+                            println("DRAG END")
                             pointerEvent = PointerEvent.DragEnd
                         }
                     )
 
                 Canvas(modifier = drawModifier) {
+
+                    println("CANVAS $pointerEvent")
 
                     when (pointerEvent) {
                         PointerEvent.Tap -> {
@@ -192,9 +212,8 @@ class HomeScreen : Screen {
                         }
 
                         PointerEvent.DragStart -> {
-                            previousPosition = currentPosition
-
-                            shapesMenuVisible = false
+                            // Canvas does not redraw on DragStart for some reason here,
+                            // so we moved all logic to drawModifier
                         }
 
                         PointerEvent.Drag -> {
@@ -203,7 +222,7 @@ class HomeScreen : Screen {
                             } else {
                                 when (currentMenuButtonAction) {
                                     MenuAction.DrawPolygon -> {
-                                        TODO("impl")
+                                        currentPath.setLastPoint(currentPosition)
                                     }
 
                                     MenuAction.DrawRectangle,
@@ -231,7 +250,7 @@ class HomeScreen : Screen {
                         }
 
                         PointerEvent.DragEnd -> {
-                            if (drawMode != DrawMode.MoveSelection) {
+                            if (drawMode != DrawMode.MoveSelection && currentMenuButtonAction != MenuAction.DrawPolygon) {
                                 // Pointer is up save current path
 
                                 if (isSelectionAction.not()) {
@@ -259,7 +278,10 @@ class HomeScreen : Screen {
                             // line from (0,0) if this composable recomposes when draw mode is changed
                             currentPosition = Offset.Unspecified
                             previousPosition = currentPosition
-                            pointerEvent = PointerEvent.Idle
+
+                            if (currentMenuButtonAction != MenuAction.DrawPolygon) {
+                                pointerEvent = PointerEvent.Idle
+                            }
                         }
 
                         else -> Unit
