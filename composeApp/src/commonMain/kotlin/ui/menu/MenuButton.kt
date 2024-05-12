@@ -1,6 +1,8 @@
 package ui.menu
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Rectangle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
@@ -14,7 +16,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalResourceApi::class)
-sealed class MenuButton(
+sealed class MenuButton( // TODO: rename
     val menuAction: MenuAction,
     private val drawableResource: DrawableResource? = null,
     private val imageVector: ImageVector? = null
@@ -43,6 +45,16 @@ sealed class MenuButton(
     data object DoSelectionMenuButton : MenuButton(
         MenuAction.DoSelection,
         Res.drawable.select_24dp_fill0_wght400_grad0_opsz24
+    )
+
+    data object PolygonApplyMenuButton : MenuButton(
+        MenuAction.PolygonApply,
+        imageVector = Icons.Outlined.Check
+    )
+
+    data object PolygonCancelMenuButton : MenuButton(
+        MenuAction.PolygonCancel,
+        imageVector = Icons.Outlined.Close
     )
 
 }

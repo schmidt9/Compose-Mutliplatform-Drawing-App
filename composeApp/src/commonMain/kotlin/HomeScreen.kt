@@ -33,6 +33,7 @@ import ui.menu.DrawingPropertiesMenu
 import ui.menu.HomeScreenTopMenu
 import ui.menu.MenuAction
 import ui.menu.MenuButton
+import ui.menu.PolygonPropertiesMenu
 import ui.menu.ShapesMenu
 import kotlin.math.abs
 import kotlin.math.min
@@ -87,6 +88,8 @@ class HomeScreen : Screen {
         var selectionButtonSelected by remember { mutableStateOf(false) }
 
         var shapesMenuVisible by remember { mutableStateOf(false) }
+
+        var polygonMenuVisible by remember { mutableStateOf(false) }
 
         var currentMenuButtonAction by remember { mutableStateOf(MenuButton.DrawRectangleMenuButton.menuAction) }
 
@@ -148,7 +151,6 @@ class HomeScreen : Screen {
                             // TODO: impl
                         },
                         onDragStart = {
-                            println("DRAG START")
                             pointerEvent = PointerEvent.DragStart
 
                             currentPosition = it
@@ -164,10 +166,11 @@ class HomeScreen : Screen {
                                 MenuAction.DrawPolygon -> {
                                     if (currentPath.isEmpty) {
                                         currentPath = PolygonShape(currentPosition)
-                                        println("CREATE")
                                     } else {
                                         currentPath.addPoint(currentPosition)
                                     }
+
+                                    polygonMenuVisible = true
                                 }
 
                                 else -> Unit
@@ -176,7 +179,6 @@ class HomeScreen : Screen {
                             shapesMenuVisible = false
                         },
                         onDrag = { position, dragAmount ->
-                            println("DRAG")
                             pointerEvent = PointerEvent.Drag
                             currentPosition = position
 
@@ -187,14 +189,11 @@ class HomeScreen : Screen {
                             }
                         },
                         onDragEnd = {
-                            println("DRAG END")
                             pointerEvent = PointerEvent.DragEnd
                         }
                     )
 
                 Canvas(modifier = drawModifier) {
-
-                    println("CANVAS $pointerEvent")
 
                     when (pointerEvent) {
                         PointerEvent.Tap -> {
@@ -243,6 +242,10 @@ class HomeScreen : Screen {
 
                                         currentPath = RectShape(rect)
                                     }
+
+                                    MenuAction.PolygonApply -> TODO()
+
+                                    MenuAction.PolygonCancel -> TODO()
 
                                     MenuAction.None -> {}
                                 }
@@ -322,6 +325,17 @@ class HomeScreen : Screen {
                     onIconClick = {
                         currentMenuButtonAction = it.menuAction
                         shapesMenuVisible = false
+                    }
+                )
+
+                PolygonPropertiesMenu(
+                    visible = polygonMenuVisible,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White),
+                    onButtonClick = {
+                        currentMenuButtonAction = it
+                        polygonMenuVisible = false
                     }
                 )
 
