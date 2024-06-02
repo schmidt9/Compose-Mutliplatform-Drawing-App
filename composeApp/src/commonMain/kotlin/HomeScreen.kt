@@ -97,6 +97,10 @@ class HomeScreen : Screen {
 
         val isSelectionAction by remember { derivedStateOf { currentMenuButtonAction == MenuAction.DoSelection } }
 
+        val isPolygonAction by remember { derivedStateOf {
+            listOf(MenuAction.DrawPolygon, MenuAction.PolygonApply, MenuAction.PolygonCancel).contains(currentMenuButtonAction)
+        } }
+
         val isMoveSelectionDrawMode by remember { derivedStateOf { drawMode == DrawMode.MoveSelection } }
 
         Scaffold(topBar = {
@@ -243,9 +247,13 @@ class HomeScreen : Screen {
                                         currentPath = RectShape(rect)
                                     }
 
-                                    MenuAction.PolygonApply -> TODO()
+                                    MenuAction.PolygonApply -> {
 
-                                    MenuAction.PolygonCancel -> TODO()
+                                    }
+
+                                    MenuAction.PolygonCancel -> {
+
+                                    }
 
                                     MenuAction.None -> {}
                                 }
@@ -256,7 +264,7 @@ class HomeScreen : Screen {
                             if (drawMode != DrawMode.MoveSelection && currentMenuButtonAction != MenuAction.DrawPolygon) {
                                 // Pointer is up save current path
 
-                                if (isSelectionAction.not()) {
+                                if (isSelectionAction.not() && isPolygonAction.not()) {
                                     paths.add(currentPath)
                                 }
 
@@ -282,8 +290,11 @@ class HomeScreen : Screen {
                             currentPosition = Offset.Unspecified
                             previousPosition = currentPosition
 
-                            if (currentMenuButtonAction != MenuAction.DrawPolygon) {
-                                pointerEvent = PointerEvent.Idle
+                            when (currentMenuButtonAction) {
+                                MenuAction.DrawRectangle, MenuAction.DoSelection -> {
+                                    pointerEvent = PointerEvent.Idle
+                                }
+                                else -> Unit
                             }
                         }
 
@@ -292,13 +303,15 @@ class HomeScreen : Screen {
 
                     with(drawContext.canvas.nativeCanvas) {
                         val checkPoint = saveLayer(null, null)
-
+                        println("PATHS ${paths.count()}")
                         // draw all paths
 
                         paths.forEach {
                             if (it.isSelected.not()) {
                                 it.isSelected = isSelectionAction && it.intersects(currentPath)
                             }
+
+                            println("POINTS COUNT ${it.getPoints().count()}")
 
                             it.draw(this@Canvas)
                         }
@@ -334,8 +347,16 @@ class HomeScreen : Screen {
                         .fillMaxWidth()
                         .background(Color.White),
                     onButtonClick = {
+                        pointerEvent = PointerEvent.Idle
                         currentMenuButtonAction = it
                         polygonMenuVisible = false
+
+                        if (it == MenuAction.PolygonApply) {
+                            paths.add(currentPath.copy())
+                            currentPath.reset()
+                        } else {
+                            currentPath.reset()
+                        }
                     }
                 )
 

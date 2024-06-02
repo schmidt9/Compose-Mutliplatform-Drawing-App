@@ -4,8 +4,7 @@ import androidx.compose.ui.geometry.Offset
 
 class PolygonShape(firstPoint: Offset) : ShapePath() {
 
-    override val shouldClose: Boolean
-        get() = true
+    override var shouldClose: Boolean = true
 
     init {
         // init two points at once to be able to refer later the last point

@@ -29,7 +29,7 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
 
     val isEmpty get() = composePath.isEmpty
 
-    open val shouldClose = false
+    open var shouldClose = false
 
     var isSelected = false
 
@@ -74,6 +74,10 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
         drawScope: DrawScope,
         properties: PathProperties
     ) {
+        if (composePath.isEmpty) {
+            return
+        }
+
         drawScope.drawPath(
             path = composePath,
             color = properties.color,
@@ -93,7 +97,17 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
         composePath.moveTo(x, y)
     }
 
+    fun copy() : ShapePath {
+        val shapePath = ShapePath()
+        shapePath.shouldClose = shouldClose
+        shapePath.isSelected = isSelected
+        shapePath.setPoints(points)
+
+        return shapePath
+    }
+
     fun reset() {
+        points.clear()
         composePath.reset()
     }
 
@@ -121,8 +135,6 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
         }
 
         addPoint(point)
-
-        println("POINTS $points")
     }
 
     fun getPoints() = points

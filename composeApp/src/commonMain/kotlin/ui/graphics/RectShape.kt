@@ -4,8 +4,7 @@ import androidx.compose.ui.geometry.Rect
 
 class RectShape(rect: Rect) : ShapePath() {
 
-    override val shouldClose: Boolean
-        get() = true
+    override var shouldClose: Boolean = true
 
     init {
         setPoints(listOf(
