@@ -2,7 +2,7 @@ package ui.graphics
 
 import androidx.compose.ui.geometry.Rect
 
-class RectShape(rect: Rect) : ShapePath() {
+class RectShape(rect: Rect) : Shape() {
 
     override var shouldClose: Boolean = true
 

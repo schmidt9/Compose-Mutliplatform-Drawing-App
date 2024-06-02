@@ -28,7 +28,7 @@ import gesture.pointerEvents
 import model.PathProperties
 import ui.graphics.PolygonShape
 import ui.graphics.RectShape
-import ui.graphics.ShapePath
+import ui.graphics.Shape
 import ui.menu.DrawingPropertiesMenu
 import ui.menu.HomeScreenTopMenu
 import ui.menu.MenuAction
@@ -45,7 +45,7 @@ class HomeScreen : Screen {
          * Paths that are added, this is required to have paths with different options and paths
          *  ith erase to keep over each other
          */
-        val paths = remember { mutableStateListOf<ShapePath>() }
+        val paths = remember { mutableStateListOf<Shape>() }
 
         /**
          * Paths that are undone via button. These paths are restored if user pushes
@@ -54,7 +54,7 @@ class HomeScreen : Screen {
          * If new path is drawn after this list is cleared to not break paths after undoing previous
          * ones.
          */
-        val pathsUndone = remember { mutableStateListOf<ShapePath>() }
+        val pathsUndone = remember { mutableStateListOf<Shape>() }
 
         /**
          * Canvas touch state. [PointerEvent.Idle] by default, [PointerEvent.DragStart] at first contact,
@@ -81,7 +81,7 @@ class HomeScreen : Screen {
          * Path that is being drawn between [PointerEvent.DragStart] and [PointerEvent.DragEnd]. When
          * pointer is up this path is saved to **paths** and new instance is created
          */
-        var currentPath by remember { mutableStateOf(ShapePath()) }
+        var currentPath by remember { mutableStateOf(Shape()) }
 
         var shapesMenuButtonSelected by remember { mutableStateOf(true) }
 
@@ -273,7 +273,7 @@ class HomeScreen : Screen {
 
                                 // Since paths are keys for map, use new one for each key
                                 // and have separate path for each down-move-up gesture cycle
-                                currentPath = ShapePath(properties)
+                                currentPath = Shape(properties)
                             }
 
                             // Since new path is drawn no need to store paths to undone

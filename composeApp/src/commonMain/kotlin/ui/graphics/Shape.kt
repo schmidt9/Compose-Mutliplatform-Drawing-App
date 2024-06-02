@@ -11,7 +11,7 @@ import model.selectedPathProperties
 import model.selectionPathProperties
 import kotlin.jvm.JvmName
 
-open class ShapePath(var properties: PathProperties = PathProperties()) {
+open class Shape(var properties: PathProperties = PathProperties()) {
 
     enum class PropertiesType {
         Default,
@@ -21,13 +21,13 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
 
     // region Properties
 
-    private val composePath = Path()
+    private val path = Path()
 
     private val selectedPathProperties = PathProperties.selectedPathProperties
 
     val selectionPathProperties = PathProperties.selectionPathProperties
 
-    val isEmpty get() = composePath.isEmpty
+    val isEmpty get() = path.isEmpty
 
     open var shouldClose = false
 
@@ -36,14 +36,14 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
     private var points = mutableListOf<Offset>()
         @JvmName("setShapePoints")
         set(value) {
-            composePath.reset()
+            path.reset()
 
             if (value.isEmpty().not()) {
-                composePath.moveTo(value.first())
+                path.moveTo(value.first())
             }
 
             value.forEach {
-                composePath.lineTo(it)
+                path.lineTo(it)
             }
 
             field = value
@@ -74,12 +74,12 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
         drawScope: DrawScope,
         properties: PathProperties
     ) {
-        if (composePath.isEmpty) {
+        if (path.isEmpty) {
             return
         }
 
         drawScope.drawPath(
-            path = composePath,
+            path = path,
             color = properties.color,
             style = Stroke(
                 width = properties.strokeWidth,
@@ -91,15 +91,15 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
     }
 
     fun translate(offset: Offset) {
-        composePath.translate(offset)
+        path.translate(offset)
     }
 
     fun moveTo(x: Float, y: Float) {
-        composePath.moveTo(x, y)
+        path.moveTo(x, y)
     }
 
-    fun copy() : ShapePath {
-        val shapePath = ShapePath()
+    fun copy() : Shape {
+        val shapePath = Shape()
         shapePath.shouldClose = shouldClose
         shapePath.isSelected = isSelected
         shapePath.setPoints(points)
@@ -109,11 +109,11 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
 
     fun reset() {
         points.clear()
-        composePath.reset()
+        path.reset()
     }
 
     fun close() {
-        composePath.close()
+        path.close()
     }
 
     fun setPoints(points: List<Offset>) {
@@ -140,8 +140,8 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
 
     fun getPoints() = points
 
-    open fun intersects(path: ShapePath): Boolean {
-        if (composePath.isEmpty || path.composePath.isEmpty) {
+    open fun intersects(path: Shape): Boolean {
+        if (this.path.isEmpty || path.path.isEmpty) {
             return false
         }
 
@@ -150,7 +150,7 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
         // is completely inside another path
         // (ie. we started drawing one shape inside another)
         val outsidePath = Path()
-        outsidePath.op(composePath, path.composePath, PathOperation.Intersect)
+        outsidePath.op(this.path, path.path, PathOperation.Intersect)
         val noIntersection = outsidePath.isEmpty
 
         if (noIntersection) {
@@ -159,10 +159,10 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
 
         // detect if one path is completely inside another path or vica versa
         val insidePath = Path()
-        insidePath.op(composePath, path.composePath, PathOperation.Difference)
+        insidePath.op(this.path, path.path, PathOperation.Difference)
         val isInside1 = insidePath.isEmpty
 
-        insidePath.op(composePath, path.composePath, PathOperation.ReverseDifference)
+        insidePath.op(this.path, path.path, PathOperation.ReverseDifference)
         val isInside2 = insidePath.isEmpty
 
         return isInside1.not() && isInside2.not()
