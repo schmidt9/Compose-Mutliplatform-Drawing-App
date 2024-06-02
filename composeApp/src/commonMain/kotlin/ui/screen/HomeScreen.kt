@@ -69,12 +69,6 @@ class HomeScreen : Screen {
          */
         var drawMode by remember { mutableStateOf(DrawMode.Draw) }
 
-        /**
-         * Path that is being drawn between [PointerEvent.DragStart] and [PointerEvent.DragEnd]. When
-         * pointer is up this path is saved to **paths** and new instance is created
-         */
-        var currentPath by remember { mutableStateOf(Shape()) }
-
         var shapesMenuButtonSelected by remember { mutableStateOf(true) }
 
         var selectionButtonSelected by remember { mutableStateOf(false) }
@@ -160,10 +154,10 @@ class HomeScreen : Screen {
 
                             when (currentMenuButtonAction) {
                                 MenuAction.DrawPolygon -> {
-                                    if (currentPath.isEmpty) {
-                                        currentPath = PolygonShape(currentPosition)
+                                    if (screenModel.currentPath.isEmpty) {
+                                        screenModel.currentPath = PolygonShape(currentPosition)
                                     } else {
-                                        currentPath.addPoint(currentPosition)
+                                        screenModel.currentPath.addPoint(currentPosition)
                                     }
 
                                     polygonMenuVisible = true
@@ -195,10 +189,10 @@ class HomeScreen : Screen {
                         PointerEvent.Tap -> {
                             when (currentMenuButtonAction) {
                                 MenuAction.DrawPolygon -> {
-                                    if (currentPath.isEmpty) {
-                                        currentPath = PolygonShape(currentPosition)
+                                    if (screenModel.currentPath.isEmpty) {
+                                        screenModel.currentPath = PolygonShape(currentPosition)
                                     } else {
-                                        currentPath.addPoint(currentPosition)
+                                        screenModel.currentPath.addPoint(currentPosition)
                                     }
                                 }
 
@@ -217,7 +211,7 @@ class HomeScreen : Screen {
                             } else {
                                 when (currentMenuButtonAction) {
                                     MenuAction.DrawPolygon -> {
-                                        currentPath.setLastPoint(currentPosition)
+                                        screenModel.currentPath.setLastPoint(currentPosition)
                                     }
 
                                     MenuAction.DrawRectangle,
@@ -236,7 +230,7 @@ class HomeScreen : Screen {
                                             bottom = bottom
                                         )
 
-                                        currentPath = RectShape(rect)
+                                        screenModel.currentPath = RectShape(rect)
                                     }
 
                                     else -> Unit
@@ -249,21 +243,21 @@ class HomeScreen : Screen {
                                 // Pointer is up save current path
 
                                 if (isSelectionAction.not() && isPolygonAction.not()) {
-                                    screenModel.paths.add(currentPath)
+                                    screenModel.paths.add(screenModel.currentPath)
                                 }
 
                                 // Create new instance of path properties to have new path and properties
                                 // only for the one currently being drawn
                                 val properties = PathProperties(
-                                    strokeWidth = currentPath.properties.strokeWidth,
-                                    color = currentPath.properties.color,
-                                    strokeCap = currentPath.properties.strokeCap,
-                                    strokeJoin = currentPath.properties.strokeJoin,
+                                    strokeWidth = screenModel.currentPath.properties.strokeWidth,
+                                    color = screenModel.currentPath.properties.color,
+                                    strokeCap = screenModel.currentPath.properties.strokeCap,
+                                    strokeJoin = screenModel.currentPath.properties.strokeJoin,
                                 )
 
                                 // Since paths are keys for map, use new one for each key
                                 // and have separate path for each down-move-up gesture cycle
-                                currentPath = Shape(properties)
+                                screenModel.currentPath = Shape(properties)
                             }
 
                             // Since new path is drawn no need to store paths to undone
@@ -292,7 +286,7 @@ class HomeScreen : Screen {
 
                         screenModel.paths.forEach {
                             if (it.isSelected.not()) {
-                                it.isSelected = isSelectionAction && it.intersects(currentPath)
+                                it.isSelected = isSelectionAction && it.intersects(screenModel.currentPath)
                             }
 
                             it.draw(this@Canvas)
@@ -302,9 +296,9 @@ class HomeScreen : Screen {
 
                         if (pointerEvent != PointerEvent.Idle/* && pointerEvent != PointerEvent.Tap*/) {
                             val pathProperties =
-                                if (isSelectionAction) currentPath.selectionPathProperties else currentPath.properties
+                                if (isSelectionAction) screenModel.currentPath.selectionPathProperties else screenModel.currentPath.properties
 
-                            currentPath.draw(this@Canvas, pathProperties)
+                            screenModel.currentPath.draw(this@Canvas, pathProperties)
                         }
 
                         restoreToCount(checkPoint)
@@ -334,10 +328,10 @@ class HomeScreen : Screen {
                         polygonMenuVisible = false
 
                         if (it == MenuAction.PolygonApply) {
-                            screenModel.paths.add(currentPath.copy())
-                            currentPath.reset()
+                            screenModel.paths.add(screenModel.currentPath.copy())
+                            screenModel.currentPath.reset()
                         } else {
-                            currentPath.reset()
+                            screenModel.currentPath.reset()
                         }
                     }
                 )
@@ -348,7 +342,7 @@ class HomeScreen : Screen {
                         .fillMaxWidth()
                         .background(Color.White)
                         .padding(4.dp),
-                    pathProperties = currentPath.properties,
+                    pathProperties = screenModel.currentPath.properties,
                     shapesMenuButton = shapesMenuButton,
                     shapesMenuButtonSelected = shapesMenuButtonSelected,
                     onShapesMenuButtonClick = {
