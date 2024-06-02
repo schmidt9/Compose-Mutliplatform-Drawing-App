@@ -24,7 +24,7 @@ open class Shape(var properties: PathProperties = PathProperties()) {
 
     // region Properties
 
-    private val path = Path()
+    protected val path = Path()
 
     private val selectedPathProperties = PathProperties.selectedPathProperties
 
@@ -32,25 +32,11 @@ open class Shape(var properties: PathProperties = PathProperties()) {
 
     val isEmpty get() = path.isEmpty
 
-    open var shouldClose = false
+    protected open var shouldClose = false
 
     var isSelected by mutableStateOf(false)
 
-    private var points = mutableListOf<Offset>()
-        @JvmName("setShapePoints")
-        set(value) {
-            path.reset()
-
-            if (value.isEmpty().not()) {
-                path.moveTo(value.first())
-            }
-
-            value.forEach {
-                path.lineTo(it)
-            }
-
-            field = value
-        }
+    protected var points = mutableListOf<Offset>()
 
     // endregion
 
@@ -119,8 +105,10 @@ open class Shape(var properties: PathProperties = PathProperties()) {
         path.close()
     }
 
+    @JvmName("setShapePoints")
     fun setPoints(points: List<Offset>) {
         this.points = points.toMutableList()
+        createPath()
 
         if (shouldClose) {
             close()
@@ -140,8 +128,6 @@ open class Shape(var properties: PathProperties = PathProperties()) {
 
         addPoint(point)
     }
-
-    fun getPoints() = points
 
     open fun intersects(path: Shape): Boolean {
         if (this.path.isEmpty || path.path.isEmpty) {
@@ -169,6 +155,9 @@ open class Shape(var properties: PathProperties = PathProperties()) {
         val isInside2 = insidePath.isEmpty
 
         return isInside1.not() && isInside2.not()
+    }
+
+    protected open fun createPath() {
     }
 
     // TODO: use for paths intersection or remove

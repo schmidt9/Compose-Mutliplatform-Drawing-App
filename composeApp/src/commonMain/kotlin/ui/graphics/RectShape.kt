@@ -2,7 +2,7 @@ package ui.graphics
 
 import androidx.compose.ui.geometry.Rect
 
-class RectShape(rect: Rect) : Shape() {
+class RectShape(rect: Rect) : PolylineShape() {
 
     override var shouldClose: Boolean = true
 

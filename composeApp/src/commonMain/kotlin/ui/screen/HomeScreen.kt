@@ -275,7 +275,7 @@ class HomeScreen : Screen {
                         screenModel.currentMenuButtonAction = it
                         screenModel.selectionButtonSelected = false
                         screenModel.clearSelection()
-                    },
+                    } ,
                     selectionButtonSelected = screenModel.selectionButtonSelected,
                     onSelectionButtonClick = {
                         screenModel.currentMenuButtonAction = it

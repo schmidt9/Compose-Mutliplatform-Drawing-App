@@ -2,7 +2,7 @@ package ui.graphics
 
 import androidx.compose.ui.geometry.Offset
 
-class PolygonShape(firstPoint: Offset) : Shape() {
+class PolygonShape(firstPoint: Offset) : PolylineShape() {
 
     override var shouldClose: Boolean = true
 
