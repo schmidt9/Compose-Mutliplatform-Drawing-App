@@ -84,7 +84,8 @@ open class ShapePath(var properties: PathProperties = PathProperties()) {
             style = Stroke(
                 width = properties.strokeWidth,
                 cap = properties.strokeCap,
-                join = properties.strokeJoin
+                join = properties.strokeJoin,
+                pathEffect = properties.pathEffect
             )
         )
     }
