@@ -13,7 +13,6 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -24,9 +23,10 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
-import gesture.PointerEvent
 import com.smarttoolfactory.composedrawingapp.ui.theme.backgroundColor
+import gesture.PointerEvent
 import gesture.pointerEvents
 import model.PathProperties
 import ui.graphics.PolygonShape
@@ -38,26 +38,15 @@ import ui.menu.MenuAction
 import ui.menu.MenuButton
 import ui.menu.PolygonActionsMenu
 import ui.menu.ShapesMenu
+import viewmodel.HomeScreenModel
 import kotlin.math.abs
 import kotlin.math.min
 
 class HomeScreen : Screen {
     @Composable
     override fun Content() {
-        /**
-         * Paths that are added, this is required to have paths with different options and paths
-         *  ith erase to keep over each other
-         */
-        val paths = remember { mutableStateListOf<Shape>() }
 
-        /**
-         * Paths that are undone via button. These paths are restored if user pushes
-         * redo button if there is no new path drawn.
-         *
-         * If new path is drawn after this list is cleared to not break paths after undoing previous
-         * ones.
-         */
-        val pathsUndone = remember { mutableStateListOf<Shape>() }
+        val screenModel = rememberScreenModel { HomeScreenModel() }
 
         /**
          * Canvas touch state. [PointerEvent.Idle] by default, [PointerEvent.DragStart] at first contact,
@@ -98,8 +87,6 @@ class HomeScreen : Screen {
 
         var currentMenuButtonAction by remember { mutableStateOf(MenuButton.DrawRectangleMenuButton.menuAction) }
 
-        fun selectedPaths() = paths.filter { it.isSelected }
-
         val isSelectionAction by remember { derivedStateOf { currentMenuButtonAction == MenuAction.DoSelection } }
 
         val isPolygonAction by remember { derivedStateOf {
@@ -117,17 +104,17 @@ class HomeScreen : Screen {
                 actions = {
                     HomeScreenTopMenu(
                         onUndo = {
-                            if (paths.isNotEmpty()) {
-                                val lastItem = paths.last()
-                                paths.remove(lastItem)
-                                pathsUndone.add(lastItem)
+                            if (screenModel.paths.isNotEmpty()) {
+                                val lastItem = screenModel.paths.last()
+                                screenModel.paths.remove(lastItem)
+                                screenModel.pathsUndone.add(lastItem)
                             }
                         },
                         onRedo = {
-                            if (pathsUndone.isNotEmpty()) {
-                                val lastPath = pathsUndone.last()
-                                pathsUndone.removeLast()
-                                paths.add(lastPath)
+                            if (screenModel.pathsUndone.isNotEmpty()) {
+                                val lastPath = screenModel.pathsUndone.last()
+                                screenModel.pathsUndone.removeLast()
+                                screenModel.paths.add(lastPath)
                             }
                         })
                 }
@@ -152,7 +139,7 @@ class HomeScreen : Screen {
                             currentPosition = it
                             previousPosition = it
 
-                            paths.forEach { path ->
+                            screenModel.paths.forEach { path ->
                                 path.isSelected = false
                             }
                         },
@@ -166,7 +153,7 @@ class HomeScreen : Screen {
                             previousPosition = it
 
                             drawMode = if (isSelectionAction) {
-                                if (selectedPaths().isEmpty()) DrawMode.Draw else DrawMode.MoveSelection
+                                if (screenModel.selectedPaths.isEmpty()) DrawMode.Draw else DrawMode.MoveSelection
                             } else {
                                 DrawMode.Draw
                             }
@@ -192,7 +179,7 @@ class HomeScreen : Screen {
                             currentPosition = position
 
                             if (isMoveSelectionDrawMode) {
-                                selectedPaths().forEach { path ->
+                                screenModel.selectedPaths.forEach { path ->
                                     path.translate(dragAmount)
                                 }
                             }
@@ -262,7 +249,7 @@ class HomeScreen : Screen {
                                 // Pointer is up save current path
 
                                 if (isSelectionAction.not() && isPolygonAction.not()) {
-                                    paths.add(currentPath)
+                                    screenModel.paths.add(currentPath)
                                 }
 
                                 // Create new instance of path properties to have new path and properties
@@ -280,7 +267,7 @@ class HomeScreen : Screen {
                             }
 
                             // Since new path is drawn no need to store paths to undone
-                            pathsUndone.clear()
+                            screenModel.pathsUndone.clear()
 
                             // If we leave this state at MotionEvent.Up it causes current path to draw
                             // line from (0,0) if this composable recomposes when draw mode is changed
@@ -303,7 +290,7 @@ class HomeScreen : Screen {
 
                         // draw all paths
 
-                        paths.forEach {
+                        screenModel.paths.forEach {
                             if (it.isSelected.not()) {
                                 it.isSelected = isSelectionAction && it.intersects(currentPath)
                             }
@@ -347,7 +334,7 @@ class HomeScreen : Screen {
                         polygonMenuVisible = false
 
                         if (it == MenuAction.PolygonApply) {
-                            paths.add(currentPath.copy())
+                            screenModel.paths.add(currentPath.copy())
                             currentPath.reset()
                         } else {
                             currentPath.reset()
