@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
@@ -25,7 +24,6 @@ import gesture.PointerEvent
 import gesture.pointerEvents
 import model.PathProperties
 import ui.graphics.PolygonShape
-import ui.graphics.RectShape
 import ui.graphics.Shape
 import ui.menu.DrawingPropertiesMenu
 import ui.menu.HomeScreenTopMenu
@@ -33,8 +31,6 @@ import ui.menu.MenuAction
 import ui.menu.PolygonActionsMenu
 import ui.menu.ShapesMenu
 import viewmodel.HomeScreenModel
-import kotlin.math.abs
-import kotlin.math.min
 
 class HomeScreen : Screen {
     @Composable
