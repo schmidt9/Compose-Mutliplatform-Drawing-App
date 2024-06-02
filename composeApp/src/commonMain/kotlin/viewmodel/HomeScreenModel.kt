@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Offset
 import cafe.adriel.voyager.core.model.ScreenModel
 import gesture.PointerEvent
 import ui.graphics.Shape
@@ -33,5 +34,21 @@ class HomeScreenModel : ScreenModel {
      * pointer is up this path is saved to **paths** and new instance is created
      */
     var currentPath by mutableStateOf(Shape())
+
+    /**
+     * Canvas touch state. [PointerEvent.Idle] by default, [PointerEvent.DragStart] at first contact,
+     * [PointerEvent.Drag] while dragging and [PointerEvent.DragEnd] when first pointer is up
+     */
+    var pointerEvent by mutableStateOf(PointerEvent.Idle)
+
+    /**
+     * Current position of the pointer that is pressed or being moved
+     */
+    var currentPosition by mutableStateOf(Offset.Unspecified)
+
+    /**
+     * Previous motion event before next touch is saved into this current position.
+     */
+    var previousPosition by mutableStateOf(Offset.Unspecified)
 
 }

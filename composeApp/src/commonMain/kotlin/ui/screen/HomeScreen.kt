@@ -49,22 +49,6 @@ class HomeScreen : Screen {
         val screenModel = rememberScreenModel { HomeScreenModel() }
 
         /**
-         * Canvas touch state. [PointerEvent.Idle] by default, [PointerEvent.DragStart] at first contact,
-         * [PointerEvent.Drag] while dragging and [PointerEvent.DragEnd] when first pointer is up
-         */
-        var pointerEvent by remember { mutableStateOf(PointerEvent.Idle) }
-
-        /**
-         * Current position of the pointer that is pressed or being moved
-         */
-        var currentPosition by remember { mutableStateOf(Offset.Unspecified) }
-
-        /**
-         * Previous motion event before next touch is saved into this current position.
-         */
-        var previousPosition by remember { mutableStateOf(Offset.Unspecified) }
-
-        /**
          * Draw mode, erase mode or touch mode to
          */
         var drawMode by remember { mutableStateOf(DrawMode.Draw) }
@@ -128,10 +112,10 @@ class HomeScreen : Screen {
                     .background(Color.White)
                     .pointerEvents(
                         onTap = {
-                            pointerEvent = PointerEvent.Tap
+                            screenModel.pointerEvent = PointerEvent.Tap
 
-                            currentPosition = it
-                            previousPosition = it
+                            screenModel.currentPosition = it
+                            screenModel.previousPosition = it
 
                             screenModel.paths.forEach { path ->
                                 path.isSelected = false
@@ -141,10 +125,10 @@ class HomeScreen : Screen {
                             // TODO: impl
                         },
                         onDragStart = {
-                            pointerEvent = PointerEvent.DragStart
+                            screenModel.pointerEvent = PointerEvent.DragStart
 
-                            currentPosition = it
-                            previousPosition = it
+                            screenModel.currentPosition = it
+                            screenModel.previousPosition = it
 
                             drawMode = if (isSelectionAction) {
                                 if (screenModel.selectedPaths.isEmpty()) DrawMode.Draw else DrawMode.MoveSelection
@@ -155,9 +139,9 @@ class HomeScreen : Screen {
                             when (currentMenuButtonAction) {
                                 MenuAction.DrawPolygon -> {
                                     if (screenModel.currentPath.isEmpty) {
-                                        screenModel.currentPath = PolygonShape(currentPosition)
+                                        screenModel.currentPath = PolygonShape(screenModel.currentPosition)
                                     } else {
-                                        screenModel.currentPath.addPoint(currentPosition)
+                                        screenModel.currentPath.addPoint(screenModel.currentPosition)
                                     }
 
                                     polygonMenuVisible = true
@@ -169,8 +153,8 @@ class HomeScreen : Screen {
                             shapesMenuVisible = false
                         },
                         onDrag = { position, dragAmount ->
-                            pointerEvent = PointerEvent.Drag
-                            currentPosition = position
+                            screenModel.pointerEvent = PointerEvent.Drag
+                            screenModel.currentPosition = position
 
                             if (isMoveSelectionDrawMode) {
                                 screenModel.selectedPaths.forEach { path ->
@@ -179,20 +163,20 @@ class HomeScreen : Screen {
                             }
                         },
                         onDragEnd = {
-                            pointerEvent = PointerEvent.DragEnd
+                            screenModel.pointerEvent = PointerEvent.DragEnd
                         }
                     )
 
                 Canvas(modifier = drawModifier) {
 
-                    when (pointerEvent) {
+                    when (screenModel.pointerEvent) {
                         PointerEvent.Tap -> {
                             when (currentMenuButtonAction) {
                                 MenuAction.DrawPolygon -> {
                                     if (screenModel.currentPath.isEmpty) {
-                                        screenModel.currentPath = PolygonShape(currentPosition)
+                                        screenModel.currentPath = PolygonShape(screenModel.currentPosition)
                                     } else {
-                                        screenModel.currentPath.addPoint(currentPosition)
+                                        screenModel.currentPath.addPoint(screenModel.currentPosition)
                                     }
                                 }
 
@@ -207,21 +191,21 @@ class HomeScreen : Screen {
 
                         PointerEvent.Drag -> {
                             if (isMoveSelectionDrawMode) {
-                                previousPosition = currentPosition
+                                screenModel.previousPosition = screenModel.currentPosition
                             } else {
                                 when (currentMenuButtonAction) {
                                     MenuAction.DrawPolygon -> {
-                                        screenModel.currentPath.setLastPoint(currentPosition)
+                                        screenModel.currentPath.setLastPoint(screenModel.currentPosition)
                                     }
 
                                     MenuAction.DrawRectangle,
                                     MenuAction.DoSelection -> {
-                                        val left = min(previousPosition.x, currentPosition.x)
-                                        val top = min(previousPosition.y, currentPosition.y)
+                                        val left = min(screenModel.previousPosition.x, screenModel.currentPosition.x)
+                                        val top = min(screenModel.previousPosition.y, screenModel.currentPosition.y)
                                         val right =
-                                            left + abs(previousPosition.x - currentPosition.x)
+                                            left + abs(screenModel.previousPosition.x - screenModel.currentPosition.x)
                                         val bottom =
-                                            top + abs(previousPosition.y - currentPosition.y)
+                                            top + abs(screenModel.previousPosition.y - screenModel.currentPosition.y)
 
                                         val rect = Rect(
                                             left = left,
@@ -265,12 +249,12 @@ class HomeScreen : Screen {
 
                             // If we leave this state at MotionEvent.Up it causes current path to draw
                             // line from (0,0) if this composable recomposes when draw mode is changed
-                            currentPosition = Offset.Unspecified
-                            previousPosition = currentPosition
+                            screenModel.currentPosition = Offset.Unspecified
+                            screenModel.previousPosition = screenModel.currentPosition
 
                             when (currentMenuButtonAction) {
                                 MenuAction.DrawRectangle, MenuAction.DoSelection -> {
-                                    pointerEvent = PointerEvent.Idle
+                                    screenModel.pointerEvent = PointerEvent.Idle
                                 }
                                 else -> Unit
                             }
@@ -294,7 +278,7 @@ class HomeScreen : Screen {
 
                         // draw current path
 
-                        if (pointerEvent != PointerEvent.Idle/* && pointerEvent != PointerEvent.Tap*/) {
+                        if (screenModel.pointerEvent != PointerEvent.Idle/* && pointerEvent != PointerEvent.Tap*/) {
                             val pathProperties =
                                 if (isSelectionAction) screenModel.currentPath.selectionPathProperties else screenModel.currentPath.properties
 
@@ -324,7 +308,7 @@ class HomeScreen : Screen {
                         .fillMaxWidth()
                         .background(Color.White),
                     onButtonClick = {
-                        pointerEvent = PointerEvent.Idle
+                        screenModel.pointerEvent = PointerEvent.Idle
                         polygonMenuVisible = false
 
                         if (it == MenuAction.PolygonApply) {
