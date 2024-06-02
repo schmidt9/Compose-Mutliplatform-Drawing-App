@@ -33,7 +33,7 @@ import ui.menu.DrawingPropertiesMenu
 import ui.menu.HomeScreenTopMenu
 import ui.menu.MenuAction
 import ui.menu.MenuButton
-import ui.menu.PolygonPropertiesMenu
+import ui.menu.PolygonActionsMenu
 import ui.menu.ShapesMenu
 import kotlin.math.abs
 import kotlin.math.min
@@ -90,6 +90,8 @@ class HomeScreen : Screen {
         var shapesMenuVisible by remember { mutableStateOf(false) }
 
         var polygonMenuVisible by remember { mutableStateOf(false) }
+
+        var shapesMenuButton: MenuButton by remember { mutableStateOf(MenuButton.DrawRectangleMenuButton) }
 
         var currentMenuButtonAction by remember { mutableStateOf(MenuButton.DrawRectangleMenuButton.menuAction) }
 
@@ -334,12 +336,13 @@ class HomeScreen : Screen {
                         .background(Color.White),
                     selectedMenuAction = currentMenuButtonAction,
                     onIconClick = {
+                        shapesMenuButton = it
                         currentMenuButtonAction = it.menuAction
                         shapesMenuVisible = false
                     }
                 )
 
-                PolygonPropertiesMenu(
+                PolygonActionsMenu(
                     visible = polygonMenuVisible,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -365,12 +368,12 @@ class HomeScreen : Screen {
                         .background(Color.White)
                         .padding(4.dp),
                     pathProperties = currentPath.properties,
-                    shapesMenuButtonAction = currentMenuButtonAction,
+                    shapesMenuButton = shapesMenuButton,
                     shapesMenuButtonSelected = shapesMenuButtonSelected,
                     onShapesMenuButtonClick = {
                         shapesMenuVisible = !shapesMenuVisible
-                        currentMenuButtonAction = it
                         shapesMenuButtonSelected = true
+                        currentMenuButtonAction = it
                         selectionButtonSelected = false
                     },
                     selectionButtonSelected = selectionButtonSelected,

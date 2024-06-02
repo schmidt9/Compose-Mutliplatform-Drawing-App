@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.window.Popup
 
 @Composable
-fun PolygonPropertiesMenu(
+fun PolygonActionsMenu(
     visible: Boolean,
     modifier: Modifier = Modifier,
     onButtonClick: (MenuAction) -> Unit
@@ -26,6 +26,8 @@ fun PolygonPropertiesMenu(
             ) {
                 Column {
                     Divider(color = Color.LightGray)
+
+                    // apply action
 
                     Row(
                         modifier = modifier,
@@ -41,6 +43,8 @@ fun PolygonPropertiesMenu(
                                 tint = Color.Blue
                             )
                         }
+
+                        // cancel action
 
                         IconButton(onClick = {
                             onButtonClick(MenuButton.PolygonCancelMenuButton.menuAction)

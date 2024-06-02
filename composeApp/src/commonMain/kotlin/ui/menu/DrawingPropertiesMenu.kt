@@ -24,7 +24,7 @@ import ui.ColorWheel
 fun DrawingPropertiesMenu(
     modifier: Modifier = Modifier,
     pathProperties: PathProperties,
-    shapesMenuButtonAction: MenuAction,
+    shapesMenuButton: MenuButton,
     shapesMenuButtonSelected: Boolean,
     onShapesMenuButtonClick: (MenuAction) -> Unit,
     selectionButtonSelected: Boolean,
@@ -34,10 +34,6 @@ fun DrawingPropertiesMenu(
 
     var showColorDialog by remember { mutableStateOf(false) }
     var showPropertiesDialog by remember { mutableStateOf(false) }
-    val shapeMenuButton = listOf(
-        MenuButton.DrawPolygonMenuButton,
-        MenuButton.DrawRectangleMenuButton
-    ).firstOrNull { it.menuAction == shapesMenuButtonAction } ?: MenuButton.DrawRectangleMenuButton
 
     Row(
         modifier = modifier,
@@ -58,9 +54,9 @@ fun DrawingPropertiesMenu(
 
         SelectableIconButton(
             onClick = {
-                onShapesMenuButtonClick(shapeMenuButton.menuAction)
+                onShapesMenuButtonClick(shapesMenuButton.menuAction)
             },
-            painter = shapeMenuButton.imagePainter,
+            painter = shapesMenuButton.imagePainter,
             selected = shapesMenuButtonSelected
         )
 
