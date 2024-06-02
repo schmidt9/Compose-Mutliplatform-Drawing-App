@@ -1,11 +1,9 @@
 package viewmodel
 
 import DrawMode
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import cafe.adriel.voyager.core.model.ScreenModel
@@ -87,6 +85,14 @@ class HomeScreenModel : ScreenModel {
     // endregion
 
     // region Methods
+
+    fun clearSelection() {
+        drawMode = DrawMode.Draw
+
+        paths.forEach {
+            it.isSelected = false
+        }
+    }
 
     fun performUndo() {
         if (paths.isEmpty()) {

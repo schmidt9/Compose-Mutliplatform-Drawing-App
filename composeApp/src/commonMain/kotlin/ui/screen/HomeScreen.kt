@@ -184,7 +184,7 @@ class HomeScreen : Screen {
                         }
 
                         PointerEvent.DragEnd -> {
-                            if (screenModel.drawMode != DrawMode.MoveSelection && screenModel.currentMenuButtonAction != MenuAction.DrawPolygon) {
+                            if (!screenModel.isMoveSelectionDrawMode && screenModel.currentMenuButtonAction != MenuAction.DrawPolygon) {
                                 // Pointer is up save current path
 
                                 if (screenModel.isSelectionAction.not() && screenModel.isPolygonAction.not()) {
@@ -296,6 +296,7 @@ class HomeScreen : Screen {
                         screenModel.shapesMenuButtonSelected = true
                         screenModel.currentMenuButtonAction = it
                         screenModel.selectionButtonSelected = false
+                        screenModel.clearSelection()
                     },
                     selectionButtonSelected = screenModel.selectionButtonSelected,
                     onSelectionButtonClick = {

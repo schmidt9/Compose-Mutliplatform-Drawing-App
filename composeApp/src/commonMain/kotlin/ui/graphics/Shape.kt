@@ -1,5 +1,8 @@
 package ui.graphics
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathMeasure
@@ -31,7 +34,7 @@ open class Shape(var properties: PathProperties = PathProperties()) {
 
     open var shouldClose = false
 
-    var isSelected = false
+    var isSelected by mutableStateOf(false)
 
     private var points = mutableListOf<Offset>()
         @JvmName("setShapePoints")
