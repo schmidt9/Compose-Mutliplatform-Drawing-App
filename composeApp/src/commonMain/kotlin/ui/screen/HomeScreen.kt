@@ -78,9 +78,7 @@ class HomeScreen : Screen {
                             screenModel.currentPosition = it
                             screenModel.previousPosition = it
 
-                            screenModel.shapes.forEach { path ->
-                                path.isSelected = false
-                            }
+                            screenModel.clearSelection()
                         },
                         onDoubleTap = {
                             // TODO: impl
@@ -118,9 +116,7 @@ class HomeScreen : Screen {
                             screenModel.currentPosition = position
 
                             if (screenModel.isMoveSelectionDrawMode) {
-                                screenModel.selectedShapes.forEach { path ->
-                                    path.translate(dragAmount)
-                                }
+                                screenModel.translateSelectedShapes(dragAmount)
                             }
                         },
                         onDragEnd = {
@@ -161,21 +157,7 @@ class HomeScreen : Screen {
 
                                     MenuAction.DrawRectangle,
                                     MenuAction.DoSelection -> {
-                                        val left = min(screenModel.previousPosition.x, screenModel.currentPosition.x)
-                                        val top = min(screenModel.previousPosition.y, screenModel.currentPosition.y)
-                                        val right =
-                                            left + abs(screenModel.previousPosition.x - screenModel.currentPosition.x)
-                                        val bottom =
-                                            top + abs(screenModel.previousPosition.y - screenModel.currentPosition.y)
-
-                                        val rect = Rect(
-                                            left = left,
-                                            top = top,
-                                            right = right,
-                                            bottom = bottom
-                                        )
-
-                                        screenModel.currentShape = RectShape(rect)
+                                        screenModel.setRectShapeAsCurrentShape()
                                     }
 
                                     else -> Unit

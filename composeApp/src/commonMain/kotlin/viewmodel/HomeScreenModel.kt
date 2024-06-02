@@ -6,11 +6,15 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import cafe.adriel.voyager.core.model.ScreenModel
 import gesture.PointerEvent
+import ui.graphics.RectShape
 import ui.graphics.Shape
 import ui.menu.MenuAction
 import ui.menu.MenuButton
+import kotlin.math.abs
+import kotlin.math.min
 
 class HomeScreenModel : ScreenModel {
 
@@ -92,6 +96,30 @@ class HomeScreenModel : ScreenModel {
         shapes.forEach {
             it.isSelected = false
         }
+    }
+
+    fun translateSelectedShapes(offset: Offset) {
+        selectedShapes.forEach {
+            it.translate(offset)
+        }
+    }
+
+    fun setRectShapeAsCurrentShape() {
+        val left = min(previousPosition.x, currentPosition.x)
+        val top = min(previousPosition.y, currentPosition.y)
+        val right =
+            left + abs(previousPosition.x - currentPosition.x)
+        val bottom =
+            top + abs(previousPosition.y - currentPosition.y)
+
+        val rect = Rect(
+            left = left,
+            top = top,
+            right = right,
+            bottom = bottom
+        )
+
+        currentShape = RectShape(rect)
     }
 
     fun performUndo() {
