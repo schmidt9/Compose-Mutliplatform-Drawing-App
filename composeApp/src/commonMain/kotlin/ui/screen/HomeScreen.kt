@@ -291,7 +291,8 @@ class HomeScreen : Screen {
                     shapesMenuButton = screenModel.shapesMenuButton,
                     shapesMenuButtonSelected = screenModel.shapesMenuButtonSelected,
                     onShapesMenuButtonClick = {
-                        screenModel.shapesMenuVisible = !screenModel.shapesMenuVisible
+                        // show shapes menu on second button click only
+                        screenModel.shapesMenuVisible = !screenModel.shapesMenuVisible && screenModel.shapesMenuButtonSelected
                         screenModel.shapesMenuButtonSelected = true
                         screenModel.currentMenuButtonAction = it
                         screenModel.selectionButtonSelected = false
