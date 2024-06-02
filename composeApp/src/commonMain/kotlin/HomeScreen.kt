@@ -303,15 +303,13 @@ class HomeScreen : Screen {
 
                     with(drawContext.canvas.nativeCanvas) {
                         val checkPoint = saveLayer(null, null)
-                        println("PATHS ${paths.count()}")
+
                         // draw all paths
 
                         paths.forEach {
                             if (it.isSelected.not()) {
                                 it.isSelected = isSelectionAction && it.intersects(currentPath)
                             }
-
-                            println("POINTS COUNT ${it.getPoints().count()}")
 
                             it.draw(this@Canvas)
                         }
