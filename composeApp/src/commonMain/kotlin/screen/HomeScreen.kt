@@ -1,3 +1,6 @@
+package screen
+
+import DrawMode
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
