@@ -17,27 +17,27 @@ class HomeScreenModel : ScreenModel {
     // region Properties
 
     /**
-     * Paths that are added, this is required to have paths with different options and paths
+     * Shapes that are added, this is required to have shapes with different options and shapes
      *  ith erase to keep over each other
      */
-    val paths = mutableStateListOf<Shape>()
+    val shapes = mutableStateListOf<Shape>()
 
     /**
-     * Paths that are undone via button. These paths are restored if user pushes
-     * redo button if there is no new path drawn.
+     * Shapes that are undone via button. These shapes are restored if user pushes
+     * redo button if there is no new shape drawn.
      *
-     * If new path is drawn after this list is cleared to not break paths after undoing previous
+     * If new shape is drawn after this list is cleared to not break shapes after undoing previous
      * ones.
      */
-    val pathsUndone = mutableStateListOf<Shape>()
+    val shapesUndone = mutableStateListOf<Shape>()
 
-    val selectedPaths get() = paths.filter { it.isSelected }
+    val selectedShapes get() = shapes.filter { it.isSelected }
 
     /**
-     * Path that is being drawn between [PointerEvent.DragStart] and [PointerEvent.DragEnd]. When
-     * pointer is up this path is saved to **paths** and new instance is created
+     * Shapes that is being drawn between [PointerEvent.DragStart] and [PointerEvent.DragEnd]. When
+     * pointer is up this shape is saved to **shapes** and new instance is created
      */
-    var currentPath by mutableStateOf(Shape())
+    var currentShape by mutableStateOf(Shape())
 
     /**
      * Canvas touch state. [PointerEvent.Idle] by default, [PointerEvent.DragStart] at first contact,
@@ -89,29 +89,29 @@ class HomeScreenModel : ScreenModel {
     fun clearSelection() {
         drawMode = DrawMode.Draw
 
-        paths.forEach {
+        shapes.forEach {
             it.isSelected = false
         }
     }
 
     fun performUndo() {
-        if (paths.isEmpty()) {
+        if (shapes.isEmpty()) {
             return
         }
 
-        val lastItem = paths.last()
-        paths.remove(lastItem)
-        pathsUndone.add(lastItem)
+        val lastItem = shapes.last()
+        shapes.remove(lastItem)
+        shapesUndone.add(lastItem)
     }
 
     fun performRedo() {
-        if (pathsUndone.isEmpty()) {
+        if (shapesUndone.isEmpty()) {
             return
         }
 
-        val lastPath = pathsUndone.last()
-        pathsUndone.removeLast()
-        paths.add(lastPath)
+        val lastShape = shapesUndone.last()
+        shapesUndone.removeLast()
+        shapes.add(lastShape)
     }
 
     // endregion

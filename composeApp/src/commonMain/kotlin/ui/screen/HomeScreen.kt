@@ -78,7 +78,7 @@ class HomeScreen : Screen {
                             screenModel.currentPosition = it
                             screenModel.previousPosition = it
 
-                            screenModel.paths.forEach { path ->
+                            screenModel.shapes.forEach { path ->
                                 path.isSelected = false
                             }
                         },
@@ -92,17 +92,17 @@ class HomeScreen : Screen {
                             screenModel.previousPosition = it
 
                             screenModel.drawMode = if (screenModel.isSelectionAction) {
-                                if (screenModel.selectedPaths.isEmpty()) DrawMode.Draw else DrawMode.MoveSelection
+                                if (screenModel.selectedShapes.isEmpty()) DrawMode.Draw else DrawMode.MoveSelection
                             } else {
                                 DrawMode.Draw
                             }
 
                             when (screenModel.currentMenuButtonAction) {
                                 MenuAction.DrawPolygon -> {
-                                    if (screenModel.currentPath.isEmpty) {
-                                        screenModel.currentPath = PolygonShape(screenModel.currentPosition)
+                                    if (screenModel.currentShape.isEmpty) {
+                                        screenModel.currentShape = PolygonShape(screenModel.currentPosition)
                                     } else {
-                                        screenModel.currentPath.addPoint(screenModel.currentPosition)
+                                        screenModel.currentShape.addPoint(screenModel.currentPosition)
                                     }
 
                                     screenModel.polygonMenuVisible = true
@@ -118,7 +118,7 @@ class HomeScreen : Screen {
                             screenModel.currentPosition = position
 
                             if (screenModel.isMoveSelectionDrawMode) {
-                                screenModel.selectedPaths.forEach { path ->
+                                screenModel.selectedShapes.forEach { path ->
                                     path.translate(dragAmount)
                                 }
                             }
@@ -134,10 +134,10 @@ class HomeScreen : Screen {
                         PointerEvent.Tap -> {
                             when (screenModel.currentMenuButtonAction) {
                                 MenuAction.DrawPolygon -> {
-                                    if (screenModel.currentPath.isEmpty) {
-                                        screenModel.currentPath = PolygonShape(screenModel.currentPosition)
+                                    if (screenModel.currentShape.isEmpty) {
+                                        screenModel.currentShape = PolygonShape(screenModel.currentPosition)
                                     } else {
-                                        screenModel.currentPath.addPoint(screenModel.currentPosition)
+                                        screenModel.currentShape.addPoint(screenModel.currentPosition)
                                     }
                                 }
 
@@ -156,7 +156,7 @@ class HomeScreen : Screen {
                             } else {
                                 when (screenModel.currentMenuButtonAction) {
                                     MenuAction.DrawPolygon -> {
-                                        screenModel.currentPath.setLastPoint(screenModel.currentPosition)
+                                        screenModel.currentShape.setLastPoint(screenModel.currentPosition)
                                     }
 
                                     MenuAction.DrawRectangle,
@@ -175,7 +175,7 @@ class HomeScreen : Screen {
                                             bottom = bottom
                                         )
 
-                                        screenModel.currentPath = RectShape(rect)
+                                        screenModel.currentShape = RectShape(rect)
                                     }
 
                                     else -> Unit
@@ -188,25 +188,25 @@ class HomeScreen : Screen {
                                 // Pointer is up save current path
 
                                 if (screenModel.isSelectionAction.not() && screenModel.isPolygonAction.not()) {
-                                    screenModel.paths.add(screenModel.currentPath)
+                                    screenModel.shapes.add(screenModel.currentShape)
                                 }
 
                                 // Create new instance of path properties to have new path and properties
                                 // only for the one currently being drawn
                                 val properties = PathProperties(
-                                    strokeWidth = screenModel.currentPath.properties.strokeWidth,
-                                    color = screenModel.currentPath.properties.color,
-                                    strokeCap = screenModel.currentPath.properties.strokeCap,
-                                    strokeJoin = screenModel.currentPath.properties.strokeJoin,
+                                    strokeWidth = screenModel.currentShape.properties.strokeWidth,
+                                    color = screenModel.currentShape.properties.color,
+                                    strokeCap = screenModel.currentShape.properties.strokeCap,
+                                    strokeJoin = screenModel.currentShape.properties.strokeJoin,
                                 )
 
                                 // Since paths are keys for map, use new one for each key
                                 // and have separate path for each down-move-up gesture cycle
-                                screenModel.currentPath = Shape(properties)
+                                screenModel.currentShape = Shape(properties)
                             }
 
                             // Since new path is drawn no need to store paths to undone
-                            screenModel.pathsUndone.clear()
+                            screenModel.shapesUndone.clear()
 
                             // If we leave this state at MotionEvent.Up it causes current path to draw
                             // line from (0,0) if this composable recomposes when draw mode is changed
@@ -229,9 +229,9 @@ class HomeScreen : Screen {
 
                         // draw all paths
 
-                        screenModel.paths.forEach {
+                        screenModel.shapes.forEach {
                             if (it.isSelected.not()) {
-                                it.isSelected = screenModel.isSelectionAction && it.intersects(screenModel.currentPath)
+                                it.isSelected = screenModel.isSelectionAction && it.intersects(screenModel.currentShape)
                             }
 
                             it.draw(this@Canvas)
@@ -241,9 +241,9 @@ class HomeScreen : Screen {
 
                         if (screenModel.pointerEvent != PointerEvent.Idle/* && pointerEvent != PointerEvent.Tap*/) {
                             val pathProperties =
-                                if (screenModel.isSelectionAction) screenModel.currentPath.selectionPathProperties else screenModel.currentPath.properties
+                                if (screenModel.isSelectionAction) screenModel.currentShape.selectionPathProperties else screenModel.currentShape.properties
 
-                            screenModel.currentPath.draw(this@Canvas, pathProperties)
+                            screenModel.currentShape.draw(this@Canvas, pathProperties)
                         }
 
                         restoreToCount(checkPoint)
@@ -273,10 +273,10 @@ class HomeScreen : Screen {
                         screenModel.polygonMenuVisible = false
 
                         if (it == MenuAction.PolygonApply) {
-                            screenModel.paths.add(screenModel.currentPath.copy())
-                            screenModel.currentPath.reset()
+                            screenModel.shapes.add(screenModel.currentShape.copy())
+                            screenModel.currentShape.reset()
                         } else {
-                            screenModel.currentPath.reset()
+                            screenModel.currentShape.reset()
                         }
                     }
                 )
@@ -287,7 +287,7 @@ class HomeScreen : Screen {
                         .fillMaxWidth()
                         .background(Color.White)
                         .padding(4.dp),
-                    pathProperties = screenModel.currentPath.properties,
+                    pathProperties = screenModel.currentShape.properties,
                     shapesMenuButton = screenModel.shapesMenuButton,
                     shapesMenuButtonSelected = screenModel.shapesMenuButtonSelected,
                     onShapesMenuButtonClick = {
