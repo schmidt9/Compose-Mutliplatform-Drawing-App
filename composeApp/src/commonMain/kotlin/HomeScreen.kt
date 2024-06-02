@@ -249,15 +249,7 @@ class HomeScreen : Screen {
                                         currentPath = RectShape(rect)
                                     }
 
-                                    MenuAction.PolygonApply -> {
-
-                                    }
-
-                                    MenuAction.PolygonCancel -> {
-
-                                    }
-
-                                    MenuAction.None -> {}
+                                    else -> Unit
                                 }
                             }
                         }
@@ -349,7 +341,6 @@ class HomeScreen : Screen {
                         .background(Color.White),
                     onButtonClick = {
                         pointerEvent = PointerEvent.Idle
-                        currentMenuButtonAction = it
                         polygonMenuVisible = false
 
                         if (it == MenuAction.PolygonApply) {
