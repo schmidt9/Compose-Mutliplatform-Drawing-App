@@ -3,7 +3,6 @@ package ui.menu
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Brush
@@ -72,12 +71,12 @@ fun DrawingPropertiesMenu(
 
     if (showColorDialog) {
         ColorSelectionDialog(
-            properties.color,
+            properties.strokeColor,
             onDismiss = { showColorDialog = !showColorDialog },
             onNegativeClick = { showColorDialog = !showColorDialog },
             onPositiveClick = { color: Color ->
                 showColorDialog = !showColorDialog
-                properties.color = color
+                properties.strokeColor = color
             }
         )
     }

@@ -173,7 +173,7 @@ class HomeScreen : Screen {
                                 // only for the one currently being drawn
                                 val properties = PathProperties(
                                     strokeWidth = screenModel.currentShape.properties.strokeWidth,
-                                    color = screenModel.currentShape.properties.color,
+                                    strokeColor = screenModel.currentShape.properties.strokeColor,
                                     strokeCap = screenModel.currentShape.properties.strokeCap,
                                     strokeJoin = screenModel.currentShape.properties.strokeJoin,
                                 )

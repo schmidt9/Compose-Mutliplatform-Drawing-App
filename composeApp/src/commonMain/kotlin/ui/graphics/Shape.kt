@@ -14,7 +14,7 @@ import model.selectedPathProperties
 import model.selectionPathProperties
 import kotlin.jvm.JvmName
 
-open class Shape(var properties: PathProperties = PathProperties()) {
+open class Shape(open var properties: PathProperties = PathProperties()) {
 
     enum class PropertiesType {
         Default,
@@ -59,7 +59,7 @@ open class Shape(var properties: PathProperties = PathProperties()) {
         draw(drawScope, currentProperties)
     }
 
-    fun draw(
+    open fun draw(
         drawScope: DrawScope,
         properties: PathProperties
     ) {
@@ -67,9 +67,16 @@ open class Shape(var properties: PathProperties = PathProperties()) {
             return
         }
 
+        properties.fillColor?.let {
+            drawScope.drawPath(
+                path = path,
+                color = it
+            )
+        }
+
         drawScope.drawPath(
             path = path,
-            color = properties.color,
+            color = properties.strokeColor,
             style = Stroke(
                 width = properties.strokeWidth,
                 cap = properties.strokeCap,
@@ -79,8 +86,9 @@ open class Shape(var properties: PathProperties = PathProperties()) {
         )
     }
 
-    fun translate(offset: Offset) {
+    open fun translate(offset: Offset) {
         path.translate(offset)
+        points = points.map { it.plus(offset) }.toMutableList()
     }
 
     fun moveTo(x: Float, y: Float) {

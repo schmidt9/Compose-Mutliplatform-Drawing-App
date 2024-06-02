@@ -7,7 +7,8 @@ import androidx.compose.ui.graphics.StrokeJoin
 
 class PathProperties(
     var strokeWidth: Float = 10f,
-    var color: Color = Color.Black,
+    var strokeColor: Color = Color.Black,
+    var fillColor: Color? = null,
     var alpha: Float = 1f,
     var strokeCap: StrokeCap = StrokeCap.Round,
     var strokeJoin: StrokeJoin = StrokeJoin.Round,
@@ -18,17 +19,18 @@ class PathProperties(
 
     fun copy(
         strokeWidth: Float = this.strokeWidth,
-        color: Color = this.color,
+        strokeColor: Color = this.strokeColor,
+        fillColor: Color? = this.fillColor,
         alpha: Float = this.alpha,
         strokeCap: StrokeCap = this.strokeCap,
         strokeJoin: StrokeJoin = this.strokeJoin
     ) = PathProperties(
-        strokeWidth, color, alpha, strokeCap, strokeJoin
+        strokeWidth, strokeColor, fillColor, alpha, strokeCap, strokeJoin
     )
 
     fun copyFrom(properties: PathProperties) {
         this.strokeWidth = properties.strokeWidth
-        this.color = properties.color
+        this.strokeColor = properties.strokeColor
         this.strokeCap = properties.strokeCap
         this.strokeJoin = properties.strokeJoin
     }
@@ -37,12 +39,18 @@ class PathProperties(
 val PathProperties.Companion.selectionPathProperties
     get() = PathProperties(
         strokeWidth = 5f,
-        color = Color.Cyan,
+        strokeColor = Color.Cyan,
         pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 20f))
     )
 
 val PathProperties.Companion.selectedPathProperties
     get() = PathProperties(
         strokeWidth = 20f,
-        color = Color.Cyan,
+        strokeColor = Color.Cyan,
+    )
+
+val PathProperties.Companion.handleProperties
+    get() = PathProperties(
+        strokeWidth = 2f,
+        fillColor = Color.White.copy(alpha = 0.8f),
     )

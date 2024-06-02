@@ -61,7 +61,7 @@ fun PropertiesMenuDialog(pathOption: PathProperties, onDismiss: () -> Unit) {
                     path.lineTo(size.width, size.height / 2)
 
                     drawPath(
-                        color = pathOption.color,
+                        color = pathOption.strokeColor,
                         path = path,
                         style = Stroke(
                             width = strokeWidth,
