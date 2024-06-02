@@ -75,18 +75,10 @@ class HomeScreen : Screen {
                 actions = {
                     HomeScreenTopMenu(
                         onUndo = {
-                            if (screenModel.paths.isNotEmpty()) {
-                                val lastItem = screenModel.paths.last()
-                                screenModel.paths.remove(lastItem)
-                                screenModel.pathsUndone.add(lastItem)
-                            }
+                            screenModel.performUndo()
                         },
                         onRedo = {
-                            if (screenModel.pathsUndone.isNotEmpty()) {
-                                val lastPath = screenModel.pathsUndone.last()
-                                screenModel.pathsUndone.removeLast()
-                                screenModel.paths.add(lastPath)
-                            }
+                            screenModel.performRedo()
                         })
                 }
             )

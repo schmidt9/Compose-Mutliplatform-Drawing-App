@@ -12,6 +12,8 @@ import ui.graphics.Shape
 
 class HomeScreenModel : ScreenModel {
 
+    // region Properties
+
     /**
      * Paths that are added, this is required to have paths with different options and paths
      *  ith erase to keep over each other
@@ -57,4 +59,31 @@ class HomeScreenModel : ScreenModel {
     var drawMode by mutableStateOf(DrawMode.Draw)
 
     val isMoveSelectionDrawMode get() = (drawMode == DrawMode.MoveSelection)
+
+    // endregion
+
+    // region Methods
+
+    fun performUndo() {
+        if (paths.isEmpty()) {
+            return
+        }
+
+        val lastItem = paths.last()
+        paths.remove(lastItem)
+        pathsUndone.add(lastItem)
+    }
+
+    fun performRedo() {
+        if (pathsUndone.isEmpty()) {
+            return
+        }
+
+        val lastPath = pathsUndone.last()
+        pathsUndone.removeLast()
+        paths.add(lastPath)
+    }
+
+    // endregion
+
 }
