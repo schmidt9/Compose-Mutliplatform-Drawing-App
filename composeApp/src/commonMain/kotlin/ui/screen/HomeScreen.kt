@@ -11,11 +11,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
@@ -35,7 +30,6 @@ import ui.graphics.Shape
 import ui.menu.DrawingPropertiesMenu
 import ui.menu.HomeScreenTopMenu
 import ui.menu.MenuAction
-import ui.menu.MenuButton
 import ui.menu.PolygonActionsMenu
 import ui.menu.ShapesMenu
 import viewmodel.HomeScreenModel
@@ -47,24 +41,6 @@ class HomeScreen : Screen {
     override fun Content() {
 
         val screenModel = rememberScreenModel { HomeScreenModel() }
-
-        var shapesMenuButtonSelected by remember { mutableStateOf(true) }
-
-        var selectionButtonSelected by remember { mutableStateOf(false) }
-
-        var shapesMenuVisible by remember { mutableStateOf(false) }
-
-        var polygonMenuVisible by remember { mutableStateOf(false) }
-
-        var shapesMenuButton: MenuButton by remember { mutableStateOf(MenuButton.DrawRectangleMenuButton) }
-
-        var currentMenuButtonAction by remember { mutableStateOf(MenuButton.DrawRectangleMenuButton.menuAction) }
-
-        val isSelectionAction by remember { derivedStateOf { currentMenuButtonAction == MenuAction.DoSelection } }
-
-        val isPolygonAction by remember { derivedStateOf {
-            listOf(MenuAction.DrawPolygon, MenuAction.PolygonApply, MenuAction.PolygonCancel).contains(currentMenuButtonAction)
-        } }
 
         Scaffold(topBar = {
             TopAppBar(
@@ -115,13 +91,13 @@ class HomeScreen : Screen {
                             screenModel.currentPosition = it
                             screenModel.previousPosition = it
 
-                            screenModel.drawMode = if (isSelectionAction) {
+                            screenModel.drawMode = if (screenModel.isSelectionAction) {
                                 if (screenModel.selectedPaths.isEmpty()) DrawMode.Draw else DrawMode.MoveSelection
                             } else {
                                 DrawMode.Draw
                             }
 
-                            when (currentMenuButtonAction) {
+                            when (screenModel.currentMenuButtonAction) {
                                 MenuAction.DrawPolygon -> {
                                     if (screenModel.currentPath.isEmpty) {
                                         screenModel.currentPath = PolygonShape(screenModel.currentPosition)
@@ -129,13 +105,13 @@ class HomeScreen : Screen {
                                         screenModel.currentPath.addPoint(screenModel.currentPosition)
                                     }
 
-                                    polygonMenuVisible = true
+                                    screenModel.polygonMenuVisible = true
                                 }
 
                                 else -> Unit
                             }
 
-                            shapesMenuVisible = false
+                            screenModel.shapesMenuVisible = false
                         },
                         onDrag = { position, dragAmount ->
                             screenModel.pointerEvent = PointerEvent.Drag
@@ -156,7 +132,7 @@ class HomeScreen : Screen {
 
                     when (screenModel.pointerEvent) {
                         PointerEvent.Tap -> {
-                            when (currentMenuButtonAction) {
+                            when (screenModel.currentMenuButtonAction) {
                                 MenuAction.DrawPolygon -> {
                                     if (screenModel.currentPath.isEmpty) {
                                         screenModel.currentPath = PolygonShape(screenModel.currentPosition)
@@ -178,7 +154,7 @@ class HomeScreen : Screen {
                             if (screenModel.isMoveSelectionDrawMode) {
                                 screenModel.previousPosition = screenModel.currentPosition
                             } else {
-                                when (currentMenuButtonAction) {
+                                when (screenModel.currentMenuButtonAction) {
                                     MenuAction.DrawPolygon -> {
                                         screenModel.currentPath.setLastPoint(screenModel.currentPosition)
                                     }
@@ -208,10 +184,10 @@ class HomeScreen : Screen {
                         }
 
                         PointerEvent.DragEnd -> {
-                            if (screenModel.drawMode != DrawMode.MoveSelection && currentMenuButtonAction != MenuAction.DrawPolygon) {
+                            if (screenModel.drawMode != DrawMode.MoveSelection && screenModel.currentMenuButtonAction != MenuAction.DrawPolygon) {
                                 // Pointer is up save current path
 
-                                if (isSelectionAction.not() && isPolygonAction.not()) {
+                                if (screenModel.isSelectionAction.not() && screenModel.isPolygonAction.not()) {
                                     screenModel.paths.add(screenModel.currentPath)
                                 }
 
@@ -237,7 +213,7 @@ class HomeScreen : Screen {
                             screenModel.currentPosition = Offset.Unspecified
                             screenModel.previousPosition = screenModel.currentPosition
 
-                            when (currentMenuButtonAction) {
+                            when (screenModel.currentMenuButtonAction) {
                                 MenuAction.DrawRectangle, MenuAction.DoSelection -> {
                                     screenModel.pointerEvent = PointerEvent.Idle
                                 }
@@ -255,7 +231,7 @@ class HomeScreen : Screen {
 
                         screenModel.paths.forEach {
                             if (it.isSelected.not()) {
-                                it.isSelected = isSelectionAction && it.intersects(screenModel.currentPath)
+                                it.isSelected = screenModel.isSelectionAction && it.intersects(screenModel.currentPath)
                             }
 
                             it.draw(this@Canvas)
@@ -265,7 +241,7 @@ class HomeScreen : Screen {
 
                         if (screenModel.pointerEvent != PointerEvent.Idle/* && pointerEvent != PointerEvent.Tap*/) {
                             val pathProperties =
-                                if (isSelectionAction) screenModel.currentPath.selectionPathProperties else screenModel.currentPath.properties
+                                if (screenModel.isSelectionAction) screenModel.currentPath.selectionPathProperties else screenModel.currentPath.properties
 
                             screenModel.currentPath.draw(this@Canvas, pathProperties)
                         }
@@ -275,26 +251,26 @@ class HomeScreen : Screen {
                 }
 
                 ShapesMenu(
-                    visible = shapesMenuVisible,
+                    visible = screenModel.shapesMenuVisible,
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color.White),
-                    selectedMenuAction = currentMenuButtonAction,
+                    selectedMenuAction = screenModel.currentMenuButtonAction,
                     onIconClick = {
-                        shapesMenuButton = it
-                        currentMenuButtonAction = it.menuAction
-                        shapesMenuVisible = false
+                        screenModel.shapesMenuButton = it
+                        screenModel.currentMenuButtonAction = it.menuAction
+                        screenModel.shapesMenuVisible = false
                     }
                 )
 
                 PolygonActionsMenu(
-                    visible = polygonMenuVisible,
+                    visible = screenModel.polygonMenuVisible,
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color.White),
                     onButtonClick = {
                         screenModel.pointerEvent = PointerEvent.Idle
-                        polygonMenuVisible = false
+                        screenModel.polygonMenuVisible = false
 
                         if (it == MenuAction.PolygonApply) {
                             screenModel.paths.add(screenModel.currentPath.copy())
@@ -312,19 +288,19 @@ class HomeScreen : Screen {
                         .background(Color.White)
                         .padding(4.dp),
                     pathProperties = screenModel.currentPath.properties,
-                    shapesMenuButton = shapesMenuButton,
-                    shapesMenuButtonSelected = shapesMenuButtonSelected,
+                    shapesMenuButton = screenModel.shapesMenuButton,
+                    shapesMenuButtonSelected = screenModel.shapesMenuButtonSelected,
                     onShapesMenuButtonClick = {
-                        shapesMenuVisible = !shapesMenuVisible
-                        shapesMenuButtonSelected = true
-                        currentMenuButtonAction = it
-                        selectionButtonSelected = false
+                        screenModel.shapesMenuVisible = !screenModel.shapesMenuVisible
+                        screenModel.shapesMenuButtonSelected = true
+                        screenModel.currentMenuButtonAction = it
+                        screenModel.selectionButtonSelected = false
                     },
-                    selectionButtonSelected = selectionButtonSelected,
+                    selectionButtonSelected = screenModel.selectionButtonSelected,
                     onSelectionButtonClick = {
-                        currentMenuButtonAction = it
-                        shapesMenuButtonSelected = false
-                        selectionButtonSelected = true
+                        screenModel.currentMenuButtonAction = it
+                        screenModel.shapesMenuButtonSelected = false
+                        screenModel.selectionButtonSelected = true
                     }
                 )
 

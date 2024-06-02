@@ -1,14 +1,18 @@
 package viewmodel
 
 import DrawMode
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import cafe.adriel.voyager.core.model.ScreenModel
 import gesture.PointerEvent
 import ui.graphics.Shape
+import ui.menu.MenuAction
+import ui.menu.MenuButton
 
 class HomeScreenModel : ScreenModel {
 
@@ -59,6 +63,26 @@ class HomeScreenModel : ScreenModel {
     var drawMode by mutableStateOf(DrawMode.Draw)
 
     val isMoveSelectionDrawMode get() = (drawMode == DrawMode.MoveSelection)
+
+    var shapesMenuButtonSelected by mutableStateOf(true)
+
+    var selectionButtonSelected by mutableStateOf(false)
+
+    var shapesMenuVisible by mutableStateOf(false)
+
+    var polygonMenuVisible by mutableStateOf(false)
+
+    var shapesMenuButton: MenuButton by mutableStateOf(MenuButton.DrawRectangleMenuButton)
+
+    var currentMenuButtonAction by mutableStateOf(MenuButton.DrawRectangleMenuButton.menuAction)
+
+    val isSelectionAction get() = (currentMenuButtonAction == MenuAction.DoSelection)
+
+    val isPolygonAction get() = listOf(
+        MenuAction.DrawPolygon,
+        MenuAction.PolygonApply,
+        MenuAction.PolygonCancel
+    ).contains(currentMenuButtonAction)
 
     // endregion
 
