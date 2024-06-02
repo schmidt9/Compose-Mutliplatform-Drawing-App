@@ -1,5 +1,6 @@
 package viewmodel
 
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -51,4 +52,10 @@ class HomeScreenModel : ScreenModel {
      */
     var previousPosition by mutableStateOf(Offset.Unspecified)
 
+    /**
+     * Draw mode, erase mode or touch mode to
+     */
+    var drawMode by mutableStateOf(DrawMode.Draw)
+
+    val isMoveSelectionDrawMode get() = (drawMode == DrawMode.MoveSelection)
 }

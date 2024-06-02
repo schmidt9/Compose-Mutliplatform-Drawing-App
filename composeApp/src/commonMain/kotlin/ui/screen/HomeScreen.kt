@@ -48,11 +48,6 @@ class HomeScreen : Screen {
 
         val screenModel = rememberScreenModel { HomeScreenModel() }
 
-        /**
-         * Draw mode, erase mode or touch mode to
-         */
-        var drawMode by remember { mutableStateOf(DrawMode.Draw) }
-
         var shapesMenuButtonSelected by remember { mutableStateOf(true) }
 
         var selectionButtonSelected by remember { mutableStateOf(false) }
@@ -70,8 +65,6 @@ class HomeScreen : Screen {
         val isPolygonAction by remember { derivedStateOf {
             listOf(MenuAction.DrawPolygon, MenuAction.PolygonApply, MenuAction.PolygonCancel).contains(currentMenuButtonAction)
         } }
-
-        val isMoveSelectionDrawMode by remember { derivedStateOf { drawMode == DrawMode.MoveSelection } }
 
         Scaffold(topBar = {
             TopAppBar(
@@ -130,7 +123,7 @@ class HomeScreen : Screen {
                             screenModel.currentPosition = it
                             screenModel.previousPosition = it
 
-                            drawMode = if (isSelectionAction) {
+                            screenModel.drawMode = if (isSelectionAction) {
                                 if (screenModel.selectedPaths.isEmpty()) DrawMode.Draw else DrawMode.MoveSelection
                             } else {
                                 DrawMode.Draw
@@ -156,7 +149,7 @@ class HomeScreen : Screen {
                             screenModel.pointerEvent = PointerEvent.Drag
                             screenModel.currentPosition = position
 
-                            if (isMoveSelectionDrawMode) {
+                            if (screenModel.isMoveSelectionDrawMode) {
                                 screenModel.selectedPaths.forEach { path ->
                                     path.translate(dragAmount)
                                 }
@@ -190,7 +183,7 @@ class HomeScreen : Screen {
                         }
 
                         PointerEvent.Drag -> {
-                            if (isMoveSelectionDrawMode) {
+                            if (screenModel.isMoveSelectionDrawMode) {
                                 screenModel.previousPosition = screenModel.currentPosition
                             } else {
                                 when (currentMenuButtonAction) {
@@ -223,7 +216,7 @@ class HomeScreen : Screen {
                         }
 
                         PointerEvent.DragEnd -> {
-                            if (drawMode != DrawMode.MoveSelection && currentMenuButtonAction != MenuAction.DrawPolygon) {
+                            if (screenModel.drawMode != DrawMode.MoveSelection && currentMenuButtonAction != MenuAction.DrawPolygon) {
                                 // Pointer is up save current path
 
                                 if (isSelectionAction.not() && isPolygonAction.not()) {
