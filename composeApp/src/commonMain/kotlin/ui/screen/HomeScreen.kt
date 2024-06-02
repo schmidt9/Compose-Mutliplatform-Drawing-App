@@ -1,4 +1,4 @@
-package screen
+package ui.screen
 
 import DrawMode
 import androidx.compose.foundation.Canvas

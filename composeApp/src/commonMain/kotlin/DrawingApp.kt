@@ -7,7 +7,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import com.smarttoolfactory.composedrawingapp.ui.theme.ComposeDrawingAppTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import screen.HomeScreen
+import ui.screen.HomeScreen
 
 @Composable
 @Preview
