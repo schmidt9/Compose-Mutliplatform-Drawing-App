@@ -1,12 +1,13 @@
 package ui.graphics
 
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import model.PathProperties
 
 open class PolylineShape : Shape() {
 
     private var handles = listOf<HandleShape>()
+
+    var showHandles = false
 
     override fun createPath() {
         super.createPath()
@@ -32,16 +33,14 @@ open class PolylineShape : Shape() {
         }
     }
 
-    override fun translate(offset: Offset) {
-        super.translate(offset)
-
-
-    }
-
     private fun updateHandles() {
         handles = listOf()
 
-        if (isSelected) {
+        if (isSelected.not()) {
+            showHandles = false
+        }
+
+        if (isSelected && showHandles) {
             handles = points.map { HandleShape(it) }
         }
     }

@@ -169,6 +169,10 @@ class HomeScreen : Screen {
                                     screenModel.shapes.add(screenModel.currentShape)
                                 }
 
+                                if (screenModel.isSelectionAction) {
+                                    screenModel.showHandlesIfNeeded()
+                                }
+
                                 // Create new instance of path properties to have new path and properties
                                 // only for the one currently being drawn
                                 val properties = PathProperties(

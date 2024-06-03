@@ -9,6 +9,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import cafe.adriel.voyager.core.model.ScreenModel
 import gesture.PointerEvent
+import ui.graphics.PolylineShape
 import ui.graphics.RectShape
 import ui.graphics.Shape
 import ui.menu.MenuAction
@@ -95,6 +96,23 @@ class HomeScreenModel : ScreenModel {
 
         shapes.forEach {
             it.isSelected = false
+        }
+    }
+
+    fun showHandlesIfNeeded() {
+        // show handles only if there is one shape selected
+        if (selectedShapes.count() == 1) {
+            selectedShapes.first().let {
+                if (it is PolylineShape) {
+                    it.showHandles = true
+                }
+            }
+        } else {
+            selectedShapes.forEach {
+                if (it is PolylineShape) {
+                    it.showHandles = false
+                }
+            }
         }
     }
 
