@@ -10,6 +10,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import gesture.PointerEvent
+import ui.graphics.CircleShape
 import ui.graphics.PolylineShape
 import ui.graphics.RectShape
 import ui.graphics.Shape
@@ -100,9 +101,24 @@ class HomeScreenModel : ScreenModel {
 
     fun drawCurrentShape(drawScope: DrawScope) {
         val pathProperties =
-            if (isSelectionAction) currentShape.selectionPathProperties else currentShape.properties
+            if (isSelectionAction) currentShape.selectionPathProperties
+            else currentShape.properties
 
         currentShape.draw(drawScope, pathProperties)
+    }
+
+    fun updateSelection(hitTestShape: Shape = currentShape) {
+        shapes.forEach {
+            if (it.isSelected.not()) {
+                it.isSelected = isSelectionAction && it.intersects(hitTestShape)
+            }
+        }
+
+        showHandlesIfNeeded()
+    }
+
+    fun updateSelectionAtCurrentPosition() {
+        updateSelection(hitTestShape = createHitTestCircleShapeWithOffset(currentPosition))
     }
 
     fun clearSelection() {
@@ -110,31 +126,6 @@ class HomeScreenModel : ScreenModel {
 
         shapes.forEach {
             it.isSelected = false
-        }
-    }
-
-    fun showHandlesIfNeeded() {
-        // show handles only if there is one shape selected
-        if (selectedShapes.count() == 1) {
-            selectedShapes.first().let {
-                if (it is PolylineShape) {
-                    it.showHandles = true
-                }
-            }
-        } else {
-            selectedShapes.forEach {
-                if (it is PolylineShape) {
-                    it.showHandles = false
-                }
-            }
-        }
-    }
-
-    fun updateSelection() {
-        shapes.forEach {
-            if (it.isSelected.not()) {
-                it.isSelected = isSelectionAction && it.intersects(currentShape)
-            }
         }
     }
 
@@ -160,6 +151,30 @@ class HomeScreenModel : ScreenModel {
         )
 
         currentShape = RectShape(rect)
+    }
+
+    /**
+     * Create circle shape for hit test detection using intersection
+     */
+    private fun createHitTestCircleShapeWithOffset(offset: Offset) : Shape {
+        return CircleShape(offset, 20f)
+    }
+
+    fun showHandlesIfNeeded() {
+        // show handles only if there is one shape selected
+        if (selectedShapes.count() == 1) {
+            selectedShapes.first().let {
+                if (it is PolylineShape) {
+                    it.showHandles = true
+                }
+            }
+        } else {
+            selectedShapes.forEach {
+                if (it is PolylineShape) {
+                    it.showHandles = false
+                }
+            }
+        }
     }
 
     fun performUndo() {

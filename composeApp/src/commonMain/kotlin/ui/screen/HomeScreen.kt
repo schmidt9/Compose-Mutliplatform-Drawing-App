@@ -75,6 +75,14 @@ class HomeScreen : Screen {
                             screenModel.previousPosition = it
 
                             screenModel.clearSelection()
+
+                            when (screenModel.currentMenuButtonAction) {
+                                MenuAction.DoSelection -> {
+                                    screenModel.updateSelectionAtCurrentPosition()
+                                }
+
+                                else -> Unit
+                            }
                         },
                         onDoubleTap = {
                             // TODO: impl
@@ -133,10 +141,6 @@ class HomeScreen : Screen {
                                     }
                                 }
 
-                                MenuAction.DoSelection -> {
-
-                                }
-
                                 else -> Unit
                             }
                         }
@@ -171,10 +175,6 @@ class HomeScreen : Screen {
 
                                 if (screenModel.isSelectionAction.not() && screenModel.isPolygonAction.not()) {
                                     screenModel.shapes.add(screenModel.currentShape)
-                                }
-
-                                if (screenModel.isSelectionAction) {
-                                    screenModel.showHandlesIfNeeded()
                                 }
 
                                 // Create new instance of path properties to have new path and properties
@@ -213,13 +213,13 @@ class HomeScreen : Screen {
                     with(drawContext.canvas.nativeCanvas) {
                         val checkPoint = saveLayer(null, null)
 
-                        // draw all paths
+                        // draw all shapes
 
                         screenModel.updateSelection()
 
                         screenModel.drawShapes(this@Canvas)
 
-                        // draw current path
+                        // draw current shape
 
                         if (screenModel.pointerEvent != PointerEvent.Idle/* && pointerEvent != PointerEvent.Tap*/) {
                             screenModel.drawCurrentShape(this@Canvas)
