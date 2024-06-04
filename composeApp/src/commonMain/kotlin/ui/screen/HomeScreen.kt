@@ -133,6 +133,10 @@ class HomeScreen : Screen {
                                     }
                                 }
 
+                                MenuAction.DoSelection -> {
+
+                                }
+
                                 else -> Unit
                             }
                         }
@@ -211,13 +215,9 @@ class HomeScreen : Screen {
 
                         // draw all paths
 
-                        screenModel.shapes.forEach {
-                            if (it.isSelected.not()) {
-                                it.isSelected = screenModel.isSelectionAction && it.intersects(screenModel.currentShape)
-                            }
+                        screenModel.updateSelection()
 
-                            it.draw(this@Canvas)
-                        }
+                        screenModel.drawShapes(this@Canvas)
 
                         // draw current path
 

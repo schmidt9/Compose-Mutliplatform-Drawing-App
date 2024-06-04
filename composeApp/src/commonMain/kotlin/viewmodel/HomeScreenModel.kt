@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import gesture.PointerEvent
 import ui.graphics.PolylineShape
@@ -91,6 +92,12 @@ class HomeScreenModel : ScreenModel {
 
     // region Methods
 
+    fun drawShapes(drawScope: DrawScope) {
+        shapes.forEach {
+            it.draw(drawScope)
+        }
+    }
+
     fun clearSelection() {
         drawMode = DrawMode.Draw
 
@@ -112,6 +119,14 @@ class HomeScreenModel : ScreenModel {
                 if (it is PolylineShape) {
                     it.showHandles = false
                 }
+            }
+        }
+    }
+
+    fun updateSelection() {
+        shapes.forEach {
+            if (it.isSelected.not()) {
+                it.isSelected = isSelectionAction && it.intersects(currentShape)
             }
         }
     }
