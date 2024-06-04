@@ -222,10 +222,7 @@ class HomeScreen : Screen {
                         // draw current path
 
                         if (screenModel.pointerEvent != PointerEvent.Idle/* && pointerEvent != PointerEvent.Tap*/) {
-                            val pathProperties =
-                                if (screenModel.isSelectionAction) screenModel.currentShape.selectionPathProperties else screenModel.currentShape.properties
-
-                            screenModel.currentShape.draw(this@Canvas, pathProperties)
+                            screenModel.drawCurrentShape(this@Canvas)
                         }
 
                         restoreToCount(checkPoint)

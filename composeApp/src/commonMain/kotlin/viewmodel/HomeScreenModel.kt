@@ -98,6 +98,13 @@ class HomeScreenModel : ScreenModel {
         }
     }
 
+    fun drawCurrentShape(drawScope: DrawScope) {
+        val pathProperties =
+            if (isSelectionAction) currentShape.selectionPathProperties else currentShape.properties
+
+        currentShape.draw(drawScope, pathProperties)
+    }
+
     fun clearSelection() {
         drawMode = DrawMode.Draw
 
