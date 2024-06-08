@@ -68,20 +68,7 @@ class HomeScreen : Screen {
                     .background(Color.White)
                     .pointerEvents(
                         onTap = {
-                            screenModel.pointerEvent = PointerEvent.Tap
-
-                            screenModel.currentPosition = it
-                            screenModel.previousPosition = it
-
-                            screenModel.clearSelection()
-
-                            when (screenModel.currentMenuButtonAction) {
-                                MenuAction.DoSelection -> {
-                                    screenModel.updateSelectionAtOffset(it)
-                                }
-
-                                else -> Unit
-                            }
+                            handleTap(screenModel, it)
                         },
                         onDoubleTap = {
                             // TODO: impl
@@ -291,6 +278,23 @@ class HomeScreen : Screen {
             }
         }
 
+    }
+
+    private fun handleTap(screenModel: HomeScreenModel, offset: Offset) {
+        screenModel.pointerEvent = PointerEvent.Tap
+
+        screenModel.currentPosition = offset
+        screenModel.previousPosition = offset
+
+        screenModel.clearSelection()
+
+        when (screenModel.currentMenuButtonAction) {
+            MenuAction.DoSelection -> {
+                screenModel.updateSelectionAtOffset(offset)
+            }
+
+            else -> Unit
+        }
     }
 
 }
