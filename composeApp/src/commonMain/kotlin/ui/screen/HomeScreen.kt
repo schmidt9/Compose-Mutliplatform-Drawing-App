@@ -68,13 +68,13 @@ class HomeScreen : Screen {
                     .background(Color.White)
                     .pointerEvents(
                         onTap = {
-                            handleTap(screenModel, it)
+                            handleModifierTap(screenModel, it)
                         },
                         onDoubleTap = {
                             // TODO: impl
                         },
                         onDragStart = {
-                            handleDragStart(screenModel, it)
+                            handleModifierDragStart(screenModel, it)
                         },
                         onDrag = { position, dragAmount ->
                             screenModel.pointerEvent = PointerEvent.Drag
@@ -249,7 +249,7 @@ class HomeScreen : Screen {
 
     }
 
-    private fun handleTap(screenModel: HomeScreenModel, offset: Offset) {
+    private fun handleModifierTap(screenModel: HomeScreenModel, offset: Offset) {
         screenModel.pointerEvent = PointerEvent.Tap
 
         screenModel.currentPosition = offset
@@ -266,7 +266,7 @@ class HomeScreen : Screen {
         }
     }
 
-    private fun handleDragStart(screenModel: HomeScreenModel, offset: Offset) {
+    private fun handleModifierDragStart(screenModel: HomeScreenModel, offset: Offset) {
         screenModel.pointerEvent = PointerEvent.DragStart
 
         screenModel.currentPosition = offset
