@@ -1,5 +1,6 @@
 package ui.screen
 
+import DrawMode
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawContext
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.model.rememberScreenModel
@@ -88,95 +91,17 @@ class HomeScreen : Screen {
 
                     when (screenModel.pointerEvent) {
                         PointerEvent.Drag -> {
-                            if (screenModel.isMoveSelectionDrawMode) {
-                                screenModel.previousPosition = screenModel.currentPosition
-                            } else {
-                                when (screenModel.currentMenuButtonAction) {
-                                    MenuAction.DrawPolygon -> {
-                                        screenModel.currentShape.setLastPoint(screenModel.currentPosition)
-                                    }
-
-                                    MenuAction.DrawRectangle -> {
-                                        screenModel.setRectShapeAsCurrentShape()
-                                    }
-
-                                    MenuAction.DoSelection -> {
-                                        when (screenModel.drawMode) {
-                                            DrawMode.Draw -> {
-                                                screenModel.setRectShapeAsCurrentShape()
-                                            }
-
-                                            DrawMode.ResizeSelection -> {
-                                                screenModel.resizeCurrentShape(screenModel.currentPosition - screenModel.previousPosition)
-                                            }
-
-                                            else -> Unit
-                                        }
-                                    }
-
-                                    else -> Unit
-                                }
-                            }
+                            handleCanvasDrag(screenModel)
                         }
 
                         PointerEvent.DragEnd -> {
-                            if (!screenModel.isMoveSelectionDrawMode && screenModel.currentMenuButtonAction != MenuAction.DrawPolygon) {
-                                // Pointer is up save current path
-
-                                if (screenModel.isSelectionAction.not() && screenModel.isPolygonAction.not()) {
-                                    screenModel.shapes.add(screenModel.currentShape)
-                                }
-
-                                // Create new instance of path properties to have new path and properties
-                                // only for the one currently being drawn
-                                val properties = PathProperties(
-                                    strokeWidth = screenModel.currentShape.properties.strokeWidth,
-                                    strokeColor = screenModel.currentShape.properties.strokeColor,
-                                    strokeCap = screenModel.currentShape.properties.strokeCap,
-                                    strokeJoin = screenModel.currentShape.properties.strokeJoin,
-                                )
-
-                                // Since paths are keys for map, use new one for each key
-                                // and have separate path for each down-move-up gesture cycle
-                                screenModel.currentShape = Shape(properties)
-                            }
-
-                            // Since new path is drawn no need to store paths to undone
-                            screenModel.shapesUndone.clear()
-
-                            // If we leave this state at MotionEvent.Up it causes current path to draw
-                            // line from (0,0) if this composable recomposes when draw mode is changed
-                            screenModel.currentPosition = Offset.Unspecified
-                            screenModel.previousPosition = screenModel.currentPosition
-
-                            when (screenModel.currentMenuButtonAction) {
-                                MenuAction.DrawRectangle, MenuAction.DoSelection -> {
-                                    screenModel.pointerEvent = PointerEvent.Idle
-                                }
-                                else -> Unit
-                            }
+                            handleCanvasDragEnd(screenModel)
                         }
 
                         else -> Unit
                     }
 
-                    with(drawContext.canvas.nativeCanvas) {
-                        val checkPoint = saveLayer(null, null)
-
-                        // draw all shapes
-
-                        screenModel.updateSelection()
-
-                        screenModel.drawShapes(this@Canvas)
-
-                        // draw current shape
-
-                        if (screenModel.pointerEvent != PointerEvent.Idle/* && pointerEvent != PointerEvent.Tap*/) {
-                            screenModel.drawCurrentShape(this@Canvas)
-                        }
-
-                        restoreToCount(checkPoint)
-                    }
+                    handleCanvasDrawing(screenModel, drawContext, this)
                 }
 
                 ShapesMenu(
@@ -306,9 +231,101 @@ class HomeScreen : Screen {
         }
     }
 
+    private fun handleCanvasDrag(screenModel: HomeScreenModel) {
+        if (screenModel.isMoveSelectionDrawMode) {
+            screenModel.previousPosition = screenModel.currentPosition
+        } else {
+            when (screenModel.currentMenuButtonAction) {
+                MenuAction.DrawPolygon -> {
+                    screenModel.currentShape.setLastPoint(screenModel.currentPosition)
+                }
+
+                MenuAction.DrawRectangle -> {
+                    screenModel.setRectShapeAsCurrentShape()
+                }
+
+                MenuAction.DoSelection -> {
+                    when (screenModel.drawMode) {
+                        DrawMode.Draw -> {
+                            screenModel.setRectShapeAsCurrentShape()
+                        }
+
+                        DrawMode.ResizeSelection -> {
+                            screenModel.resizeCurrentShape(screenModel.currentPosition - screenModel.previousPosition)
+                        }
+
+                        else -> Unit
+                    }
+                }
+
+                else -> Unit
+            }
+        }
+    }
+
     private fun handleModifierDragEnd(screenModel: HomeScreenModel) {
         screenModel.pointerEvent = PointerEvent.DragEnd
         screenModel.endCurrentShapeResizing()
+    }
+
+    private fun handleCanvasDragEnd(screenModel: HomeScreenModel) {
+        if (!screenModel.isMoveSelectionDrawMode && screenModel.currentMenuButtonAction != MenuAction.DrawPolygon) {
+            // Pointer is up save current path
+
+            if (screenModel.isSelectionAction.not() && screenModel.isPolygonAction.not()) {
+                screenModel.shapes.add(screenModel.currentShape)
+            }
+
+            // Create new instance of path properties to have new path and properties
+            // only for the one currently being drawn
+            val properties = PathProperties(
+                strokeWidth = screenModel.currentShape.properties.strokeWidth,
+                strokeColor = screenModel.currentShape.properties.strokeColor,
+                strokeCap = screenModel.currentShape.properties.strokeCap,
+                strokeJoin = screenModel.currentShape.properties.strokeJoin,
+            )
+
+            // Since paths are keys for map, use new one for each key
+            // and have separate path for each down-move-up gesture cycle
+            screenModel.currentShape = Shape(properties)
+        }
+
+        // Since new path is drawn no need to store paths to undone
+        screenModel.shapesUndone.clear()
+
+        // If we leave this state at MotionEvent.Up it causes current path to draw
+        // line from (0,0) if this composable recomposes when draw mode is changed
+        screenModel.currentPosition = Offset.Unspecified
+        screenModel.previousPosition = screenModel.currentPosition
+
+        when (screenModel.currentMenuButtonAction) {
+            MenuAction.DrawRectangle, MenuAction.DoSelection -> {
+                screenModel.pointerEvent = PointerEvent.Idle
+            }
+            else -> Unit
+        }
+    }
+
+    private fun handleCanvasDrawing(screenModel: HomeScreenModel,
+                                    drawContext: DrawContext,
+                                    drawScope: DrawScope) {
+        with(drawContext.canvas.nativeCanvas) {
+            val checkPoint = saveLayer(null, null)
+
+            // draw all shapes
+
+            screenModel.updateSelection()
+
+            screenModel.drawShapes(drawScope)
+
+            // draw current shape
+
+            if (screenModel.pointerEvent != PointerEvent.Idle/* && pointerEvent != PointerEvent.Tap*/) {
+                screenModel.drawCurrentShape(drawScope)
+            }
+
+            restoreToCount(checkPoint)
+        }
     }
 
 }
