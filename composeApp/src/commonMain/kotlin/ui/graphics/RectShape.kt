@@ -6,7 +6,7 @@ import util.plusX
 import util.plusY
 import util.sameValueAs
 
-class RectShape(rect: Rect) : PolylineShape() {
+class RectShape(rect: Rect = Rect.Zero) : PolylineShape() {
 
     override var shouldClose: Boolean = true
 

@@ -14,7 +14,7 @@ import model.selectedPathProperties
 import model.selectionPathProperties
 import kotlin.jvm.JvmName
 
-open class Shape(open var properties: PathProperties = PathProperties()) {
+open class Shape(open var properties: PathProperties = PathProperties()){
 
     enum class PropertiesType {
         Default,
@@ -73,6 +73,8 @@ open class Shape(open var properties: PathProperties = PathProperties()) {
         drawScope: DrawScope,
         properties: PathProperties
     ) {
+        println("$this, ${points.count()}")
+
         if (path.isEmpty) {
             return
         }
@@ -111,8 +113,8 @@ open class Shape(open var properties: PathProperties = PathProperties()) {
         path.moveTo(x, y)
     }
 
-    fun copy() : Shape {
-        val shapePath = Shape()
+    open fun<T : Shape> copy(factory: () -> T): T {
+        val shapePath = factory()
         shapePath.shouldClose = shouldClose
         shapePath.isSelected = isSelected
         shapePath.setPoints(points)

@@ -127,7 +127,7 @@ class HomeScreen : Screen {
                         screenModel.polygonMenuVisible = false
 
                         if (it == MenuAction.PolygonApply) {
-                            screenModel.shapes.add(screenModel.currentShape.copy())
+                            screenModel.shapes.add(screenModel.copyShape(screenModel.currentShape))
                             screenModel.currentShape.reset()
                         } else {
                             screenModel.currentShape.reset()
@@ -285,9 +285,11 @@ class HomeScreen : Screen {
                 strokeJoin = screenModel.currentShape.properties.strokeJoin,
             )
 
-            // Since paths are keys for map, use new one for each key
-            // and have separate path for each down-move-up gesture cycle
-            screenModel.currentShape = Shape(properties)
+            if (screenModel.isPolygonAction.not()) {
+                // Since paths are keys for map, use new one for each key
+                // and have separate path for each down-move-up gesture cycle
+                screenModel.currentShape = Shape(properties)
+            }
         }
 
         // Since new path is drawn no need to store paths to undone

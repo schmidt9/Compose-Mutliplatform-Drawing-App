@@ -4,7 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import model.PathProperties
 
-open class PolylineShape : Shape() {
+abstract class PolylineShape : Shape() {
 
     override fun createPath() {
         super.createPath()
