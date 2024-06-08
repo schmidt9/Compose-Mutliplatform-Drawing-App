@@ -4,8 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathMeasure
 import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -24,6 +24,10 @@ open class Shape(open var properties: PathProperties = PathProperties()) {
 
     // region Properties
 
+    companion object {
+        const val INDEX_NOT_SET = -1
+    }
+
     protected val path = Path()
 
     private val selectedPathProperties = PathProperties.selectedPathProperties
@@ -37,6 +41,12 @@ open class Shape(open var properties: PathProperties = PathProperties()) {
     var isSelected by mutableStateOf(false)
 
     protected var points = mutableListOf<Offset>()
+
+    private var handles = listOf<HandleShape>()
+
+    var showHandles = false
+
+    var selectedHandleIndex = INDEX_NOT_SET
 
     // endregion
 
@@ -84,6 +94,12 @@ open class Shape(open var properties: PathProperties = PathProperties()) {
                 pathEffect = properties.pathEffect
             )
         )
+
+        updateHandles()
+
+        handles.forEach {
+            it.draw(drawScope)
+        }
     }
 
     open fun translate(offset: Offset) {
@@ -137,8 +153,8 @@ open class Shape(open var properties: PathProperties = PathProperties()) {
         addPoint(point)
     }
 
-    open fun intersects(path: Shape): Boolean {
-        if (this.path.isEmpty || path.path.isEmpty) {
+    open fun intersects(shape: Shape): Boolean {
+        if (this.path.isEmpty || shape.path.isEmpty) {
             return false
         }
 
@@ -147,7 +163,7 @@ open class Shape(open var properties: PathProperties = PathProperties()) {
         // is completely inside another path
         // (ie. we started drawing one shape inside another)
         val outsidePath = Path()
-        outsidePath.op(this.path, path.path, PathOperation.Intersect)
+        outsidePath.op(this.path, shape.path, PathOperation.Intersect)
         val noIntersection = outsidePath.isEmpty
 
         if (noIntersection) {
@@ -156,36 +172,62 @@ open class Shape(open var properties: PathProperties = PathProperties()) {
 
         // detect if one path is completely inside another path or vica versa
         val insidePath = Path()
-        insidePath.op(this.path, path.path, PathOperation.Difference)
+        insidePath.op(this.path, shape.path, PathOperation.Difference)
         val isInside1 = insidePath.isEmpty
 
-        insidePath.op(this.path, path.path, PathOperation.ReverseDifference)
+        insidePath.op(this.path, shape.path, PathOperation.ReverseDifference)
         val isInside2 = insidePath.isEmpty
 
         return isInside1.not() && isInside2.not()
     }
 
+    fun containsPoint(offset: Offset): Boolean {
+        val hitTestShape = Shape()
+        hitTestShape.path.addOval(Rect(center = offset, radius = 10f))
+
+        return intersects(hitTestShape)
+    }
+
     protected open fun createPath() {
     }
 
-    // TODO: use for paths intersection or remove
-    fun getPathPoints(path: Path): List<Offset> {
-        val pathMeasure = PathMeasure()
-        pathMeasure.setPath(path, false)
-        val length = pathMeasure.length
+    private fun updateHandles() {
+        handles = listOf()
 
-        val step = 5f
-        var i = 0f
-        val points = mutableListOf<Offset>()
+        if (isSelected.not()) {
+            showHandles = false
+        }
 
-        do {
-            // walking over path counterclockwise getting path points with given step (interval)
-            val position = pathMeasure.getPosition(i)
-            points.add(position)
-            i += step
-        } while (i < length)
+        if (isSelected && showHandles) {
+            handles = points.map { HandleShape(it) }
+        }
+    }
 
-        return points
+    fun getHandleAtOffset(offset: Offset): HandleShape? {
+        if (showHandles.not()) {
+            return null
+        }
+
+        return handles.firstOrNull {
+            it.containsPoint(offset)
+        }
+    }
+
+    fun updateSelectedHandleIndexAtOffset(offset: Offset) {
+        selectedHandleIndex = handles.indexOfFirst {
+            it.containsPoint(offset)
+        }
+    }
+
+    fun hasHandleAtOffset(offset: Offset): Boolean {
+        return getHandleAtOffset(offset) != null
+    }
+
+    open fun resize(offset: Offset) {
+    }
+
+    fun endResizing() {
+        selectedHandleIndex = INDEX_NOT_SET
     }
 
     // endregion

@@ -11,7 +11,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import gesture.PointerEvent
 import ui.graphics.CircleShape
-import ui.graphics.PolylineShape
 import ui.graphics.RectShape
 import ui.graphics.Shape
 import ui.menu.MenuAction
@@ -69,6 +68,8 @@ class HomeScreenModel : ScreenModel {
 
     val isMoveSelectionDrawMode get() = (drawMode == DrawMode.MoveSelection)
 
+    val isResizeSelectionDrawMode get() = (drawMode == DrawMode.ResizeSelection)
+
     var shapesMenuButtonSelected by mutableStateOf(true)
 
     var selectionButtonSelected by mutableStateOf(false)
@@ -117,8 +118,8 @@ class HomeScreenModel : ScreenModel {
         showHandlesIfNeeded()
     }
 
-    fun updateSelectionAtCurrentPosition() {
-        updateSelection(hitTestShape = createHitTestCircleShapeWithOffset(currentPosition))
+    fun updateSelectionAtOffset(offset: Offset) {
+        updateSelection(hitTestShape = createHitTestCircleShapeWithOffset(offset))
     }
 
     fun clearSelection() {
@@ -135,13 +136,43 @@ class HomeScreenModel : ScreenModel {
         }
     }
 
+    fun updateDrawMode(offset: Offset) {
+        drawMode = if (isSelectionAction) {
+            if (selectedShapes.isEmpty()) {
+                DrawMode.Draw
+            } else {
+                if (selectedShapes.count() == 1 &&
+                    selectedShapes.first().hasHandleAtOffset(offset)) {
+                    DrawMode.ResizeSelection
+                } else {
+                    DrawMode.MoveSelection
+                }
+            }
+        } else {
+            DrawMode.Draw
+        }
+    }
+
+    fun startCurrentShapeResizing(offset: Offset) {
+        if (selectedShapes.count() == 1) {
+            currentShape = selectedShapes.first()
+            currentShape.updateSelectedHandleIndexAtOffset(offset)
+        }
+    }
+
+    fun endCurrentShapeResizing() {
+        currentShape.endResizing()
+    }
+
+    fun resizeCurrentShape(dragAmount: Offset) {
+        currentShape.resize(dragAmount)
+    }
+
     fun setRectShapeAsCurrentShape() {
         val left = min(previousPosition.x, currentPosition.x)
         val top = min(previousPosition.y, currentPosition.y)
-        val right =
-            left + abs(previousPosition.x - currentPosition.x)
-        val bottom =
-            top + abs(previousPosition.y - currentPosition.y)
+        val right = left + abs(previousPosition.x - currentPosition.x)
+        val bottom = top + abs(previousPosition.y - currentPosition.y)
 
         val rect = Rect(
             left = left,
@@ -163,16 +194,10 @@ class HomeScreenModel : ScreenModel {
     fun showHandlesIfNeeded() {
         // show handles only if there is one shape selected
         if (selectedShapes.count() == 1) {
-            selectedShapes.first().let {
-                if (it is PolylineShape) {
-                    it.showHandles = true
-                }
-            }
+            selectedShapes.first().showHandles = true
         } else {
             selectedShapes.forEach {
-                if (it is PolylineShape) {
-                    it.showHandles = false
-                }
+                it.showHandles = false
             }
         }
     }

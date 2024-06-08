@@ -1,4 +1,5 @@
 enum class DrawMode {
     Draw,
-    MoveSelection
+    MoveSelection,
+    ResizeSelection
 }

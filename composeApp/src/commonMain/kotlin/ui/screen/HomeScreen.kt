@@ -1,6 +1,5 @@
 package ui.screen
 
-import DrawMode
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -69,6 +68,7 @@ class HomeScreen : Screen {
                     .background(Color.White)
                     .pointerEvents(
                         onTap = {
+                            println("TAP MOD")
                             screenModel.pointerEvent = PointerEvent.Tap
 
                             screenModel.currentPosition = it
@@ -77,8 +77,16 @@ class HomeScreen : Screen {
                             screenModel.clearSelection()
 
                             when (screenModel.currentMenuButtonAction) {
+                                MenuAction.DrawPolygon -> {
+                                    if (screenModel.currentShape.isEmpty) {
+                                        screenModel.currentShape = PolygonShape(screenModel.currentPosition)
+                                    } else {
+                                        screenModel.currentShape.addPoint(screenModel.currentPosition)
+                                    }
+                                }
+
                                 MenuAction.DoSelection -> {
-                                    screenModel.updateSelectionAtCurrentPosition()
+                                    screenModel.updateSelectionAtOffset(it)
                                 }
 
                                 else -> Unit
@@ -93,11 +101,7 @@ class HomeScreen : Screen {
                             screenModel.currentPosition = it
                             screenModel.previousPosition = it
 
-                            screenModel.drawMode = if (screenModel.isSelectionAction) {
-                                if (screenModel.selectedShapes.isEmpty()) DrawMode.Draw else DrawMode.MoveSelection
-                            } else {
-                                DrawMode.Draw
-                            }
+                            screenModel.updateDrawMode(it)
 
                             when (screenModel.currentMenuButtonAction) {
                                 MenuAction.DrawPolygon -> {
@@ -108,6 +112,16 @@ class HomeScreen : Screen {
                                     }
 
                                     screenModel.polygonMenuVisible = true
+                                }
+
+                                MenuAction.DrawRectangle -> {
+                                    screenModel.setRectShapeAsCurrentShape()
+                                }
+
+                                MenuAction.DoSelection -> {
+                                    if (screenModel.isResizeSelectionDrawMode) {
+                                        screenModel.startCurrentShapeResizing(it)
+                                    }
                                 }
 
                                 else -> Unit
@@ -121,35 +135,20 @@ class HomeScreen : Screen {
 
                             if (screenModel.isMoveSelectionDrawMode) {
                                 screenModel.translateSelectedShapes(dragAmount)
+                            } else if (screenModel.isResizeSelectionDrawMode) {
+                                screenModel.resizeCurrentShape(dragAmount)
                             }
                         },
                         onDragEnd = {
                             screenModel.pointerEvent = PointerEvent.DragEnd
+
+                            screenModel.endCurrentShapeResizing()
                         }
                     )
 
                 Canvas(modifier = drawModifier) {
 
                     when (screenModel.pointerEvent) {
-                        PointerEvent.Tap -> {
-                            when (screenModel.currentMenuButtonAction) {
-                                MenuAction.DrawPolygon -> {
-                                    if (screenModel.currentShape.isEmpty) {
-                                        screenModel.currentShape = PolygonShape(screenModel.currentPosition)
-                                    } else {
-                                        screenModel.currentShape.addPoint(screenModel.currentPosition)
-                                    }
-                                }
-
-                                else -> Unit
-                            }
-                        }
-
-                        PointerEvent.DragStart -> {
-                            // Canvas does not redraw on DragStart for some reason here,
-                            // so we moved all logic to drawModifier
-                        }
-
                         PointerEvent.Drag -> {
                             if (screenModel.isMoveSelectionDrawMode) {
                                 screenModel.previousPosition = screenModel.currentPosition
@@ -159,9 +158,22 @@ class HomeScreen : Screen {
                                         screenModel.currentShape.setLastPoint(screenModel.currentPosition)
                                     }
 
-                                    MenuAction.DrawRectangle,
-                                    MenuAction.DoSelection -> {
+                                    MenuAction.DrawRectangle -> {
                                         screenModel.setRectShapeAsCurrentShape()
+                                    }
+
+                                    MenuAction.DoSelection -> {
+                                        when (screenModel.drawMode) {
+                                            DrawMode.Draw -> {
+                                                screenModel.setRectShapeAsCurrentShape()
+                                            }
+
+                                            DrawMode.ResizeSelection -> {
+                                                screenModel.resizeCurrentShape(screenModel.currentPosition - screenModel.previousPosition)
+                                            }
+
+                                            else -> Unit
+                                        }
                                     }
 
                                     else -> Unit
