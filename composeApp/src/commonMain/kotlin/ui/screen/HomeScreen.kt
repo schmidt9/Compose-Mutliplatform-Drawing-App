@@ -77,19 +77,10 @@ class HomeScreen : Screen {
                             handleModifierDragStart(screenModel, it)
                         },
                         onDrag = { position, dragAmount ->
-                            screenModel.pointerEvent = PointerEvent.Drag
-                            screenModel.currentPosition = position
-
-                            if (screenModel.isMoveSelectionDrawMode) {
-                                screenModel.translateSelectedShapes(dragAmount)
-                            } else if (screenModel.isResizeSelectionDrawMode) {
-                                screenModel.resizeCurrentShape(dragAmount)
-                            }
+                            handleModifierDrag(screenModel, position, dragAmount)
                         },
                         onDragEnd = {
-                            screenModel.pointerEvent = PointerEvent.DragEnd
-
-                            screenModel.endCurrentShapeResizing()
+                            handleModifierDragEnd(screenModel)
                         }
                     )
 
@@ -299,6 +290,25 @@ class HomeScreen : Screen {
         }
 
         screenModel.shapesMenuVisible = false
+    }
+
+    private fun handleModifierDrag(
+        screenModel: HomeScreenModel,
+        position: Offset,
+        dragAmount: Offset) {
+        screenModel.pointerEvent = PointerEvent.Drag
+        screenModel.currentPosition = position
+
+        if (screenModel.isMoveSelectionDrawMode) {
+            screenModel.translateSelectedShapes(dragAmount)
+        } else if (screenModel.isResizeSelectionDrawMode) {
+            screenModel.resizeCurrentShape(dragAmount)
+        }
+    }
+
+    private fun handleModifierDragEnd(screenModel: HomeScreenModel) {
+        screenModel.pointerEvent = PointerEvent.DragEnd
+        screenModel.endCurrentShapeResizing()
     }
 
 }
