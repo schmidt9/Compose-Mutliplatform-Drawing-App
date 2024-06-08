@@ -68,7 +68,6 @@ class HomeScreen : Screen {
                     .background(Color.White)
                     .pointerEvents(
                         onTap = {
-                            println("TAP MOD")
                             screenModel.pointerEvent = PointerEvent.Tap
 
                             screenModel.currentPosition = it
@@ -77,14 +76,6 @@ class HomeScreen : Screen {
                             screenModel.clearSelection()
 
                             when (screenModel.currentMenuButtonAction) {
-                                MenuAction.DrawPolygon -> {
-                                    if (screenModel.currentShape.isEmpty) {
-                                        screenModel.currentShape = PolygonShape(screenModel.currentPosition)
-                                    } else {
-                                        screenModel.currentShape.addPoint(screenModel.currentPosition)
-                                    }
-                                }
-
                                 MenuAction.DoSelection -> {
                                     screenModel.updateSelectionAtOffset(it)
                                 }
