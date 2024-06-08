@@ -74,38 +74,7 @@ class HomeScreen : Screen {
                             // TODO: impl
                         },
                         onDragStart = {
-                            screenModel.pointerEvent = PointerEvent.DragStart
-
-                            screenModel.currentPosition = it
-                            screenModel.previousPosition = it
-
-                            screenModel.updateDrawMode(it)
-
-                            when (screenModel.currentMenuButtonAction) {
-                                MenuAction.DrawPolygon -> {
-                                    if (screenModel.currentShape.isEmpty) {
-                                        screenModel.currentShape = PolygonShape(screenModel.currentPosition)
-                                    } else {
-                                        screenModel.currentShape.addPoint(screenModel.currentPosition)
-                                    }
-
-                                    screenModel.polygonMenuVisible = true
-                                }
-
-                                MenuAction.DrawRectangle -> {
-                                    screenModel.setRectShapeAsCurrentShape()
-                                }
-
-                                MenuAction.DoSelection -> {
-                                    if (screenModel.isResizeSelectionDrawMode) {
-                                        screenModel.startCurrentShapeResizing(it)
-                                    }
-                                }
-
-                                else -> Unit
-                            }
-
-                            screenModel.shapesMenuVisible = false
+                            handleDragStart(screenModel, it)
                         },
                         onDrag = { position, dragAmount ->
                             screenModel.pointerEvent = PointerEvent.Drag
@@ -295,6 +264,41 @@ class HomeScreen : Screen {
 
             else -> Unit
         }
+    }
+
+    private fun handleDragStart(screenModel: HomeScreenModel, offset: Offset) {
+        screenModel.pointerEvent = PointerEvent.DragStart
+
+        screenModel.currentPosition = offset
+        screenModel.previousPosition = offset
+
+        screenModel.updateDrawMode(offset)
+
+        when (screenModel.currentMenuButtonAction) {
+            MenuAction.DrawPolygon -> {
+                if (screenModel.currentShape.isEmpty) {
+                    screenModel.currentShape = PolygonShape(screenModel.currentPosition)
+                } else {
+                    screenModel.currentShape.addPoint(screenModel.currentPosition)
+                }
+
+                screenModel.polygonMenuVisible = true
+            }
+
+            MenuAction.DrawRectangle -> {
+                screenModel.setRectShapeAsCurrentShape()
+            }
+
+            MenuAction.DoSelection -> {
+                if (screenModel.isResizeSelectionDrawMode) {
+                    screenModel.startCurrentShapeResizing(offset)
+                }
+            }
+
+            else -> Unit
+        }
+
+        screenModel.shapesMenuVisible = false
     }
 
 }
