@@ -3,7 +3,7 @@ package ui.graphics
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 
-open class CircleShape(center: Offset, private val radius: Float) : Shape() {
+open class CircleShape(center: Point, private val radius: Float) : Shape() {
 
     init {
         setPoints(listOf(center))

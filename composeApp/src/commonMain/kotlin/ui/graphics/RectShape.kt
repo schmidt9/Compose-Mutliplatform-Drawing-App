@@ -19,8 +19,8 @@ class RectShape(rect: Rect = Rect.Zero) : PolylineShape() {
         ))
     }
 
-    override fun resize(offset: Offset) {
-        super.resize(offset)
+    override fun resize(point: Point) {
+        super.resize(point)
 
         if (selectedHandleIndex == INDEX_NOT_SET) {
             return
@@ -44,20 +44,20 @@ class RectShape(rect: Rect = Rect.Zero) : PolylineShape() {
         // change vertical and horizontal point
 
         prevPoint = if (currPoint.x.sameValueAs(prevPoint.x)) {
-            prevPoint.setX(offset)
+            prevPoint.setX(point)
         } else {
-            prevPoint.setY(offset)
+            prevPoint.setY(point)
         }
 
         nextPoint = if (currPoint.x.sameValueAs(nextPoint.x)) {
-            nextPoint.setX(offset)
+            nextPoint.setX(point)
         } else {
-            nextPoint.setY(offset)
+            nextPoint.setY(point)
         }
 
         // update points
 
-        currPoint = offset
+        currPoint = point
 
         points[selectedHandleIndex] = currPoint
         points[prevIndex] = prevPoint

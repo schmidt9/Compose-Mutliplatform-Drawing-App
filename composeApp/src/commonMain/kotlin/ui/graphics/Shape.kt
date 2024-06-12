@@ -40,7 +40,7 @@ open class Shape(open var properties: PathProperties = PathProperties()){
 
     var isSelected by mutableStateOf(false)
 
-    protected var points = mutableListOf<Offset>()
+    protected var points = mutableListOf<Point>()
 
     private var handles = listOf<HandleShape>()
 
@@ -130,7 +130,7 @@ open class Shape(open var properties: PathProperties = PathProperties()){
     }
 
     @JvmName("setShapePoints")
-    fun setPoints(points: List<Offset>) {
+    fun setPoints(points: List<Point>) {
         this.points = points.toMutableList()
         createPath()
 
@@ -139,13 +139,13 @@ open class Shape(open var properties: PathProperties = PathProperties()){
         }
     }
 
-    fun addPoint(point: Offset) {
+    fun addPoint(point: Point) {
         points.add(point)
         // recreate path to close with the new point
         setPoints(points)
     }
 
-    fun setLastPoint(point: Offset) {
+    fun setLastPoint(point: Point) {
         if (points.isEmpty().not()) {
             points.removeLast()
         }
@@ -181,9 +181,9 @@ open class Shape(open var properties: PathProperties = PathProperties()){
         return isInside1.not() && isInside2.not()
     }
 
-    fun containsPoint(offset: Offset): Boolean {
+    fun containsPoint(point: Point): Boolean {
         val hitTestShape = Shape()
-        hitTestShape.path.addOval(Rect(center = offset, radius = 20f))
+        hitTestShape.path.addOval(Rect(center = point, radius = 20f))
 
         return intersects(hitTestShape)
     }
@@ -203,27 +203,27 @@ open class Shape(open var properties: PathProperties = PathProperties()){
         }
     }
 
-    fun getHandleAtOffset(offset: Offset): HandleShape? {
+    private fun getHandleAtPoint(point: Point): HandleShape? {
         if (showHandles.not()) {
             return null
         }
 
         return handles.firstOrNull {
-            it.containsPoint(offset)
+            it.containsPoint(point)
         }
     }
 
-    fun updateSelectedHandleIndexAtOffset(offset: Offset) {
+    fun updateSelectedHandleIndexAtPoint(point: Point) {
         selectedHandleIndex = handles.indexOfFirst {
-            it.containsPoint(offset)
+            it.containsPoint(point)
         }
     }
 
-    fun hasHandleAtOffset(offset: Offset): Boolean {
-        return getHandleAtOffset(offset) != null
+    fun hasHandleAtPoint(point: Point): Boolean {
+        return getHandleAtPoint(point) != null
     }
 
-    open fun resize(offset: Offset) {
+    open fun resize(point: Point) {
     }
 
     fun endResizing() {

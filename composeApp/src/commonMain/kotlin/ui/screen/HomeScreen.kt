@@ -25,6 +25,7 @@ import com.smarttoolfactory.composedrawingapp.ui.theme.backgroundColor
 import gesture.PointerEvent
 import gesture.pointerEvents
 import model.PathProperties
+import ui.graphics.Point
 import ui.graphics.PolygonShape
 import ui.graphics.Shape
 import ui.menu.DrawingPropertiesMenu
@@ -175,20 +176,20 @@ class HomeScreen : Screen {
 
         when (screenModel.currentMenuButtonAction) {
             MenuAction.DoSelection -> {
-                screenModel.updateSelectionAtOffset(offset)
+                screenModel.updateSelectionAtPoint(offset)
             }
 
             else -> Unit
         }
     }
 
-    private fun handleModifierDragStart(screenModel: HomeScreenModel, offset: Offset) {
+    private fun handleModifierDragStart(screenModel: HomeScreenModel, point: Point) {
         screenModel.pointerEvent = PointerEvent.DragStart
 
-        screenModel.currentPosition = offset
-        screenModel.previousPosition = offset
+        screenModel.currentPosition = point
+        screenModel.previousPosition = point
 
-        screenModel.updateDrawMode(offset)
+        screenModel.updateDrawMode(point)
 
         when (screenModel.currentMenuButtonAction) {
             MenuAction.DrawPolygon -> {
@@ -207,7 +208,7 @@ class HomeScreen : Screen {
 
             MenuAction.DoSelection -> {
                 if (screenModel.isResizeSelectionDrawMode) {
-                    screenModel.startCurrentShapeResizing(offset)
+                    screenModel.startCurrentShapeResizing(point)
                 }
             }
 
@@ -219,7 +220,7 @@ class HomeScreen : Screen {
 
     private fun handleModifierDrag(
         screenModel: HomeScreenModel,
-        position: Offset,
+        position: Point,
         dragAmount: Offset) {
         screenModel.pointerEvent = PointerEvent.Drag
         screenModel.currentPosition = position

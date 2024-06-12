@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import gesture.PointerEvent
 import ui.graphics.CircleShape
+import ui.graphics.Point
 import ui.graphics.PolygonShape
 import ui.graphics.RectShape
 import ui.graphics.Shape
@@ -55,12 +56,12 @@ class HomeScreenModel : ScreenModel {
     /**
      * Current position of the pointer that is pressed or being moved
      */
-    var currentPosition by mutableStateOf(Offset.Unspecified)
+    var currentPosition: Point by mutableStateOf(Point.Unspecified)
 
     /**
      * Previous motion event before next touch is saved into this current position.
      */
-    var previousPosition by mutableStateOf(Offset.Unspecified)
+    var previousPosition: Point by mutableStateOf(Point.Unspecified)
 
     /**
      * Draw mode, erase mode or touch mode to
@@ -127,8 +128,8 @@ class HomeScreenModel : ScreenModel {
         showHandlesIfNeeded()
     }
 
-    fun updateSelectionAtOffset(offset: Offset) {
-        updateSelection(hitTestShape = createHitTestCircleShapeWithOffset(offset))
+    fun updateSelectionAtPoint(point: Point) {
+        updateSelection(hitTestShape = createHitTestCircleShapeWithPoint(point))
     }
 
     fun clearSelection() {
@@ -145,13 +146,13 @@ class HomeScreenModel : ScreenModel {
         }
     }
 
-    fun updateDrawMode(offset: Offset) {
+    fun updateDrawMode(point: Point) {
         drawMode = if (isSelectionAction) {
             if (selectedShapes.isEmpty()) {
                 DrawMode.Draw
             } else {
                 if (selectedShapes.count() == 1 &&
-                    selectedShapes.first().hasHandleAtOffset(offset)) {
+                    selectedShapes.first().hasHandleAtPoint(point)) {
                     DrawMode.ResizeSelection
                 } else {
                     DrawMode.MoveSelection
@@ -162,10 +163,10 @@ class HomeScreenModel : ScreenModel {
         }
     }
 
-    fun startCurrentShapeResizing(offset: Offset) {
+    fun startCurrentShapeResizing(point: Point) {
         if (selectedShapes.count() == 1) {
             currentShape = selectedShapes.first()
-            currentShape.updateSelectedHandleIndexAtOffset(offset)
+            currentShape.updateSelectedHandleIndexAtPoint(point)
         }
     }
 
@@ -173,8 +174,8 @@ class HomeScreenModel : ScreenModel {
         currentShape.endResizing()
     }
 
-    fun resizeCurrentShape(offset: Offset) {
-        currentShape.resize(offset)
+    fun resizeCurrentShape(point: Point) {
+        currentShape.resize(point)
     }
 
     fun setRectShapeAsCurrentShape() {
@@ -196,8 +197,8 @@ class HomeScreenModel : ScreenModel {
     /**
      * Create circle shape for hit test detection using intersection
      */
-    private fun createHitTestCircleShapeWithOffset(offset: Offset) : Shape {
-        return CircleShape(offset, 20f)
+    private fun createHitTestCircleShapeWithPoint(point: Point) : Shape {
+        return CircleShape(point, 20f)
     }
 
     fun showHandlesIfNeeded() {
