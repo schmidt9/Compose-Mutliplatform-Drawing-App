@@ -12,7 +12,6 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import gesture.PointerEvent
 import ui.graphics.CircleShape
 import ui.graphics.PolygonShape
-import ui.graphics.PolylineShape
 import ui.graphics.RectShape
 import ui.graphics.Shape
 import ui.menu.MenuAction
@@ -174,8 +173,8 @@ class HomeScreenModel : ScreenModel {
         currentShape.endResizing()
     }
 
-    fun resizeCurrentShape(dragAmount: Offset) {
-        currentShape.resize(dragAmount)
+    fun resizeCurrentShape(offset: Offset) {
+        currentShape.resize(offset)
     }
 
     fun setRectShapeAsCurrentShape() {

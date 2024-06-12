@@ -2,9 +2,9 @@ package ui.graphics
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import util.plusX
-import util.plusY
 import util.sameValueAs
+import util.setX
+import util.setY
 
 class RectShape(rect: Rect = Rect.Zero) : PolylineShape() {
 
@@ -37,25 +37,33 @@ class RectShape(rect: Rect = Rect.Zero) : PolylineShape() {
 
         // find points
 
-        val currPoint = points[selectedHandleIndex]
-        val prevPoint = points[prevIndex]
-        val nextPoint = points[nextIndex]
+        var currPoint = points[selectedHandleIndex]
+        var prevPoint = points[prevIndex]
+        var nextPoint = points[nextIndex]
 
-        // change points
+        // change vertical and horizontal point
 
-        if (prevPoint.x.sameValueAs(currPoint.x)) {
-            prevPoint.plusY(offset)
+        prevPoint = if (currPoint.x.sameValueAs(prevPoint.x)) {
+            prevPoint.setX(offset)
         } else {
-            prevPoint.plusX(offset)
+            prevPoint.setY(offset)
         }
 
-        if (nextPoint.x.sameValueAs(currPoint.x)) {
-            nextPoint.plusY(offset)
+        nextPoint = if (currPoint.x.sameValueAs(nextPoint.x)) {
+            nextPoint.setX(offset)
         } else {
-            nextPoint.plusX(offset)
+            nextPoint.setY(offset)
         }
 
-        currPoint.plus(offset)
+        // update points
+
+        currPoint = offset
+
+        points[selectedHandleIndex] = currPoint
+        points[prevIndex] = prevPoint
+        points[nextIndex] = nextPoint
+
+        setPoints(points)
     }
 
 }

@@ -227,7 +227,7 @@ class HomeScreen : Screen {
         if (screenModel.isMoveSelectionDrawMode) {
             screenModel.translateSelectedShapes(dragAmount)
         } else if (screenModel.isResizeSelectionDrawMode) {
-            screenModel.resizeCurrentShape(dragAmount)
+            screenModel.resizeCurrentShape(position)
         }
     }
 
@@ -251,7 +251,7 @@ class HomeScreen : Screen {
                         }
 
                         DrawMode.ResizeSelection -> {
-                            screenModel.resizeCurrentShape(screenModel.currentPosition - screenModel.previousPosition)
+                            screenModel.previousPosition = screenModel.currentPosition
                         }
 
                         else -> Unit

@@ -73,8 +73,6 @@ open class Shape(open var properties: PathProperties = PathProperties()){
         drawScope: DrawScope,
         properties: PathProperties
     ) {
-        println("$this, ${points.count()}")
-
         if (path.isEmpty) {
             return
         }
@@ -185,7 +183,7 @@ open class Shape(open var properties: PathProperties = PathProperties()){
 
     fun containsPoint(offset: Offset): Boolean {
         val hitTestShape = Shape()
-        hitTestShape.path.addOval(Rect(center = offset, radius = 10f))
+        hitTestShape.path.addOval(Rect(center = offset, radius = 20f))
 
         return intersects(hitTestShape)
     }
