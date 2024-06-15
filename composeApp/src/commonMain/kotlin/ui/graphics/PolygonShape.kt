@@ -6,6 +6,7 @@ import extensions.setX
 import extensions.setY
 import model.PathProperties
 import util.getDistanceSegmentToPoint
+import util.getProjectionPoint
 import util.hitTestRadius
 import util.snapDistance
 import kotlin.math.abs
@@ -88,7 +89,9 @@ class PolygonShape(firstPoint: Offset = Offset.Zero) : PolylineShape() {
             val distance = getDistanceSegmentToPoint(currPoint, prevPoint, point)
 
             if (distance < hitTestRadius) {
-                addPoint(i, point)
+                // use projection point to place new point exactly on border
+                val projectionPoint = getProjectionPoint(currPoint, prevPoint, point)
+                addPoint(i, projectionPoint)
                 break
             }
         }
