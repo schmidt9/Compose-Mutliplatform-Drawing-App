@@ -1,9 +1,9 @@
 package ui.graphics
 
 import androidx.compose.ui.geometry.Rect
-import util.sameValueAs
-import util.setX
-import util.setY
+import extensions.sameValueAs
+import extensions.setX
+import extensions.setY
 
 class RectShape(rect: Rect = Rect.Zero) : PolylineShape() {
 
