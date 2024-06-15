@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import model.PathProperties
 import model.selectedPathProperties
 import model.selectionPathProperties
+import util.hitTestRadius
 import kotlin.jvm.JvmName
 
 open class Shape(open var properties: PathProperties = PathProperties()){
@@ -183,7 +184,7 @@ open class Shape(open var properties: PathProperties = PathProperties()){
 
     fun containsPoint(point: Point): Boolean {
         val hitTestShape = Shape()
-        hitTestShape.path.addOval(Rect(center = point, radius = 20f))
+        hitTestShape.path.addOval(Rect(center = point, radius = hitTestRadius))
 
         return intersects(hitTestShape)
     }
