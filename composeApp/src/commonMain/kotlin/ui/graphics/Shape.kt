@@ -227,7 +227,7 @@ open class Shape(open var properties: PathProperties = PathProperties()){
     open fun resize(point: Point) {
     }
 
-    fun endResizing() {
+    open fun endResizing() {
         selectedHandleIndex = INDEX_NOT_SET
     }
 

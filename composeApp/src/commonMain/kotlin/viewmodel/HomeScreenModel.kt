@@ -39,7 +39,7 @@ class HomeScreenModel : ScreenModel {
      */
     val shapesUndone = mutableStateListOf<Shape>()
 
-    val selectedShapes get() = shapes.filter { it.isSelected }
+    private val selectedShapes get() = shapes.filter { it.isSelected }
 
     /**
      * Shapes that is being drawn between [PointerEvent.DragStart] and [PointerEvent.DragEnd]. When
@@ -201,7 +201,7 @@ class HomeScreenModel : ScreenModel {
         return CircleShape(point, 20f)
     }
 
-    fun showHandlesIfNeeded() {
+    private fun showHandlesIfNeeded() {
         // show handles only if there is one shape selected
         if (selectedShapes.count() == 1) {
             selectedShapes.first().showHandles = true
