@@ -11,8 +11,8 @@ import kotlin.math.abs
 class PolygonShape(firstPoint: Offset = Offset.Zero) : PolylineShape() {
 
     override var shouldClose: Boolean = true
-    private var prevSnapLine: SnapLine? = null
-    private var nextSnapLine: SnapLine? = null
+    private var prevSnapLineShape: SnapLineShape? = null
+    private var nextSnapLineShape: SnapLineShape? = null
 
     init {
         // init two points at once to be able to refer later the last point
@@ -22,15 +22,15 @@ class PolygonShape(firstPoint: Offset = Offset.Zero) : PolylineShape() {
 
     override fun draw(drawScope: DrawScope, properties: PathProperties) {
         super.draw(drawScope, properties)
-        prevSnapLine?.draw(drawScope)
-        nextSnapLine?.draw(drawScope)
+        prevSnapLineShape?.draw(drawScope)
+        nextSnapLineShape?.draw(drawScope)
     }
 
     override fun resize(point: Point) {
         super.resize(point)
 
-        prevSnapLine = null
-        nextSnapLine = null
+        prevSnapLineShape = null
+        nextSnapLineShape = null
 
         if (selectedHandleIndex == INDEX_NOT_SET) {
             return
@@ -53,18 +53,18 @@ class PolygonShape(firstPoint: Offset = Offset.Zero) : PolylineShape() {
 
         if (abs(currPoint.x - prevPoint.x) <= snapDistance) {
             currPoint = currPoint.setX(prevPoint)
-            prevSnapLine = SnapLine(currPoint, prevPoint)
+            prevSnapLineShape = SnapLineShape(currPoint, prevPoint)
         } else if (abs(currPoint.y - prevPoint.y) <= snapDistance) {
             currPoint = currPoint.setY(prevPoint)
-            prevSnapLine = SnapLine(currPoint, prevPoint)
+            prevSnapLineShape = SnapLineShape(currPoint, prevPoint)
         }
 
         if (abs(currPoint.x - nextPoint.x) <= snapDistance) {
             currPoint = currPoint.setX(nextPoint)
-            nextSnapLine = SnapLine(currPoint, nextPoint)
+            nextSnapLineShape = SnapLineShape(currPoint, nextPoint)
         } else if (abs(currPoint.y - nextPoint.y) <= snapDistance) {
             currPoint = currPoint.setY(nextPoint)
-            nextSnapLine = SnapLine(currPoint, nextPoint)
+            nextSnapLineShape = SnapLineShape(currPoint, nextPoint)
         }
 
         points[selectedHandleIndex] = currPoint
@@ -74,8 +74,8 @@ class PolygonShape(firstPoint: Offset = Offset.Zero) : PolylineShape() {
 
     override fun endResizing() {
         super.endResizing()
-        prevSnapLine = null
-        nextSnapLine = null
+        prevSnapLineShape = null
+        nextSnapLineShape = null
     }
 
     override fun <T : Shape> copy(factory: () -> T): T {
