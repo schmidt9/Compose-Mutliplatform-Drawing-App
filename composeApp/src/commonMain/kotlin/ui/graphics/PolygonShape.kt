@@ -12,6 +12,18 @@ class PolygonShape(firstPoint: Offset = Offset.Zero) : PolylineShape() {
         setPoints(listOf(firstPoint, firstPoint))
     }
 
+    override fun resize(point: Point) {
+        super.resize(point)
+
+        if (selectedHandleIndex == INDEX_NOT_SET) {
+            return
+        }
+
+        points[selectedHandleIndex] = point
+
+        setPoints(points)
+    }
+
     override fun <T : Shape> copy(factory: () -> T): T {
         val shape = super.copy(factory) as PolygonShape
         shape.shouldClose = shouldClose
