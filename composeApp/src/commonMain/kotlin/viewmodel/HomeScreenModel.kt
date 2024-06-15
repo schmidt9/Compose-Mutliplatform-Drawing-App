@@ -112,7 +112,7 @@ class HomeScreenModel : ScreenModel {
 
     fun drawCurrentShape(drawScope: DrawScope) {
         val pathProperties =
-            if (isSelectionAction) currentShape.selectionPathProperties
+            if (isSelectionAction && isResizeSelectionDrawMode.not()) currentShape.selectionPathProperties
             else currentShape.properties
 
         currentShape.draw(drawScope, pathProperties)
