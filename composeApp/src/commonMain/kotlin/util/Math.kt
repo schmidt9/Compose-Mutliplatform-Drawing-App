@@ -22,12 +22,12 @@ fun getDistanceSegmentToPoint(a: Point, b: Point, c: Point): Float {
 
     // Check if D is off either end of the line segment
     if (k <= 0.0) {
-        return sqrt(hypot2(c, a))
+        return sqrt(hypotenuse2(c, a))
     } else if (k >= 1.0) {
-        return sqrt(hypot2(c, b))
+        return sqrt(hypotenuse2(c, b))
     }
 
-    return sqrt(hypot2(c, d))
+    return sqrt(hypotenuse2(c, d))
 }
 
 /**
@@ -38,18 +38,18 @@ fun getProjectionPoint(a: Point, b: Point, c: Point): Point {
     val ac = sub(c, a)
     val ab = sub(b, a)
 
-    return add(proj(ac, ab), a)
+    return add(projection(ac, ab), a)
 }
 
-fun add(a: Point, b: Point) = a.plus(b)
+private fun add(a: Point, b: Point) = a.plus(b)
 
-fun sub(a: Point, b: Point) = a.minus(b)
+private fun sub(a: Point, b: Point) = a.minus(b)
 
-fun dot(a: Point, b: Point) = a.x * b.x + a.y * b.y
+private fun dot(a: Point, b: Point) = a.x * b.x + a.y * b.y
 
-fun hypot2(a: Point, b: Point) = dot(sub(a, b), sub(a, b))
+private fun hypotenuse2(a: Point, b: Point) = dot(sub(a, b), sub(a, b))
 
-fun proj(a: Point, b: Point): Point {
+private fun projection(a: Point, b: Point): Point {
     val k = dot(a, b) / dot(b, b)
     return Offset(k * b.x, k * b.y)
 }
