@@ -77,6 +77,9 @@ class HomeScreen : Screen {
                         onDoubleTap = {
                             // TODO: impl
                         },
+                        onLongPress = {
+                            handleModifierLongPress(screenModel, it)
+                        },
                         onDragStart = {
                             handleModifierDragStart(screenModel, it)
                         },
@@ -85,6 +88,9 @@ class HomeScreen : Screen {
                         },
                         onDragEnd = {
                             handleModifierDragEnd(screenModel)
+                        },
+                        onPressReleased = {
+                            handleModifierPressReleased(screenModel, it)
                         }
                     )
 
@@ -147,12 +153,13 @@ class HomeScreen : Screen {
                     shapesMenuButtonSelected = screenModel.shapesMenuButtonSelected,
                     onShapesMenuButtonClick = {
                         // show shapes menu on second button click only
-                        screenModel.shapesMenuVisible = !screenModel.shapesMenuVisible && screenModel.shapesMenuButtonSelected
+                        screenModel.shapesMenuVisible =
+                            !screenModel.shapesMenuVisible && screenModel.shapesMenuButtonSelected
                         screenModel.shapesMenuButtonSelected = true
                         screenModel.currentMenuButtonAction = it
                         screenModel.selectionButtonSelected = false
                         screenModel.clearSelection()
-                    } ,
+                    },
                     selectionButtonSelected = screenModel.selectionButtonSelected,
                     onSelectionButtonClick = {
                         screenModel.currentMenuButtonAction = it
@@ -166,17 +173,32 @@ class HomeScreen : Screen {
 
     }
 
-    private fun handleModifierTap(screenModel: HomeScreenModel, offset: Offset) {
+    private fun handleModifierTap(screenModel: HomeScreenModel, point: Point) {
         screenModel.pointerEvent = PointerEvent.Tap
 
-        screenModel.currentPosition = offset
-        screenModel.previousPosition = offset
+        screenModel.currentPosition = point
+        screenModel.previousPosition = point
 
         screenModel.clearSelection()
 
         when (screenModel.currentMenuButtonAction) {
             MenuAction.DoSelection -> {
-                screenModel.updateSelectionAtPoint(offset)
+                screenModel.updateSelectionAtPoint(point)
+            }
+
+            else -> Unit
+        }
+    }
+
+    private fun handleModifierLongPress(screenModel: HomeScreenModel, point: Point) {
+        screenModel.pointerEvent = PointerEvent.LongPress
+
+        screenModel.currentPosition = point
+        screenModel.previousPosition = point
+
+        when (screenModel.currentMenuButtonAction) {
+            MenuAction.DoSelection -> {
+                screenModel.handleLongPress(point)
             }
 
             else -> Unit
@@ -221,7 +243,8 @@ class HomeScreen : Screen {
     private fun handleModifierDrag(
         screenModel: HomeScreenModel,
         position: Point,
-        dragAmount: Offset) {
+        dragAmount: Offset
+    ) {
         screenModel.pointerEvent = PointerEvent.Drag
         screenModel.currentPosition = position
 
@@ -305,13 +328,23 @@ class HomeScreen : Screen {
             MenuAction.DrawRectangle, MenuAction.DoSelection -> {
                 screenModel.pointerEvent = PointerEvent.Idle
             }
+
             else -> Unit
         }
     }
 
-    private fun handleCanvasDrawing(screenModel: HomeScreenModel,
-                                    drawContext: DrawContext,
-                                    drawScope: DrawScope) {
+    private fun handleModifierPressReleased(screenModel: HomeScreenModel, point: Point) {
+        screenModel.pointerEvent = PointerEvent.Idle
+
+        screenModel.currentPosition = point
+        screenModel.previousPosition = point
+    }
+
+    private fun handleCanvasDrawing(
+        screenModel: HomeScreenModel,
+        drawContext: DrawContext,
+        drawScope: DrawScope
+    ) {
         with(drawContext.canvas.nativeCanvas) {
             val checkPoint = saveLayer(null, null)
 

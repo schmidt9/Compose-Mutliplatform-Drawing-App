@@ -17,6 +17,7 @@ import ui.graphics.RectShape
 import ui.graphics.Shape
 import ui.menu.MenuAction
 import ui.menu.MenuButton
+import util.hitTestRadius
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -178,6 +179,12 @@ class HomeScreenModel : ScreenModel {
         currentShape.resize(point)
     }
 
+    fun handleLongPress(point: Point) {
+        if (selectedShapes.count() == 1) {
+            selectedShapes.first().addPointIfNeeded(point)
+        }
+    }
+
     fun setRectShapeAsCurrentShape() {
         val left = min(previousPosition.x, currentPosition.x)
         val top = min(previousPosition.y, currentPosition.y)
@@ -198,7 +205,7 @@ class HomeScreenModel : ScreenModel {
      * Create circle shape for hit test detection using intersection
      */
     private fun createHitTestCircleShapeWithPoint(point: Point) : Shape {
-        return CircleShape(point, 20f)
+        return CircleShape(point, hitTestRadius)
     }
 
     private fun showHandlesIfNeeded() {

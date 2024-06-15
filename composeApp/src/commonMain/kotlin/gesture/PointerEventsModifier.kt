@@ -12,18 +12,30 @@ import androidx.compose.ui.input.pointer.pointerInput
 fun Modifier.pointerEvents(
     onTap: (Offset) -> Unit,
     onDoubleTap: (Offset) -> Unit,
+    onLongPress: (Offset) -> Unit,
     onDragStart: (Offset) -> Unit,
     onDrag: (Offset, Offset) -> Unit,
-    onDragEnd: () -> Unit
+    onDragEnd: () -> Unit,
+    onPressReleased: (Offset) -> Unit,
 ) = this.then(
     Modifier
         .pointerInput(Unit) {
             detectTapGestures(
-                onTap = {
-                    onTap(it)
-                },
                 onDoubleTap = {
                     onDoubleTap(it)
+                },
+                onLongPress = {
+                    onLongPress(it)
+                },
+                onPress = {
+                    val released = tryAwaitRelease()
+
+                    if (released) {
+                        onPressReleased(it)
+                    }
+                },
+                onTap = {
+                    onTap(it)
                 }
             )
         }
@@ -32,11 +44,11 @@ fun Modifier.pointerEvents(
                 onDragStart = {
                     onDragStart(it)
                 },
-                onDrag = { change, dragAmount ->
-                    onDrag(change.position, dragAmount)
-                },
                 onDragEnd = {
                     onDragEnd()
+                },
+                onDrag = { change, dragAmount ->
+                    onDrag(change.position, dragAmount)
                 }
             )
         }

@@ -29,7 +29,7 @@ open class Shape(open var properties: PathProperties = PathProperties()){
         const val INDEX_NOT_SET = -1
     }
 
-    protected val path = Path()
+    val path = Path()
 
     private val selectedPathProperties = PathProperties.selectedPathProperties
 
@@ -126,7 +126,7 @@ open class Shape(open var properties: PathProperties = PathProperties()){
         path.reset()
     }
 
-    fun close() {
+    private fun close() {
         path.close()
     }
 
@@ -138,12 +138,23 @@ open class Shape(open var properties: PathProperties = PathProperties()){
         if (shouldClose) {
             close()
         }
+
+        updateHandles()
     }
 
     fun addPoint(point: Point) {
         points.add(point)
         // recreate path to close with the new point
         setPoints(points)
+    }
+
+    fun addPoint(index: Int, point: Point) {
+        points.add(index, point)
+        // recreate path to close with the new point
+        setPoints(points)
+    }
+
+    open fun addPointIfNeeded(point: Point) {
     }
 
     fun setLastPoint(point: Point) {
@@ -155,6 +166,7 @@ open class Shape(open var properties: PathProperties = PathProperties()){
     }
 
     open fun intersects(shape: Shape): Boolean {
+        // the implementation below does not work for intersection with line
         if (this.path.isEmpty || shape.path.isEmpty) {
             return false
         }

@@ -5,6 +5,8 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import extensions.setX
 import extensions.setY
 import model.PathProperties
+import util.getDistanceSegmentToPoint
+import util.hitTestRadius
 import util.snapDistance
 import kotlin.math.abs
 
@@ -76,6 +78,20 @@ class PolygonShape(firstPoint: Offset = Offset.Zero) : PolylineShape() {
         super.endResizing()
         prevSnapLineShape = null
         nextSnapLineShape = null
+    }
+
+    override fun addPointIfNeeded(point: Point) {
+        for (i in points.count() - 1 downTo 0) {
+            val prevIndex = if (i == 0) points.count() - 1 else i - 1
+            val currPoint = points[i]
+            val prevPoint = points[prevIndex]
+            val distance = getDistanceSegmentToPoint(currPoint, prevPoint, point)
+
+            if (distance < hitTestRadius) {
+                addPoint(i, point)
+                break
+            }
+        }
     }
 
     override fun <T : Shape> copy(factory: () -> T): T {
