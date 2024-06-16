@@ -43,7 +43,7 @@ open class Shape(open var properties: PathProperties = PathProperties()){
 
     protected var points = mutableListOf<Point>()
 
-    private var handles = listOf<HandleShape>()
+    protected var handles = listOf<HandleShape>()
 
     var showHandles = false
 
@@ -154,7 +154,16 @@ open class Shape(open var properties: PathProperties = PathProperties()){
         setPoints(points)
     }
 
+    fun removePointAt(index: Int) {
+        points.removeAt(index)
+        // recreate path to close with the new point
+        setPoints(points)
+    }
+
     open fun addPointIfNeeded(point: Point) {
+    }
+
+    open fun removePointIfNeeded(point: Point) {
     }
 
     fun setLastPoint(point: Point) {

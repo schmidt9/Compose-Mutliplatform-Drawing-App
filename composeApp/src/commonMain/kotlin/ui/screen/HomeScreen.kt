@@ -75,7 +75,7 @@ class HomeScreen : Screen {
                             handleModifierTap(screenModel, it)
                         },
                         onDoubleTap = {
-                            // TODO: impl
+                            handleModifierDoubleTap(screenModel, it)
                         },
                         onLongPress = {
                             handleModifierLongPress(screenModel, it)
@@ -184,6 +184,21 @@ class HomeScreen : Screen {
         when (screenModel.currentMenuButtonAction) {
             MenuAction.DoSelection -> {
                 screenModel.updateSelectionAtPoint(point)
+            }
+
+            else -> Unit
+        }
+    }
+
+    private fun handleModifierDoubleTap(screenModel: HomeScreenModel, point: Point) {
+        screenModel.pointerEvent = PointerEvent.DoubleTap
+
+        screenModel.currentPosition = point
+        screenModel.previousPosition = point
+
+        when (screenModel.currentMenuButtonAction) {
+            MenuAction.DoSelection -> {
+                screenModel.handleDoubleTap(point)
             }
 
             else -> Unit

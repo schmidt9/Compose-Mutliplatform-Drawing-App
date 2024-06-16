@@ -185,6 +185,12 @@ class HomeScreenModel : ScreenModel {
         }
     }
 
+    fun handleDoubleTap(point: Point) {
+        if (selectedShapes.count() == 1) {
+            selectedShapes.first().removePointIfNeeded(point)
+        }
+    }
+
     fun setRectShapeAsCurrentShape() {
         val left = min(previousPosition.x, currentPosition.x)
         val top = min(previousPosition.y, currentPosition.y)

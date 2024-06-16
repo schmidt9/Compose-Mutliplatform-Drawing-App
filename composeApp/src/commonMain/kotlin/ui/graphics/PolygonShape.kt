@@ -1,5 +1,6 @@
 package ui.graphics
 
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import extensions.setX
@@ -92,6 +93,19 @@ class PolygonShape(firstPoint: Offset = Offset.Zero) : PolylineShape() {
                 // use projection point to place new point exactly on border
                 val projectionPoint = getProjectionPoint(currPoint, prevPoint, point)
                 addPoint(i, projectionPoint)
+                break
+            }
+        }
+    }
+
+    override fun removePointIfNeeded(point: Point) {
+        val hitTestShape = CircleShape(point, hitTestRadius)
+
+        for (i in handles.count() - 1 downTo 0) {
+            val handle = handles[i]
+
+            if (hitTestShape.intersects(handle)) {
+                removePointAt(i)
                 break
             }
         }
