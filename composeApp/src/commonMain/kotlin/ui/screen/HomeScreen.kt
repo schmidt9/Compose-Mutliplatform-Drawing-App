@@ -91,6 +91,9 @@ class HomeScreen : Screen {
                         },
                         onPressReleased = {
                             handleModifierPressReleased(screenModel, it)
+                        },
+                        onTransform = { centroid, pan, zoom ->
+                            handleModifierZoom(screenModel, centroid, zoom)
                         }
                     )
 
@@ -353,6 +356,13 @@ class HomeScreen : Screen {
 
         screenModel.currentPosition = point
         screenModel.previousPosition = point
+    }
+
+    private fun handleModifierZoom(screenModel: HomeScreenModel, centroid: Point, zoom: Float) {
+        screenModel.pointerEvent = PointerEvent.Zoom
+
+        screenModel.handleZoom(centroid, zoom)
+        println("ZOOM $zoom ${screenModel.zoom}")
     }
 
     private fun handleCanvasDrawing(

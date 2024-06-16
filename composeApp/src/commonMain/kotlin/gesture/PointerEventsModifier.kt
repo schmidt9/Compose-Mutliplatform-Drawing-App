@@ -2,6 +2,7 @@ package gesture
 
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
@@ -17,6 +18,7 @@ fun Modifier.pointerEvents(
     onDrag: (Offset, Offset) -> Unit,
     onDragEnd: () -> Unit,
     onPressReleased: (Offset) -> Unit,
+    onTransform:(centroid: Offset, pan: Offset, zoom: Float) -> Unit
 ) = this.then(
     Modifier
         .pointerInput(Unit) {
@@ -49,6 +51,14 @@ fun Modifier.pointerEvents(
                 },
                 onDrag = { change, dragAmount ->
                     onDrag(change.position, dragAmount)
+                }
+            )
+        }
+        .pointerInput(Unit) {
+            detectTransformGestures(
+                panZoomLock = true,
+                onGesture = { centroid, pan, zoom, _ ->
+                    onTransform(centroid, pan, zoom)
                 }
             )
         }

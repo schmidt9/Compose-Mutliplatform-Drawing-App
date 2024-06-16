@@ -7,5 +7,6 @@ enum class PointerEvent {
     DragStart,
     Drag,
     DragEnd,
+    Zoom,
     Idle
 }
