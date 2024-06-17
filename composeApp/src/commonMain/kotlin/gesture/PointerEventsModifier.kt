@@ -23,7 +23,8 @@ fun Modifier.pointerEvents(
     onDrag: (Offset, Offset) -> Unit,
     onDragEnd: () -> Unit,
     onPressReleased: (Offset) -> Unit,
-    onTransform:(centroid: Offset, pan: Offset, zoom: Float) -> Unit
+    onTransform:(centroid: Offset, pan: Offset, zoom: Float) -> Unit,
+    onPointerUp: () -> Unit
 ) = this.then(
     Modifier
         .pointerInput(Unit) {
@@ -84,6 +85,7 @@ fun Modifier.pointerEvents(
                     }
                 } while (event.changes.any { it.pressed })
 
+                onPointerUp()
             }
         }
 )

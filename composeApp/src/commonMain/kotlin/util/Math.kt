@@ -6,6 +6,23 @@ import kotlin.math.abs
 import kotlin.math.sqrt
 
 /**
+ * https://stackoverflow.com/a/29848387/3004003
+ */
+fun scalePoints(points: List<Point>, anchorPoint: Point, scaleFactor: Float): List<Point> {
+    return points.map {
+        // this is a vector that leads from mass center to current vertex
+        val vec = Offset(
+            it.x - anchorPoint.x,
+            it.y - anchorPoint.y
+        )
+        return@map Offset(
+            anchorPoint.x + scaleFactor * vec.x,
+            anchorPoint.y + scaleFactor * vec.y
+        )
+    }
+}
+
+/**
  * Returns the distance from line segment AB to point C
  * https://stackoverflow.com/a/1079478/3004003
  */

@@ -94,6 +94,7 @@ class HomeScreenModel : ScreenModel {
     ).contains(currentMenuButtonAction)
 
     var totalZoom by mutableStateOf(1f)
+    var zoomAnchorPoint: Point? by mutableStateOf(null)
 
     // endregion
 
@@ -194,6 +195,10 @@ class HomeScreenModel : ScreenModel {
     }
 
     fun handleZoom(centroid: Point, zoom: Float) {
+        if (zoomAnchorPoint == null) {
+            zoomAnchorPoint = centroid
+        }
+
         if (zoom >= 1) {
             val delta = zoom - 1
             this.totalZoom += delta
@@ -203,8 +208,12 @@ class HomeScreenModel : ScreenModel {
         }
 
         shapes.forEach {
-            it.scale(zoom)
+            it.scale(zoom, zoomAnchorPoint!!)
         }
+    }
+
+    fun endZoom() {
+        zoomAnchorPoint = null
     }
 
     fun setRectShapeAsCurrentShape() {

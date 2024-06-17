@@ -14,6 +14,7 @@ import model.PathProperties
 import model.selectedPathProperties
 import model.selectionPathProperties
 import util.hitTestRadius
+import util.scalePoints
 import kotlin.jvm.JvmName
 
 open class Shape(open var properties: PathProperties = PathProperties()){
@@ -109,10 +110,8 @@ open class Shape(open var properties: PathProperties = PathProperties()){
         points = points.map { it.plus(offset) }.toMutableList()
     }
 
-    fun scale(value: Float) {
-        val matrix = Matrix()
-        matrix.scale(x = value, y = value)
-        path.transform(matrix)
+    fun scale(scaleFactor: Float, anchor: Point) {
+        setPoints(scalePoints(points, anchor, scaleFactor))
     }
 
     fun moveTo(x: Float, y: Float) {
