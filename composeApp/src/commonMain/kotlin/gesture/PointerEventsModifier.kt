@@ -7,23 +7,23 @@ import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
+import ui.graphics.Point
 
 /**
  * https://developer.android.com/reference/kotlin/androidx/compose/foundation/gestures/package-summary
  */
 fun Modifier.pointerEvents(
-    onTap: (Offset) -> Unit,
-    onDoubleTap: (Offset) -> Unit,
-    onLongPress: (Offset) -> Unit,
-    onDragStart: (Offset) -> Unit,
-    onDrag: (Offset, Offset) -> Unit,
+    onTap: (Point) -> Unit,
+    onDoubleTap: (Point) -> Unit,
+    onLongPress: (Point) -> Unit,
+    onDragStart: (Point) -> Unit,
+    onDrag: (Point, Offset) -> Unit,
     onDragEnd: () -> Unit,
-    onPressReleased: (Offset) -> Unit,
-    onTransform:(centroid: Offset, pan: Offset, zoom: Float) -> Unit,
+    onPressReleased: (Point) -> Unit,
+    onTransform:(centroid: Point, pan: Offset, zoom: Float) -> Unit,
     onPointerUp: () -> Unit
 ) = this.then(
     Modifier

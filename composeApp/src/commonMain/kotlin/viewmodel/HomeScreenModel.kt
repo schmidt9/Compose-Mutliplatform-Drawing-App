@@ -94,7 +94,6 @@ class HomeScreenModel : ScreenModel {
     ).contains(currentMenuButtonAction)
 
     var totalZoom by mutableStateOf(1f)
-    var zoomAnchorPoint: Point? by mutableStateOf(null)
 
     // endregion
 
@@ -141,6 +140,12 @@ class HomeScreenModel : ScreenModel {
 
         shapes.forEach {
             it.isSelected = false
+        }
+    }
+
+    fun translateAllShapes(offset: Offset) {
+        shapes.forEach {
+            it.translate(offset)
         }
     }
 
@@ -194,11 +199,11 @@ class HomeScreenModel : ScreenModel {
         }
     }
 
-    fun handleZoom(centroid: Point, zoom: Float) {
-        if (zoomAnchorPoint == null) {
-            zoomAnchorPoint = centroid
-        }
+    fun handlePan(pan: Offset) {
+        translateAllShapes(pan)
+    }
 
+    fun handleZoom(centroid: Point, zoom: Float) {
         if (zoom >= 1) {
             val delta = zoom - 1
             this.totalZoom += delta
@@ -208,12 +213,8 @@ class HomeScreenModel : ScreenModel {
         }
 
         shapes.forEach {
-            it.scale(zoom, zoomAnchorPoint!!)
+            it.scale(zoom, centroid)
         }
-    }
-
-    fun endZoom() {
-        zoomAnchorPoint = null
     }
 
     fun setRectShapeAsCurrentShape() {

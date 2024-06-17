@@ -96,7 +96,7 @@ class HomeScreen : Screen {
                         },
                         onTransform = { centroid, pan, zoom ->
                             println("TRANS $centroid, $pan, $zoom")
-                            handleModifierTransform(screenModel, centroid, zoom)
+                            handleModifierTransform(screenModel, centroid, pan, zoom)
                         },
                         onPointerUp = {
                             handleModifierPointerUp(screenModel)
@@ -364,19 +364,21 @@ class HomeScreen : Screen {
         screenModel.previousPosition = point
     }
 
-    private fun handleModifierTransform(screenModel: HomeScreenModel, centroid: Point, zoom: Float) {
+    private fun handleModifierTransform(screenModel: HomeScreenModel,
+                                        centroid: Point,
+                                        pan: Offset,
+                                        zoom: Float) {
         screenModel.pointerEvent = PointerEvent.Zoom
 
+        screenModel.handlePan(pan)
         screenModel.handleZoom(centroid, zoom)
 
-        screenModel.pointerEvent = PointerEvent.Idle
+        screenModel.pointerEvent = PointerEvent.Idle // trigger canvas redrawing
 
         println("ZOOM $zoom ${screenModel.totalZoom}")
     }
 
     private fun handleModifierPointerUp(screenModel: HomeScreenModel) {
-        screenModel.endZoom()
-
         screenModel.pointerEvent = PointerEvent.Idle
     }
 
