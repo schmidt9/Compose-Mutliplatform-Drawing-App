@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -106,6 +107,12 @@ open class Shape(open var properties: PathProperties = PathProperties()){
     open fun translate(offset: Offset) {
         path.translate(offset)
         points = points.map { it.plus(offset) }.toMutableList()
+    }
+
+    fun scale(value: Float) {
+        val matrix = Matrix()
+        matrix.scale(x = value, y = value)
+        path.transform(matrix)
     }
 
     fun moveTo(x: Float, y: Float) {

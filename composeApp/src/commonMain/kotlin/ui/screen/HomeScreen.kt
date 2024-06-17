@@ -81,9 +81,11 @@ class HomeScreen : Screen {
                             handleModifierLongPress(screenModel, it)
                         },
                         onDragStart = {
+                            println("DRAG START")
                             handleModifierDragStart(screenModel, it)
                         },
                         onDrag = { position, dragAmount ->
+                            println("DRAG")
                             handleModifierDrag(screenModel, position, dragAmount)
                         },
                         onDragEnd = {
@@ -93,6 +95,7 @@ class HomeScreen : Screen {
                             handleModifierPressReleased(screenModel, it)
                         },
                         onTransform = { centroid, pan, zoom ->
+                            println("TRANS $centroid, $pan, $zoom")
                             handleModifierZoom(screenModel, centroid, zoom)
                         }
                     )
@@ -362,7 +365,7 @@ class HomeScreen : Screen {
         screenModel.pointerEvent = PointerEvent.Zoom
 
         screenModel.handleZoom(centroid, zoom)
-        println("ZOOM $zoom ${screenModel.zoom}")
+        println("ZOOM $zoom ${screenModel.totalZoom}")
     }
 
     private fun handleCanvasDrawing(

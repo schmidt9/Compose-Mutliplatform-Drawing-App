@@ -1,5 +1,10 @@
 package gesture
 
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.calculateCentroid
+import androidx.compose.foundation.gestures.calculatePan
+import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -55,11 +60,30 @@ fun Modifier.pointerEvents(
             )
         }
         .pointerInput(Unit) {
-            detectTransformGestures(
-                panZoomLock = true,
-                onGesture = { centroid, pan, zoom, _ ->
-                    onTransform(centroid, pan, zoom)
-                }
-            )
+            // https://stackoverflow.com/a/75425307/3004003
+            // use this approach instead of built-in detectTransformGestures
+            // because detectTransformGestures also fires with single pointer
+            // preventing detectDragGestures to work
+            awaitEachGesture {
+                awaitFirstDown()
+
+                do {
+                    val event = awaitPointerEvent()
+
+                    if (event.changes.size == 2) {
+                        val centroid = event.calculateCentroid()
+                        val pan = event.calculatePan()
+                        val zoom = event.calculateZoom()
+                        onTransform(centroid, pan, zoom)
+
+                        // This is for preventing other gestures consuming events
+                        // prevent scrolling or other continuous gestures
+                        event.changes.forEach {
+                            it.consume()
+                        }
+                    }
+                } while (event.changes.any { it.pressed })
+
+            }
         }
 )

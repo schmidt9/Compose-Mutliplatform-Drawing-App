@@ -93,7 +93,7 @@ class HomeScreenModel : ScreenModel {
         MenuAction.PolygonCancel
     ).contains(currentMenuButtonAction)
 
-    var zoom by mutableStateOf(1f)
+    var totalZoom by mutableStateOf(1f)
 
     // endregion
 
@@ -195,11 +195,15 @@ class HomeScreenModel : ScreenModel {
 
     fun handleZoom(centroid: Point, zoom: Float) {
         if (zoom >= 1) {
-            val adjustedZoom = zoom - 1
-            this.zoom += adjustedZoom
+            val delta = zoom - 1
+            this.totalZoom += delta
         } else {
-            val adjustedZoom = 1 - zoom
-            this.zoom -= adjustedZoom
+            val delta = 1 - zoom
+            this.totalZoom -= delta
+        }
+
+        shapes.forEach {
+            it.scale(zoom)
         }
     }
 
