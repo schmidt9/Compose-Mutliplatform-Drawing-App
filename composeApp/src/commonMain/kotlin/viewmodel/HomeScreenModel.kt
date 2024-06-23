@@ -77,6 +77,8 @@ class HomeScreenModel : ScreenModel {
 
     var selectionButtonSelected by mutableStateOf(false)
 
+    var addImageButtonSelected by mutableStateOf(false)
+
     var shapesMenuVisible by mutableStateOf(false)
 
     var polygonMenuVisible by mutableStateOf(false)

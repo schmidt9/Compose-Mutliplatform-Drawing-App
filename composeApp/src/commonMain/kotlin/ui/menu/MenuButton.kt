@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.DeleteForever
+import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Rectangle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
@@ -46,6 +47,11 @@ sealed class MenuButton( // TODO: rename
     data object DoSelectionMenuButton : MenuButton(
         MenuAction.DoSelection,
         Res.drawable.select_24dp_fill0_wght400_grad0_opsz24
+    )
+
+    data object AddImageMenuButton : MenuButton(
+        MenuAction.AddImage,
+        imageVector = Icons.Outlined.Image
     )
 
     data object DeleteSelectionMenuButton : MenuButton(

@@ -181,6 +181,7 @@ class HomeScreen : Screen {
                         screenModel.shapesMenuButtonSelected = true
                         screenModel.currentMenuButtonAction = it
                         screenModel.selectionButtonSelected = false
+                        screenModel.addImageButtonSelected = false
                         screenModel.clearSelection()
                     },
                     selectionButtonSelected = screenModel.selectionButtonSelected,
@@ -188,6 +189,15 @@ class HomeScreen : Screen {
                         screenModel.currentMenuButtonAction = it
                         screenModel.shapesMenuButtonSelected = false
                         screenModel.selectionButtonSelected = true
+                        screenModel.addImageButtonSelected = false
+                    },
+                    addImageButtonSelected = screenModel.addImageButtonSelected,
+                    onAddImageButtonClick = {
+                        screenModel.currentMenuButtonAction = it
+                        screenModel.shapesMenuButtonSelected = false
+                        screenModel.selectionButtonSelected = false
+                        screenModel.addImageButtonSelected = true
+                        // TODO: impl
                     }
                 )
 

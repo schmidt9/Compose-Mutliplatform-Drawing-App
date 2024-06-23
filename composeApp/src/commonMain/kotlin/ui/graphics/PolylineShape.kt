@@ -1,8 +1,7 @@
 package ui.graphics
 
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import model.PathProperties
+import extensions.lineTo
+import extensions.moveTo
 
 abstract class PolylineShape : Shape() {
 

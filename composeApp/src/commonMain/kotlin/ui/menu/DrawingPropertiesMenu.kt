@@ -27,7 +27,9 @@ fun DrawingPropertiesMenu(
     shapesMenuButtonSelected: Boolean,
     onShapesMenuButtonClick: (MenuAction) -> Unit,
     selectionButtonSelected: Boolean,
-    onSelectionButtonClick: (MenuAction) -> Unit
+    onSelectionButtonClick: (MenuAction) -> Unit,
+    addImageButtonSelected: Boolean,
+    onAddImageButtonClick: (MenuAction) -> Unit
 ) {
     val properties by rememberUpdatedState(newValue = pathProperties)
 
@@ -57,6 +59,14 @@ fun DrawingPropertiesMenu(
             },
             painter = shapesMenuButton.imagePainter,
             selected = shapesMenuButtonSelected
+        )
+
+        SelectableIconButton(
+            onClick = {
+                onAddImageButtonClick(MenuButton.AddImageMenuButton.menuAction)
+            },
+            painter = MenuButton.AddImageMenuButton.imagePainter,
+            selected = addImageButtonSelected
         )
 
         SelectableIconButton(
