@@ -7,8 +7,6 @@ import util.handleRadius
 
 class HandleShape(center: Offset) : CircleShape(center, handleRadius) {
 
-    override var properties: PathProperties
-        get() = PathProperties.handleProperties
-        set(_) {}
+    override var properties: PathProperties = PathProperties.handleProperties
 
 }
