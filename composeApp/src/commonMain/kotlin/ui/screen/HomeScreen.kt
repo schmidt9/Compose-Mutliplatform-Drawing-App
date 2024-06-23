@@ -282,6 +282,10 @@ class HomeScreen : Screen {
                 }
             }
 
+            MenuAction.AddImage -> {
+                screenModel.setAddImageShapeAsCurrentShape()
+            }
+
             else -> Unit
         }
 
@@ -330,6 +334,10 @@ class HomeScreen : Screen {
                     }
                 }
 
+                MenuAction.AddImage -> {
+                    screenModel.setAddImageShapeAsCurrentShape()
+                }
+
                 else -> Unit
             }
         }
@@ -344,7 +352,9 @@ class HomeScreen : Screen {
         if (!screenModel.isMoveSelectionDrawMode && screenModel.currentMenuButtonAction != MenuAction.DrawPolygon) {
             // Pointer is up save current path
 
-            if (screenModel.isSelectionAction.not() && screenModel.isPolygonAction.not()) {
+            if (screenModel.isSelectionAction.not() &&
+                screenModel.isPolygonAction.not() &&
+                screenModel.isAddImageAction.not()) {
                 screenModel.shapes.add(screenModel.currentShape)
             }
 

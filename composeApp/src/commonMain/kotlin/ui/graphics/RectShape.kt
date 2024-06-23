@@ -5,7 +5,7 @@ import extensions.sameValueAs
 import extensions.setX
 import extensions.setY
 
-class RectShape(rect: Rect = Rect.Zero) : PolylineShape() {
+open class RectShape(rect: Rect = Rect.Zero) : PolylineShape() {
 
     override var shouldClose: Boolean = true
 

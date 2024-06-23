@@ -49,6 +49,13 @@ val PathProperties.Companion.selectedPathProperties
         strokeColor = Color.Cyan,
     )
 
+val PathProperties.Companion.addImagePathProperties
+    get() = PathProperties(
+        strokeWidth = 5f,
+        strokeColor = Color.Red,
+        pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 20f))
+    )
+
 val PathProperties.Companion.handleProperties
     get() = PathProperties(
         strokeWidth = 2f,

@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import gesture.PointerEvent
 import ui.graphics.CircleShape
+import ui.graphics.ImageShape
 import ui.graphics.Point
 import ui.graphics.PolygonShape
 import ui.graphics.RectShape
@@ -89,13 +90,15 @@ class HomeScreenModel : ScreenModel {
 
     var currentMenuButtonAction by mutableStateOf(MenuButton.DrawRectangleMenuButton.menuAction)
 
-    val isSelectionAction get() = (currentMenuButtonAction == MenuAction.DoSelection)
-
     val isPolygonAction get() = listOf(
         MenuAction.DrawPolygon,
         MenuAction.PolygonApply,
         MenuAction.PolygonCancel
     ).contains(currentMenuButtonAction)
+
+    val isSelectionAction get() = (currentMenuButtonAction == MenuAction.DoSelection)
+
+    val isAddImageAction get() = (currentMenuButtonAction == MenuAction.AddImage)
 
     var totalZoom by mutableStateOf(1f)
 
@@ -259,19 +262,11 @@ class HomeScreenModel : ScreenModel {
     }
 
     fun setRectShapeAsCurrentShape() {
-        val left = min(previousPosition.x, currentPosition.x)
-        val top = min(previousPosition.y, currentPosition.y)
-        val right = left + abs(previousPosition.x - currentPosition.x)
-        val bottom = top + abs(previousPosition.y - currentPosition.y)
+        currentShape = RectShape(createRect())
+    }
 
-        val rect = Rect(
-            left = left,
-            top = top,
-            right = right,
-            bottom = bottom
-        )
-
-        currentShape = RectShape(rect)
+    fun setAddImageShapeAsCurrentShape() {
+        currentShape = ImageShape(createRect())
     }
 
     /**
@@ -279,6 +274,20 @@ class HomeScreenModel : ScreenModel {
      */
     private fun createHitTestCircleShapeWithPoint(point: Point) : Shape {
         return CircleShape(point, hitTestRadius)
+    }
+
+    private fun createRect(): Rect {
+        val left = min(previousPosition.x, currentPosition.x)
+        val top = min(previousPosition.y, currentPosition.y)
+        val right = left + abs(previousPosition.x - currentPosition.x)
+        val bottom = top + abs(previousPosition.y - currentPosition.y)
+
+        return Rect(
+            left = left,
+            top = top,
+            right = right,
+            bottom = bottom
+        )
     }
 
     private fun showHandlesIfNeeded() {
