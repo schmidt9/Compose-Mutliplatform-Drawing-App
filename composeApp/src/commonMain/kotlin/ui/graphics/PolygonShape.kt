@@ -1,6 +1,5 @@
 package ui.graphics
 
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import extensions.setX

@@ -1,4 +1,4 @@
-package ui.graphics
+package extensions
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
