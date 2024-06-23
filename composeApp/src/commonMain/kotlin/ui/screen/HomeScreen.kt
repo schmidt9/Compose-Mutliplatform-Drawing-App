@@ -32,6 +32,7 @@ import ui.menu.DrawingPropertiesMenu
 import ui.menu.HomeScreenTopMenu
 import ui.menu.MenuAction
 import ui.menu.PolygonActionsMenu
+import ui.menu.SelectionActionsMenu
 import ui.menu.ShapesMenu
 import viewmodel.HomeScreenModel
 
@@ -148,6 +149,19 @@ class HomeScreen : Screen {
                         } else {
                             screenModel.currentShape.reset()
                         }
+                    }
+                )
+
+                SelectionActionsMenu(
+                    visible = screenModel.selectionActionsMenuVisible,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White),
+                    onButtonClick = {
+                        screenModel.pointerEvent = PointerEvent.Idle
+                        screenModel.selectionActionsMenuVisible = false
+
+                        screenModel.removeSelection()
                     }
                 )
 

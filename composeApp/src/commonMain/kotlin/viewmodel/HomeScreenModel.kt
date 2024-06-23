@@ -81,6 +81,8 @@ class HomeScreenModel : ScreenModel {
 
     var polygonMenuVisible by mutableStateOf(false)
 
+    var selectionActionsMenuVisible by mutableStateOf(false)
+
     var shapesMenuButton: MenuButton by mutableStateOf(MenuButton.DrawRectangleMenuButton)
 
     var currentMenuButtonAction by mutableStateOf(MenuButton.DrawRectangleMenuButton.menuAction)
@@ -131,6 +133,12 @@ class HomeScreenModel : ScreenModel {
         }
 
         showHandlesIfNeeded()
+
+        if (selectionActionsMenuVisible.not() && selectedShapes.isNotEmpty()) {
+            selectionActionsMenuVisible = true
+        } else if (selectedShapes.isEmpty()) {
+            selectionActionsMenuVisible = false
+        }
     }
 
     fun updateSelectionAtPoint(point: Point) {
@@ -142,6 +150,12 @@ class HomeScreenModel : ScreenModel {
 
         shapes.forEach {
             it.isSelected = false
+        }
+    }
+
+    fun removeSelection() {
+        shapes.removeAll {
+            it.isSelected
         }
     }
 
