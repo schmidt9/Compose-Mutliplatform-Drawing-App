@@ -1,4 +1,4 @@
-package ui.menu.dialogs
+package ui.dialogs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,6 +26,9 @@ import composemutliplatformdrawingapp.composeapp.generated.resources.ic_images
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
+/**
+ * https://github.com/QasimNawaz/KMPImagePicker/blob/main/composeApp/src/commonMain/kotlin/Dialogs.kt
+ */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ImageSourceOptionDialog(
