@@ -122,9 +122,11 @@ class HomeScreenModel : ScreenModel {
     }
 
     fun updateSelection(hitTestShape: Shape = currentShape) {
-        shapes.forEach {
-            if (it.isSelected.not()) {
-                it.isSelected = isSelectionAction && it.intersects(hitTestShape)
+        if (isResizeSelectionDrawMode.not()) {
+            shapes.forEach {
+                if (it.isSelected.not()) {
+                    it.isSelected = isSelectionAction && it.intersects(hitTestShape)
+                }
             }
         }
 
@@ -143,7 +145,7 @@ class HomeScreenModel : ScreenModel {
         }
     }
 
-    fun translateAllShapes(offset: Offset) {
+    private fun translateAllShapes(offset: Offset) {
         shapes.forEach {
             it.translate(offset)
         }
@@ -152,6 +154,18 @@ class HomeScreenModel : ScreenModel {
     fun translateSelectedShapes(offset: Offset) {
         selectedShapes.forEach {
             it.translate(offset)
+        }
+    }
+
+    private fun scaleAllShapes(scaleFactor: Float, anchor: Point) {
+        shapes.forEach {
+            it.scale(scaleFactor, anchor)
+        }
+    }
+
+    private fun scaleSelectedShapes(scaleFactor: Float, anchor: Point) {
+        selectedShapes.forEach {
+            it.scale(scaleFactor, anchor)
         }
     }
 
@@ -200,7 +214,11 @@ class HomeScreenModel : ScreenModel {
     }
 
     fun handlePan(pan: Offset) {
-        translateAllShapes(pan)
+        if (selectedShapes.isEmpty()) {
+            translateAllShapes(pan)
+        } else {
+            translateSelectedShapes(pan)
+        }
     }
 
     fun handleZoom(centroid: Point, zoom: Float) {
@@ -212,9 +230,16 @@ class HomeScreenModel : ScreenModel {
             this.totalZoom -= delta
         }
 
-        shapes.forEach {
-            it.scale(zoom, centroid)
+        if (centroid == Point.Unspecified) {
+            return
         }
+
+        if (selectedShapes.isEmpty()) {
+            scaleAllShapes(zoom, centroid)
+        } else {
+            scaleSelectedShapes(zoom, centroid)
+        }
+
     }
 
     fun setRectShapeAsCurrentShape() {
