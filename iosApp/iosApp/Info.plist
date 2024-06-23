@@ -46,5 +46,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Grant access to your camera to be able to add images to your drawing</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Grant access to your photo library to be able to add images to your drawing</string>
 </dict>
 </plist>

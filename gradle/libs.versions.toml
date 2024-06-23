@@ -1,4 +1,5 @@
 [versions]
+accompanistPermissionsVersion = "0.35.1-alpha"
 agp = "8.4.0"
 android-compileSdk = "34"
 android-minSdk = "24"
@@ -17,6 +18,7 @@ kotlin = "1.9.23"
 voyagerVersion = "1.0.0"
 
 [libraries]
+google-accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissionsVersion" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
