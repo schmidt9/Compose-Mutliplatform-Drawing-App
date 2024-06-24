@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Path
@@ -18,7 +19,7 @@ import util.hitTestRadius
 import util.scalePoints
 import kotlin.jvm.JvmName
 
-open class Shape(open var properties: PathProperties = PathProperties()){
+open class Shape(open var properties: PathProperties = PathProperties()) {
 
     enum class PropertiesType {
         Default,
@@ -51,6 +52,8 @@ open class Shape(open var properties: PathProperties = PathProperties()){
     open val width: Float = 0f
 
     open val height: Float = 0f
+
+    open val size get() = Size(width, height)
 
     var showHandles = false
 
@@ -127,7 +130,7 @@ open class Shape(open var properties: PathProperties = PathProperties()){
         path.moveTo(x, y)
     }
 
-    open fun<T : Shape> copy(factory: () -> T): T {
+    open fun <T : Shape> copy(factory: () -> T): T {
         val shapePath = factory()
         shapePath.shouldClose = shouldClose
         shapePath.isSelected = isSelected

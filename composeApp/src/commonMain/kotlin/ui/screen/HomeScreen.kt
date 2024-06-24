@@ -26,6 +26,7 @@ import gesture.PointerEvent
 import gesture.pointerEvents
 import model.PathProperties
 import ui.dialogs.AddImageDialog
+import ui.graphics.ImageShape
 import ui.graphics.Point
 import ui.graphics.PolygonShape
 import ui.graphics.Shape
@@ -201,12 +202,17 @@ class HomeScreen : Screen {
                 if (screenModel.addImageDialogVisible) {
                     AddImageDialog(
                         onImageSelected = {
-
+                            println("IMAGE onImageSelected $it")
+                            (screenModel.currentShape as ImageShape).image = it
+                            screenModel.addImageDialogVisible = false
                         },
                         onCancelled = {
+                            println("IMAGE onCancelled")
                             screenModel.currentShape = Shape()
+                            screenModel.addImageDialogVisible = false
                         },
                         onDismissRequest = {
+                            println("IMAGE onDismissRequest")
                             screenModel.addImageDialogVisible = false
                         }
                     )

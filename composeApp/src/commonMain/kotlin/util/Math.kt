@@ -1,8 +1,11 @@
 package util
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import ui.graphics.Point
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sqrt
 
 /**
@@ -56,6 +59,36 @@ fun getProjectionPoint(a: Point, b: Point, c: Point): Point {
     val ab = sub(b, a)
 
     return add(projection(ac, ab), a)
+}
+
+fun scaleSizeToWidth(size: Size, newWidth: Float): Size {
+    val minVal = min(size.width, newWidth);
+    val maxVal = max(size.width, newWidth);
+
+    return Size(
+        width = newWidth,
+        height = (if (newWidth < size.width) minVal / maxVal else maxVal / minVal) * size.height
+    )
+}
+
+fun scaleSizeToHeight(size: Size, newHeight: Float): Size {
+    val minVal = min(size.height, newHeight);
+    val maxVal = max(size.height, newHeight);
+
+    return Size(
+        width = (if (newHeight < size.height) minVal / maxVal else maxVal / minVal) * size.width,
+        height = newHeight
+    )
+}
+
+/**
+ * @param sourceSize Size to scale
+ * @param targetSize Size to which `sourceSize` should be scaled using smaller side of `targetSize`
+ * @return New scaled size
+ */
+fun scaleSizeToSize(sourceSize: Size, targetSize: Size): Size {
+    return if (targetSize.width < targetSize.height) scaleSizeToWidth(sourceSize, targetSize.width)
+    else scaleSizeToHeight(sourceSize, targetSize.height)
 }
 
 private fun add(a: Point, b: Point) = a.plus(b)
