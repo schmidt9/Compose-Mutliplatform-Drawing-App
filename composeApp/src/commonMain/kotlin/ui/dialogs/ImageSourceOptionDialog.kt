@@ -29,7 +29,6 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 /**
  * https://github.com/QasimNawaz/KMPImagePicker/blob/main/composeApp/src/commonMain/kotlin/Dialogs.kt
  */
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ImageSourceOptionDialog(
     onDismissRequest: () -> Unit,

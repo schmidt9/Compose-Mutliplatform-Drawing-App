@@ -18,10 +18,14 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Error
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -36,12 +40,11 @@ import org.jetbrains.compose.resources.painterResource
 /**
  * https://github.com/QasimNawaz/KMPImagePicker/blob/main/composeApp/src/commonMain/kotlin/Dialogs.kt
  */
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun AlertMessageDialog(
     title: String,
     message: String? = null,
-    resource: DrawableResource? = Res.drawable.ic_error_dialog,
+    resource: ImageVector? = Icons.Outlined.Error,
     positiveButtonText: String? = null,
     negativeButtonText: String? = null,
     onPositiveClick: () -> Unit = {},
@@ -67,7 +70,7 @@ fun AlertMessageDialog(
                 resource?.let {
                     Image(
                         modifier = Modifier.size(100.dp),
-                        painter = painterResource(it),
+                        painter = rememberVectorPainter(it),
                         contentDescription = null
                     )
                 }
