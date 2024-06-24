@@ -204,7 +204,7 @@ class HomeScreen : Screen {
 
                         },
                         onCancelled = {
-
+                            screenModel.currentShape = Shape()
                         },
                         onDismissRequest = {
                             screenModel.addImageDialogVisible = false
