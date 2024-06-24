@@ -207,6 +207,7 @@ class HomeScreen : Screen {
                             (screenModel.currentShape as ImageShape).image = it
                             screenModel.addImageDialogVisible = false
                             screenModel.imageIsLoading = false
+                            screenModel.addCurrentImageShape()
                         },
                         onCancelled = {
                             println("IMAGE onCancelled")
@@ -411,7 +412,9 @@ class HomeScreen : Screen {
         screenModel.previousPosition = screenModel.currentPosition
 
         when (screenModel.currentMenuButtonAction) {
-            MenuAction.DrawRectangle, MenuAction.DoSelection -> {
+            MenuAction.DrawRectangle,
+            MenuAction.DoSelection,
+            MenuAction.AddImage -> {
                 screenModel.pointerEvent = PointerEvent.Idle
             }
 

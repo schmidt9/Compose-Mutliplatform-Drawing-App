@@ -114,13 +114,33 @@ class HomeScreenModel : ScreenModel {
         shapes.add(copyShape(currentShape))
     }
 
-    private fun copyShape(shape: Shape): Shape {
-        return when (shape) {
-            is PolygonShape -> shape.copy { PolygonShape() }
-            is RectShape -> shape.copy { RectShape() }
-            is ImageShape -> shape.copy { ImageShape() }
-            else -> shape.copy { Shape() }
+    fun addCurrentImageShape() {
+        if (currentShape !is ImageShape) {
+            return
         }
+
+        currentShape.isSelected = true
+        addCurrentShape()
+    }
+
+    private fun copyShape(shape: Shape): Shape {
+        // using ::class comparison here instead of when..is pattern
+        // because when..is gives returns true for subclasses when comparing with superclass
+        val shapeClass = shape::class
+
+        if (shapeClass == PolygonShape::class) {
+            return shape.copy { PolygonShape() }
+        }
+
+        if (shapeClass == RectShape::class) {
+            return shape.copy { RectShape() }
+        }
+
+        if (shapeClass == ImageShape::class) {
+            return shape.copy { ImageShape() }
+        }
+
+        return shape.copy { Shape() }
     }
 
     fun drawShapes(drawScope: DrawScope) {

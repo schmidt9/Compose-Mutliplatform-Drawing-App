@@ -38,4 +38,11 @@ class ImageShape(rect: Rect = Rect.Zero) : RectShape(rect) {
         }
     }
 
+    override fun <T : Shape> copy(factory: () -> T): T {
+        val copy = super.copy(factory) as ImageShape
+        copy.image = image
+
+        return copy as T
+    }
+
 }
