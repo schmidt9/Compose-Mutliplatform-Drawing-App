@@ -21,6 +21,7 @@ import util.rememberGalleryManager
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun AddImageDialog(
+    onImageLoading: () -> Unit,
     onImageSelected: (ImageBitmap) -> Unit,
     onCancelled: () -> Unit,
     onDismissRequest: () -> Unit
@@ -53,6 +54,8 @@ fun AddImageDialog(
 
     val cameraManager = rememberCameraManager {
         coroutineScope.launch {
+            onImageLoading()
+
             val bitmap = withContext(Dispatchers.Default) {
                 it?.toImageBitmap()
             }
@@ -67,6 +70,8 @@ fun AddImageDialog(
 
     val galleryManager = rememberGalleryManager {
         coroutineScope.launch {
+            onImageLoading()
+
             val bitmap = withContext(Dispatchers.Default) {
                 it?.toImageBitmap()
             }

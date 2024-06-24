@@ -82,6 +82,8 @@ class HomeScreenModel : ScreenModel {
 
     var addImageDialogVisible by mutableStateOf(false)
 
+    var imageIsLoading by mutableStateOf(false)
+
     var shapesMenuVisible by mutableStateOf(false)
 
     var polygonMenuVisible by mutableStateOf(false)

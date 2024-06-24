@@ -26,6 +26,7 @@ import gesture.PointerEvent
 import gesture.pointerEvents
 import model.PathProperties
 import ui.dialogs.AddImageDialog
+import ui.dialogs.LoadingIndicator
 import ui.graphics.ImageShape
 import ui.graphics.Point
 import ui.graphics.PolygonShape
@@ -41,7 +42,6 @@ import viewmodel.HomeScreenModel
 class HomeScreen : Screen {
     @Composable
     override fun Content() {
-
         val screenModel = rememberScreenModel { HomeScreenModel() }
 
         Scaffold(topBar = {
@@ -66,7 +66,6 @@ class HomeScreen : Screen {
                     .fillMaxSize()
                     .background(backgroundColor)
             ) {
-
                 val drawModifier = Modifier
                     .padding(8.dp)
                     .shadow(1.dp)
@@ -104,7 +103,6 @@ class HomeScreen : Screen {
                     )
 
                 Canvas(modifier = drawModifier) {
-
                     when (screenModel.pointerEvent) {
                         PointerEvent.Drag -> {
                             handleCanvasDrag(screenModel)
@@ -201,10 +199,14 @@ class HomeScreen : Screen {
 
                 if (screenModel.addImageDialogVisible) {
                     AddImageDialog(
+                        onImageLoading = {
+                            screenModel.imageIsLoading = true
+                        },
                         onImageSelected = {
                             println("IMAGE onImageSelected $it")
                             (screenModel.currentShape as ImageShape).image = it
                             screenModel.addImageDialogVisible = false
+                            screenModel.imageIsLoading = false
                         },
                         onCancelled = {
                             println("IMAGE onCancelled")
@@ -218,6 +220,10 @@ class HomeScreen : Screen {
                     )
                 }
 
+            }
+
+            if (screenModel.imageIsLoading) {
+                LoadingIndicator(text = "Loading image...")
             }
         }
 
