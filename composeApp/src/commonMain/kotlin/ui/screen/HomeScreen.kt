@@ -141,7 +141,7 @@ class HomeScreen : Screen {
                         screenModel.polygonMenuVisible = false
 
                         if (it == MenuAction.PolygonApply) {
-                            screenModel.shapes.add(screenModel.copyShape(screenModel.currentShape))
+                            screenModel.addCurrentShape()
                             screenModel.currentShape.reset()
                         } else {
                             screenModel.currentShape.reset()
@@ -382,7 +382,7 @@ class HomeScreen : Screen {
             if (screenModel.isSelectionAction.not() &&
                 screenModel.isPolygonAction.not() &&
                 screenModel.isAddImageAction.not()) {
-                screenModel.shapes.add(screenModel.currentShape)
+                screenModel.addCurrentShape()
             }
 
             // Create new instance of path properties to have new path and properties

@@ -30,7 +30,7 @@ class HomeScreenModel : ScreenModel {
      * Shapes that are added, this is required to have shapes with different options and shapes
      *  ith erase to keep over each other
      */
-    val shapes = mutableStateListOf<Shape>()
+    private val shapes = mutableStateListOf<Shape>()
 
     /**
      * Shapes that are undone via button. These shapes are restored if user pushes
@@ -110,10 +110,15 @@ class HomeScreenModel : ScreenModel {
 
     // region Methods
 
-    fun copyShape(shape: Shape): Shape {
+    fun addCurrentShape() {
+        shapes.add(copyShape(currentShape))
+    }
+
+    private fun copyShape(shape: Shape): Shape {
         return when (shape) {
             is PolygonShape -> shape.copy { PolygonShape() }
             is RectShape -> shape.copy { RectShape() }
+            is ImageShape -> shape.copy { ImageShape() }
             else -> shape.copy { Shape() }
         }
     }

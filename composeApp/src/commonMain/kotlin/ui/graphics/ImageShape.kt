@@ -12,14 +12,14 @@ import androidx.compose.ui.unit.IntSize
 import model.PathProperties
 import model.addImagePathProperties
 import util.scaleSizeToSize
-import kotlin.math.max
-import kotlin.math.min
 
 class ImageShape(rect: Rect = Rect.Zero) : RectShape(rect) {
 
-    override var properties: PathProperties = PathProperties.addImagePathProperties
-
     var image by mutableStateOf<ImageBitmap?>(null)
+
+    override var properties: PathProperties =
+        if (image == null) PathProperties.addImagePathProperties
+        else PathProperties()
 
     override fun draw(drawScope: DrawScope, properties: PathProperties) {
         super.draw(drawScope, properties)
