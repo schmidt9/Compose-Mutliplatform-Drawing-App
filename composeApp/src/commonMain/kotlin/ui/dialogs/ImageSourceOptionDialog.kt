@@ -13,18 +13,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Camera
+import androidx.compose.material.icons.outlined.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import composemutliplatformdrawingapp.composeapp.generated.resources.Res
-import composemutliplatformdrawingapp.composeapp.generated.resources.ic_camera
-import composemutliplatformdrawingapp.composeapp.generated.resources.ic_images
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 
 /**
  * https://github.com/QasimNawaz/KMPImagePicker/blob/main/composeApp/src/commonMain/kotlin/Dialogs.kt
@@ -60,7 +60,7 @@ fun ImageSourceOptionDialog(
                 Icon(
                     tint = MaterialTheme.colors.onSurface,
                     modifier = Modifier.size(25.dp),
-                    painter = painterResource(Res.drawable.ic_camera),
+                    painter = rememberVectorPainter(Icons.Outlined.Camera),
                     contentDescription = null
                 )
                 Text(text = "Camera", color = MaterialTheme.colors.onSurface)
@@ -75,7 +75,7 @@ fun ImageSourceOptionDialog(
                 Icon(
                     tint = MaterialTheme.colors.onSurface,
                     modifier = Modifier.size(25.dp),
-                    painter = painterResource(Res.drawable.ic_images),
+                    painter = rememberVectorPainter(Icons.Outlined.Image),
                     contentDescription = null
                 )
                 Text(text = "Gallery", color = MaterialTheme.colors.onSurface)

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
@@ -46,6 +47,10 @@ open class Shape(open var properties: PathProperties = PathProperties()){
     protected var points = mutableListOf<Point>()
 
     protected var handles = listOf<HandleShape>()
+
+    open val width: Float = 0f
+
+    open val height: Float = 0f
 
     var showHandles = false
 
@@ -106,6 +111,10 @@ open class Shape(open var properties: PathProperties = PathProperties()){
     }
 
     open fun translate(offset: Offset) {
+        if (offset.isUnspecified) {
+            return
+        }
+
         path.translate(offset)
         points = points.map { it.plus(offset) }.toMutableList()
     }

@@ -4,10 +4,17 @@ import androidx.compose.ui.geometry.Rect
 import extensions.sameValueAs
 import extensions.setX
 import extensions.setY
+import kotlin.math.abs
 
 open class RectShape(rect: Rect = Rect.Zero) : PolylineShape() {
 
     override var shouldClose: Boolean = true
+
+    override val width: Float
+        get() = abs(points[0].x - points[3].x)
+
+    override val height: Float
+        get() = abs(points[0].y - points[1].y)
 
     init {
         setPoints(listOf(

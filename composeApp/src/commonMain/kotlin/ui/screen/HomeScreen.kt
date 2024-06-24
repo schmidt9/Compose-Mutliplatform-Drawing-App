@@ -25,6 +25,7 @@ import com.smarttoolfactory.composedrawingapp.ui.theme.backgroundColor
 import gesture.PointerEvent
 import gesture.pointerEvents
 import model.PathProperties
+import ui.dialogs.AddImageDialog
 import ui.graphics.Point
 import ui.graphics.PolygonShape
 import ui.graphics.Shape
@@ -82,11 +83,9 @@ class HomeScreen : Screen {
                             handleModifierLongPress(screenModel, it)
                         },
                         onDragStart = {
-                            println("DRAG START")
                             handleModifierDragStart(screenModel, it)
                         },
                         onDrag = { position, dragAmount ->
-                            println("DRAG")
                             handleModifierDrag(screenModel, position, dragAmount)
                         },
                         onDragEnd = {
@@ -96,7 +95,6 @@ class HomeScreen : Screen {
                             handleModifierPressReleased(screenModel, it)
                         },
                         onTransform = { centroid, pan, zoom ->
-                            println("TRANS $centroid, $pan, $zoom")
                             handleModifierTransform(screenModel, centroid, pan, zoom)
                         },
                         onPointerUp = {
@@ -197,9 +195,22 @@ class HomeScreen : Screen {
                         screenModel.shapesMenuButtonSelected = false
                         screenModel.selectionButtonSelected = false
                         screenModel.addImageButtonSelected = true
-                        // TODO: impl
                     }
                 )
+
+                if (screenModel.addImageDialogVisible) {
+                    AddImageDialog(
+                        onImageSelected = {
+
+                        },
+                        onCancelled = {
+
+                        },
+                        onDismissRequest = {
+                            screenModel.addImageDialogVisible = false
+                        }
+                    )
+                }
 
             }
         }
@@ -346,6 +357,10 @@ class HomeScreen : Screen {
     private fun handleModifierDragEnd(screenModel: HomeScreenModel) {
         screenModel.pointerEvent = PointerEvent.DragEnd
         screenModel.endCurrentShapeResizing()
+
+        if (screenModel.isAddImageAction) {
+            screenModel.addImageDialogVisible = true
+        }
     }
 
     private fun handleCanvasDragEnd(screenModel: HomeScreenModel) {
@@ -367,7 +382,8 @@ class HomeScreen : Screen {
                 strokeJoin = screenModel.currentShape.properties.strokeJoin,
             )
 
-            if (screenModel.isPolygonAction.not()) {
+            if (screenModel.isPolygonAction.not() &&
+                screenModel.isAddImageAction.not()) {
                 // Since paths are keys for map, use new one for each key
                 // and have separate path for each down-move-up gesture cycle
                 screenModel.currentShape = Shape(properties)
@@ -408,8 +424,6 @@ class HomeScreen : Screen {
         screenModel.handleZoom(centroid, zoom)
 
         screenModel.pointerEvent = PointerEvent.Idle // trigger canvas redrawing
-
-        println("ZOOM $zoom ${screenModel.totalZoom}")
     }
 
     private fun handleModifierPointerUp(screenModel: HomeScreenModel) {

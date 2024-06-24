@@ -80,6 +80,8 @@ class HomeScreenModel : ScreenModel {
 
     var addImageButtonSelected by mutableStateOf(false)
 
+    var addImageDialogVisible by mutableStateOf(false)
+
     var shapesMenuVisible by mutableStateOf(false)
 
     var polygonMenuVisible by mutableStateOf(false)
@@ -259,6 +261,10 @@ class HomeScreenModel : ScreenModel {
             scaleSelectedShapes(zoom, centroid)
         }
 
+    }
+
+    fun handleAddImageAction() {
+        // TODO: impl
     }
 
     fun setRectShapeAsCurrentShape() {
