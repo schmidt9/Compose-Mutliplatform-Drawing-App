@@ -31,11 +31,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import composemutliplatformdrawingapp.composeapp.generated.resources.Res
-import composemutliplatformdrawingapp.composeapp.generated.resources.ic_error_dialog
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 
 /**
  * https://github.com/QasimNawaz/KMPImagePicker/blob/main/composeApp/src/commonMain/kotlin/Dialogs.kt
