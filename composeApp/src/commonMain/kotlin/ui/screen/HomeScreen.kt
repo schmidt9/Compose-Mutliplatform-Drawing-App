@@ -204,10 +204,9 @@ class HomeScreen : Screen {
                         },
                         onImageSelected = {
                             println("IMAGE onImageSelected $it")
-                            (screenModel.currentShape as ImageShape).image = it
                             screenModel.addImageDialogVisible = false
                             screenModel.imageIsLoading = false
-                            screenModel.addCurrentImageShape()
+                            screenModel.addCurrentImageShape(it)
                         },
                         onCancelled = {
                             println("IMAGE onCancelled")

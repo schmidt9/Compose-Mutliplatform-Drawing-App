@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import cafe.adriel.voyager.core.model.ScreenModel
 import gesture.PointerEvent
@@ -114,12 +115,18 @@ class HomeScreenModel : ScreenModel {
         shapes.add(copyShape(currentShape))
     }
 
-    fun addCurrentImageShape() {
+    fun addCurrentImageShape(image: ImageBitmap) {
         if (currentShape !is ImageShape) {
             return
         }
 
         currentShape.isSelected = true
+
+        with(currentShape as ImageShape) {
+            this.image = image
+            sizeToFitImage()
+        }
+
         addCurrentShape()
     }
 
