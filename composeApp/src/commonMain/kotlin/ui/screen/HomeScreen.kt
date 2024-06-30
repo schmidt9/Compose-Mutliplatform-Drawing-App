@@ -203,18 +203,15 @@ class HomeScreen : Screen {
                             screenModel.imageIsLoading = true
                         },
                         onImageSelected = {
-                            println("IMAGE onImageSelected $it")
                             screenModel.addImageDialogVisible = false
                             screenModel.imageIsLoading = false
                             screenModel.addCurrentImageShape(it)
                         },
                         onCancelled = {
-                            println("IMAGE onCancelled")
                             screenModel.currentShape = Shape()
                             screenModel.addImageDialogVisible = false
                         },
                         onDismissRequest = {
-                            println("IMAGE onDismissRequest")
                             screenModel.addImageDialogVisible = false
                         }
                     )
@@ -306,7 +303,11 @@ class HomeScreen : Screen {
             }
 
             MenuAction.AddImage -> {
-                screenModel.setAddImageShapeAsCurrentShape()
+                if (screenModel.hasSelection) {
+                    screenModel.startCurrentShapeResizing(point)
+                } else {
+                    screenModel.setAddImageShapeAsCurrentShape()
+                }
             }
 
             else -> Unit
@@ -358,7 +359,11 @@ class HomeScreen : Screen {
                 }
 
                 MenuAction.AddImage -> {
-                    screenModel.setAddImageShapeAsCurrentShape()
+                    if (screenModel.hasSelection) {
+                        screenModel.previousPosition = screenModel.currentPosition
+                    } else {
+                        screenModel.setAddImageShapeAsCurrentShape()
+                    }
                 }
 
                 else -> Unit
@@ -370,7 +375,7 @@ class HomeScreen : Screen {
         screenModel.pointerEvent = PointerEvent.DragEnd
         screenModel.endCurrentShapeResizing()
 
-        if (screenModel.isAddImageAction) {
+        if (screenModel.isAddImageAction && screenModel.hasSelection.not()) {
             screenModel.addImageDialogVisible = true
         }
     }

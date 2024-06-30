@@ -44,6 +44,10 @@ class HomeScreenModel : ScreenModel {
 
     private val selectedShapes get() = shapes.filter { it.isSelected }
 
+    val hasSingleSelection get() = (selectedShapes.count() == 1)
+
+    val hasSelection get() = selectedShapes.isNotEmpty()
+
     /**
      * Shapes that is being drawn between [PointerEvent.DragStart] and [PointerEvent.DragEnd]. When
      * pointer is up this shape is saved to **shapes** and new instance is created
@@ -225,11 +229,11 @@ class HomeScreenModel : ScreenModel {
     }
 
     fun updateDrawMode(point: Point) {
-        drawMode = if (isSelectionAction) {
+        drawMode = if (isSelectionAction || isAddImageAction) {
             if (selectedShapes.isEmpty()) {
                 DrawMode.Draw
             } else {
-                if (selectedShapes.count() == 1 &&
+                if (hasSingleSelection &&
                     selectedShapes.first().hasHandleAtPoint(point)) {
                     DrawMode.ResizeSelection
                 } else {
@@ -242,7 +246,7 @@ class HomeScreenModel : ScreenModel {
     }
 
     fun startCurrentShapeResizing(point: Point) {
-        if (selectedShapes.count() == 1) {
+        if (hasSingleSelection) {
             currentShape = selectedShapes.first()
             currentShape.updateSelectedHandleIndexAtPoint(point)
         }
@@ -257,13 +261,13 @@ class HomeScreenModel : ScreenModel {
     }
 
     fun handleLongPress(point: Point) {
-        if (selectedShapes.count() == 1) {
+        if (hasSingleSelection) {
             selectedShapes.first().addPointIfNeeded(point)
         }
     }
 
     fun handleDoubleTap(point: Point) {
-        if (selectedShapes.count() == 1) {
+        if (hasSingleSelection) {
             selectedShapes.first().removePointIfNeeded(point)
         }
     }
@@ -332,7 +336,7 @@ class HomeScreenModel : ScreenModel {
 
     private fun showHandlesIfNeeded() {
         // show handles only if there is one shape selected
-        if (selectedShapes.count() == 1) {
+        if (hasSingleSelection) {
             selectedShapes.first().showHandles = true
         } else {
             selectedShapes.forEach {
