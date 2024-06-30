@@ -172,7 +172,7 @@ class HomeScreenModel : ScreenModel {
         if (isResizeSelectionDrawMode.not()) {
             shapes.forEach {
                 if (it.isSelected.not()) {
-                    it.isSelected = isSelectionAction && it.intersects(hitTestShape)
+                    it.isSelected = (isSelectionAction || isAddImageAction) && it.intersects(hitTestShape)
                 }
             }
         }

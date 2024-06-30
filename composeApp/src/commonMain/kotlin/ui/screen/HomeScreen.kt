@@ -235,7 +235,8 @@ class HomeScreen : Screen {
         screenModel.clearSelection()
 
         when (screenModel.currentMenuButtonAction) {
-            MenuAction.DoSelection -> {
+            MenuAction.DoSelection,
+            MenuAction.AddImage -> {
                 screenModel.updateSelectionAtPoint(point)
             }
 

@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import model.PathProperties
 import model.addImagePathProperties
+import model.hidden
 import model.selectedPathProperties
 import util.scaleSizeToSize
 
@@ -21,7 +22,8 @@ class ImageShape(rect: Rect = Rect.Zero) : RectShape(rect) {
 
     override var properties: PathProperties
         get() = if (image == null) PathProperties.addImagePathProperties
-        else PathProperties.selectedPathProperties
+        else if (isSelected) PathProperties.selectedPathProperties
+        else PathProperties.hidden
         set(_) {}
 
     override fun draw(drawScope: DrawScope, properties: PathProperties) {

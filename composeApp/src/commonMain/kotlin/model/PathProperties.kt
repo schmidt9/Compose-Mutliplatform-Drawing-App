@@ -61,3 +61,8 @@ val PathProperties.Companion.handleProperties
         strokeWidth = 2f,
         fillColor = Color.White.copy(alpha = 0.8f),
     )
+
+val PathProperties.Companion.hidden
+    get() = PathProperties(
+        strokeWidth = 0f
+    )

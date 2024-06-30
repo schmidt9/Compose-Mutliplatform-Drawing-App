@@ -213,12 +213,12 @@ open class Shape(open var properties: PathProperties = PathProperties()) {
         // detect if one path is completely inside another path or vica versa
         val insidePath = Path()
         insidePath.op(this.path, shape.path, PathOperation.Difference)
-        val isInside1 = insidePath.isEmpty
+        val isInside1 = insidePath.isEmpty.not()
 
         insidePath.op(this.path, shape.path, PathOperation.ReverseDifference)
-        val isInside2 = insidePath.isEmpty
+        val isInside2 = insidePath.isEmpty.not()
 
-        return isInside1.not() && isInside2.not()
+        return isInside1 && isInside2
     }
 
     fun containsPoint(point: Point): Boolean {
